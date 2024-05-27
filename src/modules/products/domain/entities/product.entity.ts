@@ -18,7 +18,7 @@ export class Product {
     unit_measure: string;
 
     @ApiProperty()
-    category: unknown;
+    category_name: string;
 
     @ApiProperty()
     expiration: string;
