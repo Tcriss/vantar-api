@@ -7,9 +7,10 @@ import { appConfig, swaggerOptions, validationOptions } from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, appConfig);
+  const document = SwaggerModule.createDocument(app, swaggerOptions);
 
   app.useGlobalPipes(new ValidationPipe(validationOptions))
-  SwaggerModule.setup('swagger', app, swaggerOptions);
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
 }
