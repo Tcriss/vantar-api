@@ -1,3 +1,10 @@
+node_modules
+.git
+.gitignore
+*.md
+dist
+test
+
 # compiled output
 /dist
 /node_modules
@@ -41,20 +48,3 @@ lerna-debug.log*
 .env.test
 .env.production
 .env.local
-.env.docker
-
-# temp directory
-.temp
-.tmp
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-# prisma migrations
-migrations

@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Product } from "@prisma/client";
 
-
-export class Product {
+export class ProductEntity implements Product {
     @ApiProperty()
     id: string;
 
@@ -21,5 +21,8 @@ export class Product {
     category_name: string;
 
     @ApiProperty()
-    expiration: string;
+    expiration: Date;
+
+    @ApiProperty()
+    userId: string;
 }
