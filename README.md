@@ -69,10 +69,6 @@ DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sch
 pnpm install
 ```
 
-```bash
-docker compose --env-file .env.docker up --build -d
-```
-
 ## Execution
 
 ```bash
@@ -85,6 +81,12 @@ $ pnpm run start:dev
 # production mode
 $ pnpm run start:prod
 ```
+
+Using docker
+```bash
+docker compose --env-file .env.docker up --build -d
+```
+> Note: --env-file flag is to tell docker that use .env.docker file in build time, if is not set docker will use default .env instead and it'll use the default configuration where localhost is set, instead of database service set in compose.yml file.
 
 ## Test
 
