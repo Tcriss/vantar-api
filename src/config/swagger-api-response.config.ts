@@ -4,6 +4,11 @@ export const success: ApiResponseOptions = {
     status: 200, 
     description: 'Succesfull'
 };
+export const success_array: ApiResponseOptions = {
+    status: 200, 
+    description: 'Succesfull',
+    isArray: true
+};
 export const uploaded: ApiResponseOptions = {
     status: 201, 
     description: 'Uploaded to the server succesfully'
