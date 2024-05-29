@@ -7,7 +7,7 @@ export const success: ApiResponseOptions = {
 export const success_array: ApiResponseOptions = {
     status: 200, 
     description: 'Succesfull',
-    isArray: true
+    isArray: true,
 };
 export const uploaded: ApiResponseOptions = {
     status: 201, 

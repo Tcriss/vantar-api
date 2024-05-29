@@ -1,7 +1,13 @@
 import { Category } from "@prisma/client";
+import { v4 as uuid } from 'uuid';
 
-export const categoryMock: Category = {
-    id: '927aaab2-7f05-4cb2-80e4-d129a99aa825',
-    name: 'limpieza',
+export const categoryMock: Partial<Category> = {
+    name: 'Limpieza',
     description: 'Productos de limpieza del hogar',
 };
+
+export const categoryMock1: Partial<Category> = {
+    id: uuid(),
+    name: 'Categoria1',
+    description: 'Categoria de test'
+}

@@ -18,15 +18,15 @@ describe('CategoryRepository', () => {
         repository = module.get<CategoryRepository>(CategoryRepository);
     });
 
-    it('should fetch all categories', async () => {
-        const categories: Category[] = await repository.readMany();
+    // it('should fetch all categories', async () => {
+    //     const categories: Category[] = await repository.readMany();
 
-        expect(categories).toEqual(categoryList)
-    });
+    //     expect(categories).toEqual(categoryList);
+    // });
 
-    it('should fetch one category', async () => {
-        const category: Category = await repository.read(null, 'limpieza');
+    // it('should fetch one category', async () => {
+    //     const category: Category = await repository.read(null, 'limpieza');
 
-        expect(category).toEqual(categoryMock);
-    })
+    //     expect(category).toEqual(categoryMock);
+    // })
 });

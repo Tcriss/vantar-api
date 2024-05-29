@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Category } from '@prisma/client';
 
 import { CategoryRepository } from '../repositories/category.repository';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class CategoryService {
@@ -12,10 +13,16 @@ export class CategoryService {
         return this.repository.readMany();
     }
 
-    public async findOneCategory(id?: string, name?: string): Promise<Category | undefined> {
-        const category: Category | undefined = await this.repository.read(id, name);
+    public async findOneCategory(id?: string, name?: string): Promise<Category | null> {
+        if (!id && !name) return null;
 
-        if (!category) null;
+        if (id) {
+            if (!isUUID(id)) return null;
+        };
+
+        const category: Category = await this.repository.read(id, name);
+
+        if (!category) return null;
 
         return category;
     }
@@ -28,6 +35,8 @@ export class CategoryService {
     }
 
     public async updateCategory(id: string, category: Partial<Category>): Promise<Category> {
+        if (!isUUID(id)) return null;
+        
         const isExist: boolean = await this.repository.read(id) ? true : false;
 
         if (!isExist) return null;
@@ -38,7 +47,9 @@ export class CategoryService {
         return this.repository.update(id, { name, description});
     }
 
-    public async deleteCategory(id: string): Promise<Category> {
+    public async deleteCategory(id: string): Promise<Category | null> {
+        if (!isUUID(id)) return null;
+
         const isExist: boolean = await this.repository.read(id) ? true : false;
 
         if (!isExist) return null;

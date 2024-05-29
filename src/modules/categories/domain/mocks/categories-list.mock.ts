@@ -9,7 +9,7 @@ export const categoryList: Category[] = [
     {
         description: 'Productos de limpieza del hogar',
         id: '927aaab2-7f05-4cb2-80e4-d129a99aa825',
-        name: 'limpieza',
+        name: 'Limpieza',
     },
     {
         description: 'Productos para reparar/arreglar',
