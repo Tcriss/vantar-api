@@ -7,7 +7,7 @@ import { CategoryService } from '../../application/services/category.service';
 import { CreateCategoryDTO } from '../dtos/create-category.dto';
 import { EditCategoryDTO } from '../dtos/edit-category.dto';
 import { categoryMock } from '../../domain/mocks/category.mock';
-import { bad_req, not_found, server_error, success, success_array, uploaded } from '../../../../config/swagger-api-response.config';
+import { bad_req, not_found, server_error, success, success_array, uploaded } from '../config/swager-responses.config';
 
 @ApiTags('Categories')
 @Controller('categories')

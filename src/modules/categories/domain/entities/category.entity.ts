@@ -11,6 +11,6 @@ export class CategoryEntity implements Category {
     @ApiProperty()
     description: string;
 
-    @ApiProperty()
+    @ApiProperty({ required: false })
     products: Product[]
 }
