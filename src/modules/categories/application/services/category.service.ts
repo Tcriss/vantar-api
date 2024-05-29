@@ -21,14 +21,28 @@ export class CategoryService {
     }
 
     public async createCategory(category: Partial<Category>): Promise<Category> {
-        return this.repository.create(category);
+        const name: string = category.name.charAt(0).toUpperCase() + category.name.slice(1);
+        const description: string = category.description;
+
+        return this.repository.create({ name, description});
     }
 
     public async updateCategory(id: string, category: Partial<Category>): Promise<Category> {
-        return this.repository.update(id, category);
+        const isExist: boolean = await this.repository.read(id) ? true : false;
+
+        if (!isExist) return null;
+        
+        const name: string = category.name.charAt(0).toUpperCase() + category.name.slice(1);
+        const description: string = category.description;
+
+        return this.repository.update(id, { name, description});
     }
 
     public async deleteCategory(id: string): Promise<Category> {
+        const isExist: boolean = await this.repository.read(id) ? true : false;
+
+        if (!isExist) return null;
+
         return this.repository.delete(id);
     }
 }

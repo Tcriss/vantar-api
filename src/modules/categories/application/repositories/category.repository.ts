@@ -19,18 +19,24 @@ export class CategoryRepository {
             this.prisma.category.findMany({
                 where: {
                     name: { contains: query }
-                }
+                },
+                orderBy: { name: 'desc' }
             })
-            : this.prisma.category.findMany();
+            : this.prisma.category.findMany({ orderBy: { name: 'asc' }});
     }
 
     public async create(category: Partial<Category>): Promise<Category> {
-        return this.prisma.category.create({
-            data: {
-                name: category.name,
-                description: category.description
-            }
-        });
+        try {
+            return this.prisma.category.create({
+                data: {
+                    name: category.name,
+                    description: category.description
+                }
+            });
+        } catch(err) {
+            console.log(err)
+            throw new Error(`Error trying to create category: ${err}`);
+        }
     }
 
     public async createMany(categories: Category[]): Promise<Prisma.BatchPayload> {
