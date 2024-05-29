@@ -7,6 +7,7 @@ import { CategoryService } from '../../application/services/category.service';
 import { CreateCategoryDTO } from '../dtos/create-category.dto';
 import { EditCategoryDTO } from '../dtos/edit-category.dto';
 import { categoryMock } from '../../domain/mocks/category.mock';
+import { bad_req, not_found, server_error, success, uploaded } from '../../../../config/swagger-api-response.config';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -15,17 +16,18 @@ export class CategoryController {
     constructor(private service: CategoryService) { }
 
     @ApiOperation({ summary: 'Gets all categories' })
-    @ApiResponse({ status: 200, description: 'Categories found' })
-    @ApiResponse({ status: 500, description: 'Server error' })
+    @ApiResponse(success)
+    @ApiResponse(server_error)
     @Get()
     public async findAll(): Promise<Category[]> {
         return this.service.findAllCategories();
     }
 
     @ApiOperation({ summary: 'Gets a category' })
-    @ApiResponse({ status: 200, description: 'Category found' })
-    @ApiResponse({ status: 403, description: 'Bad request' })
-    @ApiResponse({ status: 404, description: 'Category not found' })
+    @ApiResponse(success)
+    @ApiResponse(bad_req)
+    @ApiResponse(not_found)
+    @ApiResponse(server_error)
     @Get(':id')
     public async findOne(@Param('id') id: string): Promise<Category> {
         const category: Category = await this.service.findOneCategory(id);
@@ -38,18 +40,18 @@ export class CategoryController {
 
     @ApiOperation({ summary: 'Creates one category' })
     @ApiBody({ type: CreateCategoryDTO, schema: categoryMock })
-    @ApiResponse({ status: 201, description: 'Category created succesfully' })
-    @ApiResponse({ status: 403, description: 'Bad request' })
-    @ApiResponse({ status: 500, description: 'Server error' })
+    @ApiResponse(uploaded)
+    @ApiResponse(bad_req)
+    @ApiResponse(server_error)
     @Post()
     public async create(@Body() category: CreateCategoryDTO): Promise<Category> {
         return this.service.createCategory(category);
     }
 
     @ApiOperation({ summary: 'Edits a category' })
-    @ApiResponse({ status: 200, description: 'Category updated succesfully' })
-    @ApiResponse({ status: 403, description: 'Bad request' })
-    @ApiResponse({ status: 500, description: 'Server error' })
+    @ApiResponse(success)
+    @ApiResponse(bad_req)
+    @ApiResponse(server_error)
     @ApiBody({ type: EditCategoryDTO })
     @Put(':id')
     public async update(@Param('id') id: string, @Body() category: EditCategoryDTO): Promise<Category> {
@@ -62,10 +64,10 @@ export class CategoryController {
     }
 
     @ApiOperation({ summary: 'Deletes a category' })
-    @ApiResponse({ status: 200, description: 'Category deleted' })
-    @ApiResponse({ status: 403, description: 'Bad request' })
-    @ApiResponse({ status: 404, description: 'Category not found' })
-    @ApiResponse({ status: 500, description: 'Server error' })
+    @ApiResponse(success)
+    @ApiResponse(bad_req)
+    @ApiResponse(not_found)
+    @ApiResponse(server_error)
     @Delete(':id')
     public async delete(@Param('id') id: string): Promise<string> {
         const res: Category = await this.service.deleteCategory(id);
