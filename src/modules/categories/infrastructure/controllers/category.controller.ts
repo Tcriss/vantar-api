@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Put, Post, HttpException, HttpStatus } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiNoContentResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Category } from '@prisma/client';
-import { isUUID } from 'class-validator';
 
 import { CategoryService } from '../../application/services/category.service';
 import { CreateCategoryDTO } from '../dtos/create-category.dto';
@@ -32,7 +31,20 @@ export class CategoryController {
     public async findOne(@Param('id') id: string): Promise<Category> {
         const category: Category = await this.service.findOneCategory(id);
 
-        if (!isUUID(id)) throw new HttpException('Invalid id', HttpStatus.BAD_REQUEST);
+        if (!category) throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
+
+        return category;
+    }
+
+    @ApiOperation({ summary: 'Gets a category by its name' })
+    @ApiResponse(success)
+    @ApiResponse(bad_req)
+    @ApiResponse(not_found)
+    @ApiResponse(server_error)
+    @Get(':name')
+    public async findOneByName(@Param('name') name: string): Promise<Category> {
+        const category: Category = await this.service.findOneCategory(null, name);
+        
         if (!category) throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
 
         return category;
@@ -57,23 +69,20 @@ export class CategoryController {
     public async update(@Param('id') id: string, @Body() category: EditCategoryDTO): Promise<Category> {
         const res: Category = await this.service.updateCategory(id, category);
 
-        if (!isUUID(id)) throw new HttpException('Invalid id', HttpStatus.BAD_REQUEST);
         if (res === null) throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
 
         return res;
     }
 
     @ApiOperation({ summary: 'Deletes a category' })
-    @ApiResponse(success)
+    @ApiNoContentResponse({description: 'Category deleted'})
     @ApiResponse(bad_req)
     @ApiResponse(not_found)
     @ApiResponse(server_error)
     @Delete(':id')
     public async delete(@Param('id') id: string): Promise<string> {
         const res: Category = await this.service.deleteCategory(id);
-
-        if (!isUUID(id)) throw new HttpException('Invalid id', HttpStatus.BAD_REQUEST);
-        if (res === null) throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
+        
         if (!res) throw new HttpException('Category not deleted', HttpStatus.BAD_REQUEST);
 
         return 'Category deleted';

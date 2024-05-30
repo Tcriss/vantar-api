@@ -79,14 +79,6 @@ describe('CategoryService', () => {
 
       expect(res).toBeNull();
     });
-
-    it('should not get category when id is invalid', async () => {
-      prismaMock.category.findUnique.mockResolvedValue(null);
-
-      const res: Category = await service.findOneCategory('927a');
-
-      expect(res).toBeNull();
-    });
   });
 
   describe('Update Category', () => {
@@ -115,14 +107,6 @@ describe('CategoryService', () => {
 
       expect(res).toBeNull();
     });
-
-    it('should not update category when id is invalid', async () => {
-      prismaMock.category.findUnique.mockResolvedValue(null);
-
-      const res: Category = await service.findOneCategory('927aaab2f05-80e4-d129a99aa825');
-
-      expect(res).toBeNull();
-    });
   });
 
   describe('Delete Category', () => {
@@ -138,14 +122,6 @@ describe('CategoryService', () => {
       prismaMock.category.findUnique.mockResolvedValue(null);
 
       const res: Category = await service.findOneCategory(falseId);
-
-      expect(res).toBeNull();
-    });
-
-    it('should not delete category when id is invalid', async () => {
-      prismaMock.category.findUnique.mockResolvedValue(null);
-
-      const res: Category = await service.findOneCategory('927aaab2-7f05-80e4');
 
       expect(res).toBeNull();
     });

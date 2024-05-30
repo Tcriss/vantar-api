@@ -1,9 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Product, Category } from "@prisma/client";
+import { UUID } from "crypto";
 
 export class CategoryEntity implements Category {
-    @ApiProperty()
-    id: string;
+    @ApiProperty({ uniqueItems: true })
+    id: UUID;
 
     @ApiProperty()
     name: string;
@@ -11,6 +12,6 @@ export class CategoryEntity implements Category {
     @ApiProperty()
     description: string;
 
-    @ApiProperty({ required: false })
-    products: Product[]
+    @ApiProperty({ required: false, nullable: true })
+    products?: Product[]
 }

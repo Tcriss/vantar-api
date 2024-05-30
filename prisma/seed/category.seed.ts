@@ -1,30 +1,30 @@
 import { Category, PrismaClient } from "@prisma/client";
-import { v4 as uuid } from 'uuid';
+import { randomUUID } from "crypto";
 
 const prisma = new PrismaClient();
 const categories: Category[] = [
     {
-        id: uuid(),
+        id: randomUUID(),
         name: 'limpieza',
         description: 'Productos de limpieza del hogar',
     },
     {
-        id: uuid(),
+        id: randomUUID(),
         name: 'Herramientas',
         description: 'Productos para reparar/arreglar'
     },
     {
-        id: uuid(),
+        id: randomUUID(),
         name: 'Snacks',
         description: 'Chitos, platanitos, papitas...'
     },
     {
-        id: uuid(),
+        id: randomUUID(),
         name: 'Lacteos',
         description: 'Yogurt, queso...'
     },
     {
-        id: uuid(),
+        id: randomUUID(),
         name: 'Carne',
         description: 'Pollo, chuletas, res, cerd, jamón, salami...'
     },

@@ -1,5 +1,5 @@
 import { Category } from "@prisma/client";
-import { v4 as uuid } from 'uuid';
+import { randomUUID } from "crypto";
 
 export const categoryMock: Partial<Category> = {
     name: 'Limpieza',
@@ -7,7 +7,7 @@ export const categoryMock: Partial<Category> = {
 };
 
 export const categoryMock1: Partial<Category> = {
-    id: uuid(),
+    id: randomUUID(),
     name: 'Categoria1',
     description: 'Categoria de test'
 }
