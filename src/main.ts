@@ -11,7 +11,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, appConfig);
   const document = SwaggerModule.createDocument(app, swaggerOptions);
   const configService: ConfigService = app.get(ConfigService);
-  const {httpAdapter} = app.get(HttpAdapterHost);
+  const { httpAdapter } = app.get(HttpAdapterHost);
 
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
   app.useGlobalPipes(new ValidationPipe(validationOptions));
