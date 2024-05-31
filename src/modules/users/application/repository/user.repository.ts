@@ -8,8 +8,12 @@ export class UserRepository {
 
     constructor(private prisma: PrismaProvider) { }
 
-    public async find(id?: string, name?: string): Promise<User> {
-        return this.prisma.user.findUnique({ where: { id: id } || { id: id, name: name } });
+    public async find(id?: string, name?: string, email?: string): Promise<User> {
+        return this.prisma.user.findUnique({ where: 
+            {id: id } || 
+            { id: id, name: name } || 
+            { email: email } 
+        });
     }
 
     public async create(user: User): Promise<User> {

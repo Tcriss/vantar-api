@@ -1,11 +1,11 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { User } from "@prisma/client";
+import { randomUUID } from "crypto";
 
 import { PrismaProvider } from "../../../prisma/providers/prisma.provider";
 import { UserRepository } from "./user.repository";
 import { prismaMock } from "../../domain/mocks/user-providers.mock";
-import { User } from "@prisma/client";
 import { usersMock } from "../../domain/mocks/user.mocks";
-import { randomUUID } from "crypto";
 
 describe('User Repository', () => {
     let repository: UserRepository;
@@ -13,7 +13,10 @@ describe('User Repository', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [ UserRepository, { provide: PrismaProvider, useValue: prismaMock } ],
+            providers: [ 
+                UserRepository, 
+                { provide: PrismaProvider, useValue: prismaMock } 
+            ],
         }).compile();
 
         repository = module.get<UserRepository>(UserRepository);

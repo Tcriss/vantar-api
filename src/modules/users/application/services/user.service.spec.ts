@@ -1,11 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigModule } from '@nestjs/config';
 import { User } from '@prisma/client';
+import { randomUUID } from 'crypto';
 
 import { UserService } from './user.service';
 import { mockUserRepository } from '../../domain/mocks/user-providers.mock';
 import { UserRepository } from '../repository/user.repository';
 import { usersMock } from '../../domain/mocks/user.mocks';
-import { randomUUID } from 'crypto';
+import { PrismaModule } from '../../../prisma/prisma.module';
 
 describe('UserService', () => {
   let service: UserService;
@@ -13,7 +15,11 @@ describe('UserService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UserService, { provide: UserRepository, useValue: mockUserRepository }],
+      providers: [
+        UserService,
+        { provide: UserRepository, useValue: mockUserRepository }
+      ],
+      imports: [ConfigModule, PrismaModule]
     }).compile();
 
     service = module.get<UserService>(UserService);
@@ -28,7 +34,7 @@ describe('UserService', () => {
     it('should find user by id', async () => {
       jest.spyOn(repository, 'find').mockResolvedValue(usersMock[0]);
 
-      const res: User = await service.find(usersMock[0].id);
+      const res: User = await service.findUser(usersMock[0].id);
 
       expect(res).toEqual(usersMock[0]);
     });
@@ -36,7 +42,7 @@ describe('UserService', () => {
     it('should find user by name', async () => {
       jest.spyOn(repository, 'find').mockResolvedValue(usersMock[0]);
 
-      const res: User = await service.find(null, usersMock[0].name);
+      const res: User = await service.findUser(null, usersMock[0].name);
 
       expect(res).toEqual(usersMock[0]);
     });
@@ -44,7 +50,7 @@ describe('UserService', () => {
     it('should find user by email', async () => {
       jest.spyOn(repository, 'find').mockResolvedValue(usersMock[0]);
 
-      const res: User = await service.find(_, _, usersMock[0].email);
+      const res: User = await service.findUser(null, null, usersMock[0].email);
 
       expect(res).toEqual(usersMock[0]);
     });
@@ -52,7 +58,7 @@ describe('UserService', () => {
     it('should return undefined if user was not find', async () => {
       jest.spyOn(repository, 'find').mockResolvedValue(undefined);
 
-      const res: User = await service.find(randomUUID());
+      const res: User = await service.findUser(randomUUID());
 
       expect(res).toBeUndefined;
     });
@@ -60,7 +66,7 @@ describe('UserService', () => {
     it('should return null if id is invalid', async () => {
       jest.spyOn(repository, 'find').mockResolvedValue(null);
 
-      const res: User = await service.find('2332');
+      const res: User = await service.findUser('2332');
 
       expect(res).toBeNull;
     });
@@ -72,7 +78,7 @@ describe('UserService', () => {
     it('should update user', async () => {
       jest.spyOn(repository, 'create').mockResolvedValue(usersMock[0]);
 
-      const res: User = await service.create({ name, email, password });
+      const res: User = await service.createUser({ name, email, password });
 
       expect(res).toEqual(usersMock[0]);
     });
@@ -84,7 +90,7 @@ describe('UserService', () => {
     it('should update user', async () => {
       jest.spyOn(repository, 'delete').mockResolvedValue(usersMock[3]);
 
-      const res: User = await service.update(usersMock[2].id, { name, password });
+      const res: User = await service.updateUser(usersMock[2].id, { name, password });
 
       expect(res).toBeUndefined;
     });
@@ -92,7 +98,7 @@ describe('UserService', () => {
     it('should return undefined if user was not find', async () => {
       jest.spyOn(repository, 'update').mockResolvedValue(undefined);
 
-      const res: User = await service.update(randomUUID(), { name, password});
+      const res: User = await service.updateUser(randomUUID(), { name, password});
 
       expect(res).toBeUndefined;
     });
@@ -100,7 +106,7 @@ describe('UserService', () => {
     it('should return null if id is invalid', async () => {
       jest.spyOn(repository, 'update').mockResolvedValue(null);
 
-      const res: User = await service.update('2332', { name, password});
+      const res: User = await service.updateUser('2332', { name, password});
 
       expect(res).toBeNull;
     });
@@ -110,15 +116,15 @@ describe('UserService', () => {
     it('should delete user', async () => {
       jest.spyOn(repository, 'delete').mockResolvedValue(usersMock[1]);
 
-      const res: User = await service.delete(usersMock[1]);
+      const res: string = await service.deleteUser(usersMock[1].id);
 
-      expect(res).toBeUndefined;
+      expect(res).toBe('User deleted');
     });
 
     it('should return undefined if user was not find', async () => {
       jest.spyOn(repository, 'delete').mockResolvedValue(undefined);
 
-      const res: User = await service.delete(randomUUID());
+      const res: string = await service.deleteUser(randomUUID());
 
       expect(res).toBeUndefined;
     });
@@ -126,7 +132,7 @@ describe('UserService', () => {
     it('should return null if id is invalid', async () => {
       jest.spyOn(repository, 'delete').mockResolvedValue(null);
 
-      const res: User = await service.delete('2332');
+      const res: string = await service.deleteUser('2332');
 
       expect(res).toBeNull;
     });
