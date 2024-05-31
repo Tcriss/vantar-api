@@ -2,128 +2,120 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Category } from '@prisma/client';
 
 import { CategoryService } from './category.service';
-import { PrismaModule } from '../../../prisma/prisma.module';
-import { PrismaProvider } from '../../../prisma/providers/prisma.provider';
-import { prismaMock } from '../../domain/mocks/prisma.mock';
 import { CategoryRepository } from '../repositories/category.repository';
-import { categoryMock1 } from '../../domain/mocks/category.mock';
-import { categoryList } from '../../domain/mocks/categories-list.mock';
+import { mockCategoryRepository, prismaMock } from '../../domain/mocks/category-providers.mock';
+import { categories, category } from '../../domain/mocks/category.mock';
 
 describe('CategoryService', () => {
-  const falseId: string = '8a6e0804-2bd0-4672-b79d-d97027f9071a';
   let service: CategoryService;
+  let repository: CategoryRepository;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        {
-          provide: PrismaProvider,
-          useValue: prismaMock
-        },
         CategoryService,
-        CategoryRepository,
+        {
+          provide: CategoryRepository,
+          useValue: mockCategoryRepository,
+        },
       ],
-      imports: [PrismaModule]
     }).compile();
 
     service = module.get<CategoryService>(CategoryService);
+    repository = module.get<CategoryRepository>(CategoryRepository);
   });
 
-  describe('Service Initialization', () => {
-    it('should be defined', () => {
-      expect(service).toBeDefined();
-    });
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
 
   describe('Find All Categories', () => {
-    it('should get all categories', async () => {
-      prismaMock.category.findMany.mockResolvedValue(categoryList);
+    it('should return an array of categories', async () => {
+      jest.spyOn(repository, 'readMany').mockResolvedValue(categories);
 
-      const res: Category[] = await service.findAllCategories();
+      expect(await service.findAllCategories()).toBe(categories);
+    });
+  });
 
-      expect(res).toEqual(categoryList);
+  describe('Find One Category', () => {
+    it('should return a category by id', async () => {
+      jest.spyOn(repository, 'read').mockResolvedValue(category);
+
+      expect(await service.findOneCategory('1')).toBe(category);
+    });
+
+    it('should return a category by name', async () => {
+      jest.spyOn(repository, 'read').mockResolvedValue(category);
+
+      expect(await service.findOneCategory(null, 'Test')).toBe(category);
+    });
+
+    it('should return null if neither id nor name is provided', async () => {
+      jest.spyOn(repository, 'read').mockResolvedValue(null);
+
+      expect(await service.findOneCategory()).toBeNull;
+    });
+
+    it('should return null if category is not found', async () => {
+      jest.spyOn(repository, 'read').mockResolvedValue(undefined);
+
+      expect(await service.findOneCategory('1')).toBeUndefined;
     });
   });
 
   describe('Create Category', () => {
     it('should create a category', async () => {
-      prismaMock.category.create.mockResolvedValue(categoryMock1);
+      const category: Partial<Category> = { name: 'test', description: 'Test' };
+      const createdCategory: Category = { id: '1', name: 'Test', description: 'Test' };
+      jest.spyOn(repository, 'create').mockResolvedValue(createdCategory);
 
-      const res: Category = await service.createCategory(categoryMock1);
-
-      expect(res).toBe(categoryMock1);
-    });
-  });
-
-  describe('Find One Category', () => {
-    it('should get created category by id', async () => {
-      prismaMock.category.findUnique.mockResolvedValue(categoryMock1);
-
-      const res: Category = await service.findOneCategory(categoryMock1.id);
-
-      expect(res).toEqual(categoryMock1);
-    });
-
-    it('should not return if id or name is not provided', async () => {
-      prismaMock.category.findUnique.mockResolvedValue(null);
-
-      const res: Category = await service.findOneCategory();
-
-      expect(res).toBeNull();
-    });
-
-    it('should return null if category was not found', async () => {
-      prismaMock.category.findUnique.mockResolvedValue(null);
-
-      const res: Category = await service.findOneCategory(falseId);
-
-      expect(res).toBeNull();
+      expect(await service.createCategory(category)).toBe(createdCategory);
     });
   });
 
   describe('Update Category', () => {
-    it('should update category by id', async () => {
-      prismaMock.category.update.mockResolvedValue({
-        id: categoryMock1.id,
-        name: 'Categoria1x',
-        description: 'Categoria de test'
-      });
+    it('should update a category', async () => {
+      const updatedCategory: Partial<Category> = { name: 'Updated Test', description: 'Updated Test' };
+      const resultCategory: Category = { id: '1', name: 'Updated Test', description: 'Updated Test' };
 
-      const name: string = 'Categoria1x';
-      const description: string = 'Categoria de test';
-      const res: Category = await service.updateCategory(categoryMock1.id, {name, description});
+      jest.spyOn(repository, 'update').mockResolvedValue(resultCategory);
+      jest.spyOn(repository, 'read').mockResolvedValue(resultCategory);
 
-      expect(res).toStrictEqual({
-        id: categoryMock1.id,
-        name: 'Categoria1x',
-        description: 'Categoria de test'
-      });
+      expect(await service.updateCategory('1', updatedCategory)).toBe(resultCategory);
     });
 
-    it('should not update if category was not found', async () => {
-      prismaMock.category.findUnique.mockResolvedValue(null);
+    it('should return null if id was not provided', async () => {
+      jest.spyOn(repository, 'update').mockResolvedValue(null);
 
-      const res: Category = await service.findOneCategory(falseId);
+      expect(await service.updateCategory('invalid-uuid', { name: 'Test', description: 'Test' })).toBeNull;
+    });
 
-      expect(res).toBeNull();
+    it('should return null if category does not exist', async () => {
+      jest.spyOn(repository, 'read').mockResolvedValue(undefined);
+
+      expect(await service.updateCategory('2', { name: 'Test', description: 'Test' })).toBeUndefined;
     });
   });
 
   describe('Delete Category', () => {
-    it('should delete category', async () => {
-      prismaMock.category.delete.mockResolvedValue(categoryMock1);
+    it('should delete a category', async () => {
+      const category: Category = { id: '1', name: 'Test', description: 'Test' };
+      jest.spyOn(repository, 'delete').mockResolvedValue(category);
+      jest.spyOn(repository, 'read').mockResolvedValue(category);
 
-      const res = await service.deleteCategory(categoryMock1.id);
-
-      expect(res).toBe(categoryMock1);
+      expect(await service.deleteCategory('1')).toBe(category);
     });
 
-    it('should return null if category does not exist', async () => {
-      prismaMock.category.findUnique.mockResolvedValue(null);
+    it('should return null if id was not provided', async () => {
+      jest.spyOn(repository, 'read').mockResolvedValue(null);
 
-      const res: Category = await service.findOneCategory(falseId);
+      expect(await service.deleteCategory('invalid-uuid')).toBeNull;
+    });
 
-      expect(res).toBeNull();
+    it('should return undefined does not exist', async () => {
+      jest.spyOn(repository, 'read').mockResolvedValue(undefined);
+
+      expect(await service.deleteCategory('2')).toBeUndefined;
     });
   });
 });

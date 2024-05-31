@@ -1,149 +1,143 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { Category } from '@prisma/client';
 
 import { CategoryController } from './category.controller';
 import { CategoryService } from '../../application/services/category.service';
-import { CategoryRepository } from '../../application/repositories/category.repository';
-import { PrismaProvider } from 'src/modules/prisma/providers/prisma.provider';
-import { prismaMock } from '../../domain/mocks/prisma.mock';
-import { Category } from '@prisma/client';
-import { categoryList } from '../../domain/mocks/categories-list.mock';
-import { categoryMock, categoryMock1 } from '../../domain/mocks/category.mock';
+import { CreateCategoryDTO } from '../dtos/create-category.dto';
+import { EditCategoryDTO } from '../dtos/edit-category.dto';
+import { mockCategoryService } from '../../domain/mocks/category-providers.mock';
 
 describe('CategoryController', () => {
   let controller: CategoryController;
-  const falseId: string = '839611b3-a078-4751-8f18-44d8752f749f';
+  let service: CategoryService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CategoryController],
       providers: [
-        CategoryService,
-        CategoryRepository,
         {
-          provide: PrismaProvider,
-          useValue: prismaMock
-        }
+          provide: CategoryService,
+          useValue: mockCategoryService,
+        },
       ],
     }).compile();
 
     controller = module.get<CategoryController>(CategoryController);
+    service = module.get<CategoryService>(CategoryService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('Find All Categories', () => {
-    it('should return all categories', async () => {
-      prismaMock.category.findMany.mockResolvedValue(categoryList);
+  describe('findAll', () => {
+    it('should return an array of categories', async () => {
+      const result: Category[] = [
+        { 
+          id: '1', 
+          name: 'Test', 
+          description: 'Test' 
+        }
+      ];
+      jest.spyOn(service, 'findAllCategories').mockResolvedValue(result);
 
-      const categories: Category[] = await controller.findAll();
-
-      expect(categories).toBe(categoryList);
+      expect(await controller.findAll()).toBe(result);
     });
   });
 
-  describe('Find One Category', () => {
-    it('Should return a category by its id', async () => {
-      prismaMock.category.findUnique.mockResolvedValue(categoryMock1);
+  describe('Find One', () => {
+    it('should return a category', async () => {
+      const result: Category = { id: '1', name: 'Test', description: 'Test' };
+      jest.spyOn(service, 'findOneCategory').mockResolvedValue(result);
 
-      const category: Category = await controller.findOne(categoryMock1.id);
-
-      expect(category).toBe(categoryMock1);
+      expect(await controller.findOne('1')).toBe(result);
     });
 
-    it('Should return a category by its name', async () => {
-      prismaMock.category.findUnique.mockResolvedValue(categoryMock1);
+    it('should throw an exception if category not found', async () => {
+      jest.spyOn(service, 'findOneCategory').mockResolvedValue(null);
 
-      const category: Category = await controller.findOneByName(categoryMock1.name);
-
-      expect(category).toBe(categoryMock1);
+      await expect(controller.findOne('1')).rejects.toThrow(HttpException);
     });
 
-    it('Should return a not found message if category does not exist', async () => {
-      prismaMock.category.findUnique.mockRejectedValue(
-        new HttpException('Category not found', HttpStatus.NOT_FOUND)
+    it('should throw an exception if category id is invalid', async () => {
+      jest.spyOn(service, 'findOneCategory').mockRejectedValue(
+        new HttpException('id must be in uuid format', HttpStatus.BAD_REQUEST)
       );
 
-      try {
-        await controller.findOne(falseId);
-      } catch(err) {
-        expect(err).toBeInstanceOf(HttpException);
-        expect(err.message).toEqual('Category not found');
-        expect(err.status).toEqual(HttpStatus.NOT_FOUND);
-      }
+      await expect(controller.findOne('1')).rejects.toThrow(HttpException);
     });
   });
 
-  describe('Create Category', () => {
+  describe('Find One By Name', () => {
+    it('should return a category by name', async () => {
+      const result: Category = { id: '1', name: 'Test', description: 'Test' };
+      jest.spyOn(service, 'findOneCategory').mockResolvedValue(result);
+
+      expect(await controller.findOneByName('Test')).toBe(result);
+    });
+
+    it('should throw an exception if category not found by name', async () => {
+      jest.spyOn(service, 'findOneCategory').mockResolvedValue(null);
+
+      await expect(controller.findOneByName('Test')).rejects.toThrow(HttpException);
+    });
+  });
+
+  describe('Create', () => {
     it('should create a category', async () => {
-      prismaMock.category.create.mockResolvedValue(categoryMock1);
+      const dto: CreateCategoryDTO = { name: 'Test', description: 'Test' };
+      const result: Category = { id: '1', name: 'Test', description: 'Test' };
+      jest.spyOn(service, 'createCategory').mockResolvedValue(result);
 
-      const { name, description } = categoryMock1;
-      const res: Category = await controller.create({ name, description });
-
-      expect(res).toBe(categoryMock1);
-    });
-
-    it('should send bad request if fields are missing', async () => {
-      prismaMock.category.create.mockResolvedValue({
-        message: [
-          "name should not be empty",
-          "description should not be empty"
-        ],
-        error: "Bad Request",
-        statusCode: 400
-      });
-
-      const {name, description} = { name: '', description: '' };
-      const res: Category = await controller.create({ name, description });
-
-      expect(res).toStrictEqual({
-        message: [
-          "name should not be empty",
-          "description should not be empty"
-        ],
-        error: "Bad Request",
-        statusCode: 400
-      });
+      expect(await controller.create(dto)).toBe(result);
     });
   });
 
-  describe('Update Category', () => {
-    it('should updates a category', async () => {
-      prismaMock.category.update.mockResolvedValue({
-        id: categoryMock1.id,
-        ...categoryMock
-      });
+  describe('Update', () => {
+    it('should update a category', async () => {
+      const dto: EditCategoryDTO = { name: 'Updated Test', description: 'Updated Test' };
+      const result: Category = { id: '1', name: 'Updated Test', description: 'Updated Test' };
+      jest.spyOn(service, 'updateCategory').mockResolvedValue(result);
 
-      const { name, description } = categoryMock;
-      const res: Category = await controller.update(categoryMock.id, { name, description });
+      expect(await controller.update('1', dto)).toBe(result);
+    });
 
-      expect(res).toEqual({
-        id: categoryMock1.id,
-        ...categoryMock
-      });
+    it('should throw an exception if category not found for update', async () => {
+      jest.spyOn(service, 'updateCategory').mockResolvedValue(null);
+
+      await expect(controller.update('1', { name: 'Test', description: 'Test' })).rejects.toThrow(HttpException);
+    });
+
+    it('should throw an exception if category id is invalid', async () => {
+      jest.spyOn(service, 'findOneCategory').mockRejectedValue(
+        new HttpException('id must be in uuid format', HttpStatus.BAD_REQUEST)
+      );
+
+      await expect(controller.findOne('1')).rejects.toThrow(HttpException);
     });
   });
 
-  describe('Delete Category', () => {
-    it('should deletes a category', async () => {
-      prismaMock.category.delete.mockResolvedValue('Category deleted');
+  describe('Delete', () => {
+    it('should delete a category', async () => {
+      const result: Category = { id: '1', name: 'Test', description: 'Test' };
+      jest.spyOn(service, 'deleteCategory').mockResolvedValue(result);
 
-      const res: string = await controller.delete(categoryMock.id);
-
-      expect(res).toBe('Category deleted');
+      expect(await controller.delete('1')).toBe('Category deleted');
     });
 
-    it('should not delete if category was not found', async () => {
-      try {
-          await controller.delete(falseId);
-      } catch (error) {
-          expect(error).toBeInstanceOf(HttpException);
-          expect(error.message).toBe('Category not found');
-          expect(error.status).toBe(HttpStatus.NOT_FOUND);
-      }
+    it('should throw an exception if category not deleted', async () => {
+      jest.spyOn(service, 'deleteCategory').mockResolvedValue(null);
+
+      await expect(controller.delete('1')).rejects.toThrow(HttpException);
+    });
+
+    it('should throw an exception if category id is invalid', async () => {
+      jest.spyOn(service, 'findOneCategory').mockRejectedValue(
+        new HttpException('id must be in uuid format', HttpStatus.BAD_REQUEST)
+      );
+
+      await expect(controller.findOne('1')).rejects.toThrow(HttpException);
     });
   });
 });
