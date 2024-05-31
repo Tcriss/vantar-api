@@ -11,6 +11,5 @@ export class UserEntity implements User {
     @ApiProperty({ format: 'email', uniqueItems: true })
     email: string;
 
-    @ApiProperty({ format: 'password' })
     password: string;
 }
