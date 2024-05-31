@@ -1,5 +1,3 @@
-import { Prisma } from "@prisma/client";
-
 export const prismaMock = {
     user: {
         findUnique: jest.fn(),
@@ -8,17 +6,15 @@ export const prismaMock = {
         delete: jest.fn()
     }
 };
-
-export const mockCategoryRepository = {
-    find: jest.fn(),
-    create: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-};
-
-export const mockCategoryService = {
+export const mockUserService = {
     findUser: jest.fn(),
     createUser: jest.fn(),
     updateUser: jest.fn(),
     deleteUser: jest.fn(),
+};
+export const mockUserRepository = {
+    find: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
 };
