@@ -6,6 +6,7 @@ import { UserService } from '../../application/services/user.service';
 import { bad_req, not_found, server_error, success } from '../config/swagger-response.config';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
+import { UserEntity } from '../../domain/entities/user.entity';
 
 @ApiTags('Users')
 @Controller('users')
@@ -14,14 +15,11 @@ export class UserController {
     constructor(private service: UserService) {}
 
     @ApiOperation({ summary: 'Gets a user' })
-    @ApiResponse(success)
-    @ApiResponse(bad_req)
-    @ApiResponse(not_found)
-    @ApiResponse(server_error)
+    @ApiOkResponse({ type: UserEntity })
     @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'User id'})
     @Get(':id')
-    public async find(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
-        const user: User = await this.service.findUser(id);
+    public async find(@Param('id', ParseUUIDPipe) id: string): Promise<UserEntity> {
+        const user: UserEntity = await this.service.findUser(id);
 
         if (user === null) throw new HttpException('User not found, invalid id', HttpStatus.NOT_FOUND);
         if (user === undefined) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -34,8 +32,8 @@ export class UserController {
     @ApiResponse(bad_req)
     @ApiResponse(server_error)
     @Post()
-    public async create(@Body() body: CreateUserDto): Promise<User> {
-        const user: User = await this.service.createUser(body);
+    public async create(@Body() body: CreateUserDto): Promise<UserEntity> {
+        const user: UserEntity = await this.service.createUser(body);
 
         if (!user) throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -49,7 +47,7 @@ export class UserController {
     @ApiResponse(server_error)
     @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'User id'})
     @Patch(':id')
-    public async update(@Param('id', ParseUUIDPipe) id: string, @Body() body: UpdateUserDto): Promise<User> {
+    public async update(@Param('id', ParseUUIDPipe) id: string, @Body() body: UpdateUserDto): Promise<UserEntity> {
         const user: User = await this.service.updateUser(id, body);
 
         if (user === null) throw new HttpException('User not found, invalid id', HttpStatus.BAD_REQUEST);
