@@ -22,21 +22,16 @@ export class CategoryRepository {
                 },
                 orderBy: { name: 'desc' }
             })
-            : this.prisma.category.findMany({ orderBy: { name: 'asc' }});
+            : this.prisma.category.findMany({ orderBy: { name: 'asc' } });
     }
 
     public async create(category: Partial<Category>): Promise<Category> {
-        try {
-            return this.prisma.category.create({
-                data: {
-                    name: category.name,
-                    description: category.description
-                }
-            });
-        } catch(err) {
-            console.log(err)
-            throw new Error(`Error trying to create category: ${err}`);
-        }
+        return this.prisma.category.create({
+            data: {
+                name: category.name,
+                description: category.description
+            }
+        });
     }
 
     public async createMany(categories: Category[]): Promise<Prisma.BatchPayload> {
@@ -48,7 +43,7 @@ export class CategoryRepository {
 
     public async update(id: string, category: Partial<Category>): Promise<Category> {
         return this.prisma.category.update({
-            where: { id: id }, 
+            where: { id: id },
             data: category
         });
     }
