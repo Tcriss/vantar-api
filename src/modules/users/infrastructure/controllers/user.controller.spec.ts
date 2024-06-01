@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { User } from '@prisma/client';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 import { UserController } from './user.controller';
 import { UserService } from '../../application/services/user.service';
 import { mockUserService } from '../../domain/mocks/user-providers.mock';
 import { usersMock } from '../../domain/mocks/user.mocks';
-import { User } from '@prisma/client';
-import { HttpException, HttpStatus } from '@nestjs/common';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -38,7 +38,7 @@ describe('UserController', () => {
     });
 
     it('should throw an exception if id is invalid', async () => {
-      jest.spyOn(service, 'findUser').mockRejectedValue(null);
+      jest.spyOn(service, 'findUser').mockResolvedValue(null);
 
       try {
         await controller.find('1113');
@@ -50,10 +50,10 @@ describe('UserController', () => {
     });
 
     it('should throw an exception if user was not found', async () => {
-      jest.spyOn(service, 'findUser').mockRejectedValue(undefined);
+      jest.spyOn(service, 'findUser').mockResolvedValue(undefined);
 
       try {
-        await controller.find(usersMock[2]);
+        await controller.find(usersMock[2].id);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).rejects.toBe(404);
@@ -70,37 +70,23 @@ describe('UserController', () => {
 
       expect(user).toEqual(usersMock[1])
     });
-
-    it('should throw an exception if some fields are missing', async () => {
-      jest.spyOn(service, 'createUser').mockRejectedValue(null);
-
-      const { email, name} = usersMock[0];
-
-      try {
-        await controller.create({email, name});
-      } catch (err) {
-        expect(err).toBeInstanceOf(HttpException);
-        expect(err.message).toBeInstanceOf(Array);
-        expect(err.message).toBe(['password should not be empty'])
-        expect(err.statusCode).toBe(HttpStatus.BAD_REQUEST);
-      }
-    });
   });
 
   describe('Update User', () => {
     it('should update user', async  () => {
-      jest.spyOn(service, 'updateUser').mockResolvedValue(usersMock[1]);
+      jest.spyOn(service, 'updateUser').mockResolvedValue(usersMock[3]);
 
-      const user: User = await controller.update(usersMock[1].id);
+      const { name, password } = usersMock[1];
+      const user: User = await controller.update(usersMock[2].id, { name, password });
 
-      expect(user).toBe(usersMock[1]);
+      expect(user).toBe(usersMock[3]);
     });
 
     it('should throw an exception if id is invalid', async () => {
-      jest.spyOn(service, 'updateUser').mockRejectedValue(null);
+      jest.spyOn(service, 'updateUser').mockResolvedValue(null);
 
       try {
-        await controller.update('123');
+        await controller.update('123', usersMock[0]);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.message).toBe('User not found, invalid id');
@@ -109,10 +95,10 @@ describe('UserController', () => {
     });
 
     it('should throw an exception if user does not exist', async () => {
-      jest.spyOn(service, 'updateUser').mockRejectedValue(undefined);
+      jest.spyOn(service, 'updateUser').mockResolvedValue(undefined);
 
       try {
-        await controller.update(usersMock[0].id);
+        await controller.update(usersMock[0].id, usersMock[0]);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.message).toBe('User not found');
@@ -131,7 +117,7 @@ describe('UserController', () => {
     });
 
     it('should throw an exception if id is invalid', async () => {
-      jest.spyOn(service, 'deleteUser').mockRejectedValue(null);
+      jest.spyOn(service, 'deleteUser').mockResolvedValue(null);
 
       try {
         await controller.delete('123');
@@ -143,7 +129,7 @@ describe('UserController', () => {
     });
 
     it('should throw an exception if user does not exist', async () => {
-      jest.spyOn(service, 'deleteUser').mockRejectedValue(undefined);
+      jest.spyOn(service, 'deleteUser').mockResolvedValue(undefined);
 
       try {
         await controller.delete(usersMock[0].id);

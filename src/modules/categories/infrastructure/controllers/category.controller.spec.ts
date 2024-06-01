@@ -110,7 +110,7 @@ describe('CategoryController', () => {
     });
 
     it('should throw an exception if category id is invalid', async () => {
-      jest.spyOn(service, 'findOneCategory').mockRejectedValue(
+      jest.spyOn(service, 'updateCategory').mockRejectedValue(
         new HttpException('id must be in uuid format', HttpStatus.BAD_REQUEST)
       );
 
@@ -133,7 +133,7 @@ describe('CategoryController', () => {
     });
 
     it('should throw an exception if category id is invalid', async () => {
-      jest.spyOn(service, 'findOneCategory').mockRejectedValue(
+      jest.spyOn(service, 'deleteCategory').mockRejectedValue(
         new HttpException('id must be in uuid format', HttpStatus.BAD_REQUEST)
       );
 
