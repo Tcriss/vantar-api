@@ -8,4 +8,4 @@ import { CategoryService } from './application/services/category.service';
     controllers: [CategoryController],
     providers: [CategoryService, CategoryRepository],
 })
-export class CategoriesModule {}
+export class CategoryModule {}
