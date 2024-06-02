@@ -3,6 +3,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common/pipes';
 import { ConfigService } from '@nestjs/config';
 import { ClassSerializerInterceptor } from '@nestjs/common';
+import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
 import { appConfig, swaggerOptions, validationOptions } from './config';
@@ -14,6 +15,7 @@ async function bootstrap() {
   const configService: ConfigService = app.get(ConfigService);
   const { httpAdapter } = app.get(HttpAdapterHost);
 
+  app.useLogger(app.get(Logger));
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
