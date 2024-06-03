@@ -18,12 +18,15 @@ export class AuthController {
     @ApiResponse({ status: 406, description: 'Wrong credentials' })
     @HttpCode(200)
     @Post('login')
-    public async login(@Body() credentials: LoginUserDto): Promise<Token> {
+    public async login(@Body() credentials: LoginUserDto): Promise<{ message: string, access_token: string }> {
         const res: Token = await this.service.logIn(credentials);
 
         if (res === undefined) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         if (res === null) throw new HttpException('Wrong credentials', HttpStatus.NOT_ACCEPTABLE);
 
-        return res;
+        return {
+            message: 'Login successful', 
+            access_token: res.access_token
+        };
     }
 }

@@ -34,12 +34,17 @@ export class UserController {
     @ApiOperation({ summary: 'Creates a user' })
     @ApiResponse({ status: 201, description: 'User created succesfully' })
     @ApiResponse({ status: 400, description: 'Validations error' })
+    @ApiResponse({ status: 409, description: 'User already exist or you are already logged, method not allowed' })
     @ApiResponse({ status: 500, description: 'Internal server error' })
     @Post()
-    public async create(@Body() body: CreateUserDto): Promise<UserEntity> {
-        const user: UserEntity = await this.service.createUser(body);
+    public async create(@Req() req: ReqUser, @Body() body: CreateUserDto): Promise<UserEntity> {
+        const isLogged: boolean = req.user.id ? true : false;
+        const isExist: Boolean = await this.service.findUser(null, body.email) ? true : false;
 
-        if (!user) throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+        if (isLogged) throw new HttpException('You are already authenticated', HttpStatus.NOT_ACCEPTABLE);
+        if (isExist) throw new HttpException('This user already exists', HttpStatus.NOT_ACCEPTABLE);
+
+        const user: UserEntity = await this.service.createUser(body);
 
         return user;
     }
