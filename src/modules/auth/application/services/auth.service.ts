@@ -5,7 +5,6 @@ import * as bcrypt from 'bcrypt';
 
 import { UserEntity } from '../../../users/domain/entities/user.entity';
 import { UserService } from '../../../users/application/services/user.service';
-import { AuthEntity } from '../../domain/entities/auth.entity';
 import { Payload, Token } from '../../domain/types';
 import { LoginUserDto } from '../../infrastructure/dto';
 
