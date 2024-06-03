@@ -1,5 +1,5 @@
-import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { LoginUserDto } from '../dto';
 import { AuthService } from '../../application/services/auth.service';
@@ -14,6 +14,8 @@ export class AuthController {
 
     @ApiOperation({ summary: 'Sing in a user' })
     @ApiOkResponse({ type: AuthEntity, description: 'User logged in successfully'})
+    @ApiResponse({ status: 404, description: 'User not found' })
+    @ApiResponse({ status: 406, description: 'Wrong credentials' })
     @HttpCode(200)
     @Post('login')
     public async login(@Body() credentials: LoginUserDto): Promise<Token> {
