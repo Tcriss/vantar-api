@@ -26,6 +26,6 @@ import { AuthModule } from './modules/auth/auth.module';
 export class AppModule implements NestModule {
 
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(CorrelationIdMiddleware)
+    consumer.apply(CorrelationIdMiddleware).forRoutes('*');
   }
 }
