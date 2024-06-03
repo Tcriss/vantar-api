@@ -10,11 +10,9 @@ export class UserRepository {
 
     constructor(private prisma: PrismaProvider) { }
 
-    public async find(id?: string, name?: string, email?: string): Promise<UserEntity> {
-        return this.prisma.user.findUnique({ where: 
-            {id: id } || 
-            { id: id, name: name } || 
-            { email: email } 
+    public async find(params: { id?: string, email?: string }): Promise<UserEntity> {
+        return this.prisma.user.findUnique({
+            where: params.id ? { id: params.id } : { email: params.email } 
         });
     }
 

@@ -6,41 +6,39 @@ import * as bcrypt from 'bcrypt';
 import { UserEntity } from '../../../users/domain/entities/user.entity';
 import { UserService } from '../../../users/application/services/user.service';
 import { AuthEntity } from '../../domain/entities/auth.entity';
+import { Payload, Token } from '../../domain/types';
+import { LoginUserDto } from '../../infrastructure/dto';
 
 @Injectable()
 export class AuthService {
 
     constructor(private config: ConfigService, private userService: UserService, private jwt: JwtService) {}
 
-    public async validateUser(email: string, password: string): Promise<UserEntity> {
-        const user: UserEntity = await this.userService.findUser(null, null, email);
+    public async logIn(credentials: LoginUserDto): Promise<Token> {
+        const { email, password } = credentials;
+        const user: UserEntity = await this.userService.findUser(null, email);
 
         if (!user) return undefined;
 
-        const isValid: boolean = await this.isPasswordValid(user.password);
+        const isValid: boolean = await bcrypt.compare(password, user.password);
 
         if (!isValid) return null;
 
-        return user;
+        return this.getToken(user);
     }
 
-    public async loginUser(user: UserEntity): Promise<AuthEntity> {
-        const payload = {
+    public async getToken(user: UserEntity): Promise<Token> {
+        const payload: Payload = {
             id: user.id,
             name: user.name,
             email: user.email
         };
 
-        return { access_token: this.jwt.sign(payload) };
-    }
+        const token: string =  await this.jwt.signAsync(payload, {
+            secret: this.config.get<string>('SECRET'), 
+            expiresIn: 60 * 15
+        })
 
-    public async decodeToken(token: string): Promise<Partial<UserEntity>> {
-        return this.jwt.decode(token);
-    }
-
-    public async recoverPassword(): Promise<void> {}
-
-    private async isPasswordValid(resource: string): Promise<boolean> {
-        return bcrypt.compare(resource, this.config.get<string>('HASH'));
+        return { access_token: token };
     }
 }

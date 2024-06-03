@@ -12,10 +12,10 @@ export class UserService {
 
     constructor(private repository: UserRepository, private config: ConfigService) {}
 
-    public async findUser(id?: string, name?: string, email?: string): Promise<UserEntity> {
-        if (!id && !name && !email) return null;
+    public async findUser(id?: string, email?: string): Promise<UserEntity> {
+        if (!id && !email) return null;
 
-        const user: UserEntity = await this.repository.find(id, name, email);
+        const user: UserEntity = await this.repository.find({ id, email });
 
         if (!user) return undefined;
 

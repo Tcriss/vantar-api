@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
@@ -7,6 +7,7 @@ import { bad_req, not_found, server_error, success } from '../config/swagger-res
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
 import { UserEntity } from '../../domain/entities/user.entity';
+import { JwtGuard } from 'src/modules/auth/application/guards/jwt.guard';
 
 @ApiTags('Users')
 @Controller('users')
@@ -17,6 +18,7 @@ export class UserController {
     @ApiOperation({ summary: 'Gets a user' })
     @ApiOkResponse({ type: UserEntity })
     @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'User id'})
+    @UseGuards(JwtGuard)
     @Get(':id')
     public async find(@Param('id', ParseUUIDPipe) id: string): Promise<UserEntity> {
         const user: UserEntity = await this.service.findUser(id);
@@ -45,6 +47,7 @@ export class UserController {
     @ApiResponse(bad_req)
     @ApiResponse(not_found)
     @ApiResponse(server_error)
+    @UseGuards(JwtGuard)
     @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'User id'})
     @Patch(':id')
     public async update(@Param('id', ParseUUIDPipe) id: string, @Body() body: UpdateUserDto): Promise<UserEntity> {
@@ -63,6 +66,7 @@ export class UserController {
     @ApiResponse(not_found)
     @ApiResponse(server_error)
     @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'User id'})
+    @UseGuards(JwtGuard)
     @Delete(':id')
     public async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string> {
         const res: string = await this.service.deleteUser(id);
