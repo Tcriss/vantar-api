@@ -6,7 +6,7 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import { Payload } from "../../../domain/types/payload.type";
 
 @Injectable()
-export class AccesTokenStrategy extends PassportStrategy(Strategy, 'ats') {
+export class AccessTokenStrategy extends PassportStrategy(Strategy, 'ats') {
 
     constructor(config: ConfigService) {
         super({
