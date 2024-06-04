@@ -1,12 +1,12 @@
 import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
 import { LoginUserDto } from '../dto';
 import { AuthService } from '../../application/services/auth.service';
 import { Token } from '../../domain/types';
 import { AuthEntity } from '../../domain/entities/auth.entity';
 import { GoogleGuard } from '../../application/guards/google/google.guard';
-import { Request, RequestHandler, Response } from 'express';
 
 @ApiTags('Authentication')
 @Controller('auth')
