@@ -6,7 +6,7 @@ import { PrismaModule } from './modules/prisma/prisma.module';
 import { UserModule } from './modules/users/user.module';
 import { CategoryModule } from './modules/categories/category.module';
 import { CorrelationIdMiddleware } from './middlewares/correlation-id/correlation-id.middleware';
-import { loggerFactory } from './dynamic-modules-config/logger.factory';
+import { loggerFactory } from './config/logger.factory';
 import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
