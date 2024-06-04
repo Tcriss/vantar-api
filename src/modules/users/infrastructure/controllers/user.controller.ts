@@ -6,7 +6,7 @@ import { UserService } from '../../application/services/user.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
 import { UserEntity } from '../../domain/entities/user.entity';
-import { JwtGuard } from '../../../auth/application/guards/jwt.guard';
+import { AccessTokenGuard } from '../../../auth/application/guards/access-token/access-token.guard';
 import { ReqUser } from '../../../../types/req-user.type';
 
 @Controller('users') @ApiTags('Users')
@@ -20,7 +20,7 @@ export class UserController {
     @ApiResponse({ status: 400, description: 'Invalid id' })
     @ApiResponse({ status: 404, description: 'User not found' })
     @ApiResponse({ status: 500, description: 'Server error' })
-    @UseGuards(JwtGuard)
+    @UseGuards(AccessTokenGuard)
     @Get()
     public async find(@Req() req: ReqUser): Promise<UserEntity> {
         const user: UserEntity = await this.service.findUser(req.user.id);
@@ -55,7 +55,7 @@ export class UserController {
     @ApiResponse({ status: 400, description: 'Validations error' })
     @ApiResponse({ status: 404, description: 'User not found' })
     @ApiResponse({ status: 500, description: 'Internal server error' })
-    @UseGuards(JwtGuard)
+    @UseGuards(AccessTokenGuard)
     @Patch()
     public async update(@Req() req: ReqUser, @Body() body: UpdateUserDto): Promise<UserEntity> {
         const user: User = await this.service.updateUser(req.user.id, body);
@@ -73,7 +73,7 @@ export class UserController {
     @ApiResponse({ status: 400, description: 'Validations error' })
     @ApiResponse({ status: 404, description: 'User not found' })
     @ApiResponse({ status: 500, description: 'Internal server error' })
-    @UseGuards(JwtGuard)
+    @UseGuards(AccessTokenGuard)
     @Delete()
     public async delete(@Req() req: ReqUser): Promise<string> {
         const res: string = await this.service.deleteUser(req.user.id);

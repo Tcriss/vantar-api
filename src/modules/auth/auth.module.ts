@@ -7,9 +7,10 @@ import { UserModule } from '../users/user.module';
 import { AuthController } from './infrastructure/controllers/auth.controller';
 import { jwtFactory } from './application/config/jwt.factory';
 import { AccessTokenStrategy } from './application/strategies/access-token/access-token.strategy';
+import { GoogleAuthStrategy } from './application/strategies/google/google.strategy';
 
 @Module({
-  providers: [AuthService, AccessTokenStrategy],
+  providers: [AuthService, AccessTokenStrategy, GoogleAuthStrategy],
   controllers: [AuthController],
   imports: [
     JwtModule.registerAsync({

@@ -8,7 +8,7 @@ import { Payload } from "../../../domain/types/payload.type";
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy, 'ats') {
 
-    constructor(config: ConfigService) {
+    constructor(private config: ConfigService) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
