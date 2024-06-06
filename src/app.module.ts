@@ -5,6 +5,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { UserModule } from './modules/users/user.module';
 import { CategoryModule } from './modules/categories/category.module';
+import { CustomerModule } from './modules/customers/customer.module';
 import { CorrelationIdMiddleware } from './middlewares/correlation-id/correlation-id.middleware';
 import { loggerFactory } from './common/config/logger.factory';
 import { AuthModule } from './modules/auth/auth.module';
@@ -20,7 +21,8 @@ import { AuthModule } from './modules/auth/auth.module';
     PrismaModule,
     AuthModule,
     UserModule,
-    CategoryModule
+    CustomerModule,
+    CategoryModule,
   ],
 })
 export class AppModule implements NestModule {

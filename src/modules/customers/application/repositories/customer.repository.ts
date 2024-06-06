@@ -26,18 +26,21 @@ export class CustomerRepository {
         });
     }
 
-    public async create(customer: CustomerEntity): Promise<CustomerEntity> {
+    public async create(customer: Partial<CustomerEntity>): Promise<CustomerEntity> {
         return this.prisma.customer.create({
-            data: customer,
-            include: { inventories: false, user: false }
+            data: {
+                name: customer.name,
+                contact: customer.contact,
+                companies: customer.companies,
+                user_id: customer.user_id
+            }
         });
     }
 
     public async update(id: string, customer: Partial<CustomerEntity>): Promise<Partial<CustomerEntity>> {
         return this.prisma.customer.update({
             data: customer,
-            where: { id: id },
-            select: { companies: true, contact: true, active: true, name: true },
+            where: { id: id }
         });
     }
 
