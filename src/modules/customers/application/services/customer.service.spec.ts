@@ -3,9 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CustomerService } from './customer.service';
 import { CustomerRepository } from '../repositories/customer.repository';
 import { mockCustomerRepository } from '../../domain/mocks/customers-providers.mock';
-import { mockCustomer1, mockCustomer2, mockCustomer3, mockCustomers, mockPartialCustomer1, mockPartialCustomer2, mockPartialCustomers, mockSearchedCustomers } from '../../domain/mocks/customers.mock';
+import { mockCustomer1, mockCustomer2, mockCustomer3, mockCustomers, mockPartialCustomer1, mockPartialCustomers, mockSearchedCustomers } from '../../domain/mocks/customers.mock';
 import { CustomerEntity } from '../../domain/entities/customer.entity';
-import { CustomerResponse } from '../../domain/types';
 
 describe('CustomerService', () => {
   let service: CustomerService;
