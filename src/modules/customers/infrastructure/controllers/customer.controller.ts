@@ -42,7 +42,7 @@ export class CustomerController {
     @ApiResponse({ status: 500, description: 'Server error' })
     @ApiQuery({ name: 'fields', required: false, description: 'Fiels you want to fetch' })
     @Get(':id')
-    public async findOne(@Param('id', ParseUUIDPipe) id: string, @Query('fields') fields: string): Promise<Partial<CustomerEntity>> {
+    public async findOne(@Param('id', ParseUUIDPipe) id: string, @Query('fields') fields?: string): Promise<Partial<CustomerEntity>> {
         const customer: Partial<CustomerEntity> = await this.service.findOneCustomer(id, fields);
 
         if (!customer) throw new HttpException('Customer not found', HttpStatus.NOT_FOUND);
@@ -89,10 +89,11 @@ export class CustomerController {
     @ApiResponse({ status: 404, description: 'Customer not found' })
     @ApiResponse({ status: 500, description: 'Server error' })
     @Delete(':id')
-    public async delete(@Param('id', ParseUUIDPipe) id: string): Promise<CustomerResponse> {
-        const res: Partial<CustomerEntity> = await this.service.deleteCustomer(id);
+    public async delete(@Req() req: ReqUser, @Param('id', ParseUUIDPipe) id: string): Promise<CustomerResponse> {
+        const res: Partial<CustomerEntity> = await this.service.deleteCustomer(req.user.id, id);
 
-        if (!res) throw new HttpException('Customer not found', HttpStatus.NOT_FOUND);
+        if (res === null) throw new HttpException('You are not the owner of this resource', HttpStatus.FORBIDDEN);
+        if (res === undefined) throw new HttpException('Customer not found', HttpStatus.NOT_FOUND);
 
         return { message: 'Customer deleted succesfully' };
     }
