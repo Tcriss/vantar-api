@@ -9,17 +9,17 @@ export const prismaMock = {
   };
   
   export const mockCustomerRepository = {
-    readMany: jest.fn(),
-    read: jest.fn(),
+    findAll: jest.fn(),
+    findOne: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
   };
   
   export const mockCustomerService = {
-    findAllCategories: jest.fn(),
-    findOneCategory: jest.fn(),
-    createCategory: jest.fn(),
-    updateCategory: jest.fn(),
-    deleteCategory: jest.fn(),
+    findAllCustomers: jest.fn(),
+    findOneCustomer: jest.fn(),
+    createCustomer: jest.fn(),
+    updateCustomer: jest.fn(),
+    deleteCustomer: jest.fn(),
   };

@@ -33,7 +33,7 @@ describe('Customer', () => {
     it('should find all customers', async () => {
       jest.spyOn(prisma.customer, 'findMany').mockRejectedValue([mockCustomers[0], mockCustomers[1]]);
 
-      const res: CustomerEntity[] = await repository.findAll(mockCustomers[0].user_id, { skip: 0, take: 3});
+      const res: Partial<CustomerEntity>[] = await repository.findAll(mockCustomers[0].user_id, { skip: 0, take: 3});
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toHaveLength(2);
@@ -43,7 +43,7 @@ describe('Customer', () => {
     it('should only bring one element', async () => {
       jest.spyOn(prisma.customer, 'findMany').mockRejectedValue([mockCustomers[0]]);
 
-      const res: CustomerEntity[] = await repository.findAll(mockCustomers[0].user_id, { skip: 0, take: 1 });
+      const res: Partial<CustomerEntity>[] = await repository.findAll(mockCustomers[0].user_id, { skip: 0, take: 1 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toHaveLength(1);

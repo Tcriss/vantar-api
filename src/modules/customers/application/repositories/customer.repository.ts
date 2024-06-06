@@ -9,7 +9,7 @@ export class CustomerRepository {
 
     constructor(private prisma: PrismaProvider) {}
 
-    public async findAll(ownerId: string, page: Pagination, query?: string, fields?: SelectedFields): Promise<CustomerEntity[]> {
+    public async findAll(ownerId: string, page: Pagination, query?: string, fields?: SelectedFields): Promise<Partial<CustomerEntity>[]> {
         return this.prisma.customer.findMany({
             skip: page.skip,
             take: page.take,
@@ -19,7 +19,7 @@ export class CustomerRepository {
         });
     }
 
-    public async findOne(id: string, fields?: SelectedFields): Promise<CustomerEntity> {
+    public async findOne(id: string, fields?: SelectedFields): Promise<Partial<CustomerEntity>> {
         return this.prisma.customer.findUnique({
             where: { id: id }, 
             select: fields

@@ -9,10 +9,10 @@ export class CustomerService {
 
     constructor(private repository: CustomerRepository) {}
 
-    public async findAllCustomers(ownerId: string, page: Pagination, query?: string, selected?: string): Promise<CustomerEntity[]> {
+    public async findAllCustomers(ownerId: string, page: Pagination, query?: string, selected?: string): Promise<Partial<CustomerEntity>[]> {
         const fields: SelectedFields = selected ? {
             id: true,
-            user_id: false,
+            user_id: selected.includes('userId') ? true : false,
             active: selected.includes('active') ? true : false,
             name: selected.includes('name') ? true : false,
             companies: selected.includes('companies') ? true : false,
@@ -23,17 +23,17 @@ export class CustomerService {
         return this.repository.findAll(ownerId, page, query, fields);
     }
 
-    public async findOneCustomer(id: string, selected?: string): Promise<CustomerEntity> {
+    public async findOneCustomer(id: string, selected?: string): Promise<Partial<CustomerEntity>> {
         const fields: SelectedFields = selected ? {
             id: true,
-            user_id: false,
+            user_id: selected.includes('userId') ? true : false,
             active: selected.includes('active') ? true : false,
             name: selected.includes('name') ? true : false,
             companies: selected.includes('companies') ? true : false,
             contact: selected.includes('contact') ? true : false,
             created_at: selected.includes('created') ? true : false,
         } : null;
-        const customer: CustomerEntity = await this.repository.findOne(id, fields);
+        const customer: Partial<CustomerEntity> = await this.repository.findOne(id, fields);
 
         if (!customer) return undefined;
 
@@ -59,8 +59,10 @@ export class CustomerService {
         return res;
     }
 
-    public async deleteCustomer(id: string): Promise<CustomerEntity> {
-        if (!id) return null;
+    public async deleteCustomer(owner: string, id: string): Promise<CustomerEntity> {
+        const existin: Partial<CustomerEntity> = await this.findOneCustomer(id);
+
+        if (owner !== existin.user_id) return null;
 
         const res: CustomerEntity = await this.repository.delete(id);
 
