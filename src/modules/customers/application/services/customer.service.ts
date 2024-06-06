@@ -3,12 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { CustomerRepository } from '../repositories/customer.repository';
 import { Pagination, SelectedFields } from '../../domain/types';
 import { CustomerEntity } from '../../domain/entities/customer.entity';
-import { Logger } from 'nestjs-pino';
 
 @Injectable()
 export class CustomerService {
 
-    constructor(private repository: CustomerRepository, private logger: Logger) {}
+    constructor(private repository: CustomerRepository) {}
 
     public async findAllCustomers(ownerId: string, page: Pagination, query?: string, selected?: string): Promise<CustomerEntity[]> {
         const fields: SelectedFields = selected ? {

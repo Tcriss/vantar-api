@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@ne
 import { CustomerService } from '../../application/services/customer.service';
 import { AccessTokenGuard } from '../../../auth/application/guards/access-token/access-token.guard';
 import { ReqUser } from '../../../../common/types';
-import { Pagination, CustomerResponse, SelectedFields } from '../../domain/types';
+import { Pagination, CustomerResponse } from '../../domain/types';
 import { CustomerEntity } from '../../domain/entities/customer.entity';
 import { CreateCustomerDto, UpdateCustomerDto } from '../dtos';
 import { CustomerResponseEntity } from '../../domain/entities/customer-responses.entity';
