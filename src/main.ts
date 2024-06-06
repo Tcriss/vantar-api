@@ -6,7 +6,7 @@ import { ClassSerializerInterceptor } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
-import { appConfig, swaggerOptions, validationOptions } from './config';
+import { appConfig, swaggerOptions, validationOptions } from './common/config';
 import { PrismaClientExceptionFilter } from './filters/prisma-client-exception/prisma-client-exception.filter';
 
 async function bootstrap() {
