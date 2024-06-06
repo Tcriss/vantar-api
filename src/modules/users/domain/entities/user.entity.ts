@@ -12,6 +12,9 @@ export class UserEntity implements User {
     @ApiProperty({ format: 'email', uniqueItems: true })
     email: string;
 
+    @ApiProperty({ format: 'date' })
+    created_at: Date;
+
     @Exclude()
     password: string;
 
