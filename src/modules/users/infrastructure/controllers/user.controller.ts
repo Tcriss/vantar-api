@@ -7,7 +7,7 @@ import { CreateUserDto } from '../dtos/create-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { AccessTokenGuard } from '../../../auth/application/guards/access-token/access-token.guard';
-import { ReqUser } from '../../../../types/req-user.type';
+import { ReqUser } from '../../domain/types/req-user.type';
 
 @Controller('users') @ApiTags('Users')
 export class UserController {

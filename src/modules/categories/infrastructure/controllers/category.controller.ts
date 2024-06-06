@@ -1,13 +1,13 @@
 import { Body, Controller, Delete, Get, Param, Put, Post, HttpException, HttpStatus, ParseUUIDPipe } from '@nestjs/common';
-import { ApiBody, ApiNoContentResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Category } from '@prisma/client';
 
 import { CategoryService } from '../../application/services/category.service';
 import { CreateCategoryDTO } from '../dtos/create-category.dto';
 import { EditCategoryDTO } from '../dtos/edit-category.dto';
-import { bad_req, not_found, server_error, success, success_array, uploaded } from '../config/swager-responses.config';
 import { categoryMock } from '../../domain/mocks/category.mock';
-import { uuidPipeOptions } from 'src/config/uuid-pipe.config';
+import { uuidPipeOptions } from 'src/common/config/uuid-pipe.config';
+import { CategoryEntity } from '../../domain/entities/category.entity';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -16,18 +16,18 @@ export class CategoryController {
     constructor(private service: CategoryService) { }
 
     @ApiOperation({ summary: 'Gets all categories' })
-    @ApiResponse(success_array)
-    @ApiResponse(server_error)
+    @ApiResponse({ status: 200, type: CategoryEntity, isArray: true })
+    @ApiResponse({ status: 500, description: 'Server error'})
     @Get()
     public async findAll(): Promise<Category[]> {
         return this.service.findAllCategories();
     }
 
     @ApiOperation({ summary: 'Gets a category' })
-    @ApiResponse(success)
-    @ApiResponse(bad_req)
-    @ApiResponse(not_found)
-    @ApiResponse(server_error)
+    @ApiResponse({ status: 200, type: CategoryEntity })
+    @ApiResponse({ status: 400, description: 'Validations error'})
+    @ApiResponse({ status: 404, description: 'Category not found' })
+    @ApiResponse({ status: 500, description: 'Server error'})
     @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'The ID of the category'})
     @Get(':id')
     public async findOne(@Param('id', new ParseUUIDPipe(uuidPipeOptions)) id: string): Promise<Category> {
@@ -39,10 +39,10 @@ export class CategoryController {
     }
 
     @ApiOperation({ summary: 'Gets a category by its name' })
-    @ApiResponse(success)
-    @ApiResponse(bad_req)
-    @ApiResponse(not_found)
-    @ApiResponse(server_error)
+    @ApiResponse({ status: 200, type: CategoryEntity })
+    @ApiResponse({ status: 400, description: 'Validations error'})
+    @ApiResponse({ status: 404, description: 'Category not found' })
+    @ApiResponse({ status: 500, description: 'Server error'})
     @ApiParam({ name: 'name', type: 'string', description: 'The name of the category'})
     @Get(':name')
     public async findOneByName(@Param('name') name: string): Promise<Category> {
@@ -55,18 +55,19 @@ export class CategoryController {
 
     @ApiOperation({ summary: 'Creates one category' })
     @ApiBody({ type: CreateCategoryDTO, schema: categoryMock })
-    @ApiResponse(uploaded)
-    @ApiResponse(bad_req)
-    @ApiResponse(server_error)
+    @ApiResponse({ status: 200, type: CategoryEntity })
+    @ApiResponse({ status: 400, description: 'Validations error'})
+    @ApiResponse({ status: 500, description: 'Server error'})
     @Post()
     public async create(@Body() category: CreateCategoryDTO): Promise<Category> {
         return this.service.createCategory(category);
     }
 
     @ApiOperation({ summary: 'Edits a category' })
-    @ApiResponse(success)
-    @ApiResponse(bad_req)
-    @ApiResponse(server_error)
+    @ApiResponse({ status: 200, type: CategoryEntity })
+    @ApiResponse({ status: 400, description: 'Validations error'})
+    @ApiResponse({ status: 404, description: 'Category not found' })
+    @ApiResponse({ status: 500, description: 'Server error'})
     @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'The ID of the category'})
     @ApiBody({ type: EditCategoryDTO })
     @Put(':id')
@@ -79,10 +80,10 @@ export class CategoryController {
     }
 
     @ApiOperation({ summary: 'Deletes a category' })
-    @ApiNoContentResponse({description: 'Category deleted'})
-    @ApiResponse(bad_req)
-    @ApiResponse(not_found)
-    @ApiResponse(server_error)
+    @ApiResponse({ status: 200, description: 'Category deleted' })
+    @ApiResponse({ status: 400, description: 'Validations error'})
+    @ApiResponse({ status: 404, description: 'Category not found' })
+    @ApiResponse({ status: 500, description: 'Server error'})
     @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'The ID of the category'})
     @Delete(':id')
     public async delete(@Param('id', new ParseUUIDPipe(uuidPipeOptions)) id: string): Promise<string> {
