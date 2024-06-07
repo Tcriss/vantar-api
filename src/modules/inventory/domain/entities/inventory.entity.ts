@@ -9,7 +9,7 @@ export class InventoryEntity implements Inventory {
     customer_id: string;
 
     @ApiProperty()
-    amount: number;
+    products_amount: number;
 
     @ApiProperty()
     capital: number;
@@ -21,5 +21,5 @@ export class InventoryEntity implements Inventory {
     created_at: Date;
 
     @ApiProperty()
-    service_amount: number;
+    service_charge: number;
 }
