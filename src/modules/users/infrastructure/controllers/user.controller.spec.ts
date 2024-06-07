@@ -11,7 +11,7 @@ describe('UserController', () => {
   let controller: UserController;
   let service: UserService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [{ 
         provide: UserService, 
@@ -32,7 +32,7 @@ describe('UserController', () => {
     it('should find a user by id', async  () => {
       jest.spyOn(service, 'findUser').mockResolvedValue(usersMock[1]);
 
-      const user: User = await controller.find(usersMock[1].id);
+      const user: User = await controller.find({ user: { id: usersMock[1].id, email: '', name: '' }});
 
       expect(user).toEqual(usersMock[1]);
     });
@@ -41,11 +41,11 @@ describe('UserController', () => {
       jest.spyOn(service, 'findUser').mockResolvedValue(null);
 
       try {
-        await controller.find('1113');
+        await controller.find({ user: { id: '113', email: '', name: '' }});
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).rejects.toBe(400);
-        expect(err.message).rejects.toBe('User not found, invalid id');
+        expect(err.status).toBe(HttpStatus.BAD_REQUEST);
+        expect(err.message).toBe('User not found, invalid id');
       }
     });
 
@@ -53,20 +53,21 @@ describe('UserController', () => {
       jest.spyOn(service, 'findUser').mockResolvedValue(undefined);
 
       try {
-        await controller.find(usersMock[2].id);
+        await controller.find({ user: { id: usersMock[2].id, email: '', name: '' }});
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).rejects.toBe(404);
-        expect(err.message).rejects.toBe('User not found');
+        expect(err.status).toBe(HttpStatus.NOT_FOUND);
+        expect(err.message).toBe('User not found');
       };
     });
   });
 
   describe('Create User', () => {
-    it('should find a user by id', async  () => {
+    it('should create user', async  () => {
+      jest.spyOn(service, 'findUser').mockResolvedValue(undefined);
       jest.spyOn(service, 'createUser').mockResolvedValue(usersMock[1]);
 
-      const user: User = await controller.find(usersMock[1].id);
+      const user: User = await controller.create(usersMock[1]);
 
       expect(user).toEqual(usersMock[1])
     });
@@ -77,7 +78,7 @@ describe('UserController', () => {
       jest.spyOn(service, 'updateUser').mockResolvedValue(usersMock[3]);
 
       const { name, password } = usersMock[1];
-      const user: User = await controller.update(usersMock[2].id, { name, password });
+      const user: User = await controller.update({ user: { id: usersMock[2].id, email: '', name: '' }}, { name, password });
 
       expect(user).toBe(usersMock[3]);
     });
@@ -86,11 +87,11 @@ describe('UserController', () => {
       jest.spyOn(service, 'updateUser').mockResolvedValue(null);
 
       try {
-        await controller.update('123', usersMock[0]);
+        await controller.update({ user: { id: '133', email: '', name: '' }}, usersMock[0]);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.message).toBe('User not found, invalid id');
-        expect(err.statusCode).toBe(HttpStatus.BAD_REQUEST);
+        expect(err.status).toBe(HttpStatus.BAD_REQUEST);
       }
     });
 
@@ -98,11 +99,11 @@ describe('UserController', () => {
       jest.spyOn(service, 'updateUser').mockResolvedValue(undefined);
 
       try {
-        await controller.update(usersMock[0].id, usersMock[0]);
+        await controller.update({ user: { id: usersMock[0].id, email: '', name: '' }}, usersMock[0]);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.message).toBe('User not found');
-        expect(err.statusCode).toBe(HttpStatus.NOT_FOUND);
+        expect(err.status).toBe(HttpStatus.NOT_FOUND);
       }
     });
   });
@@ -111,7 +112,7 @@ describe('UserController', () => {
     it('should find a user by id', async  () => {
       jest.spyOn(service, 'deleteUser').mockResolvedValue('User deleted');
 
-      const res: string = await controller.delete(usersMock[0].id);
+      const res: string = await controller.delete({ user: { id: usersMock[0].id, email: '', name: '' }});
 
       expect(res).toBe('User deleted');
     });
@@ -120,11 +121,11 @@ describe('UserController', () => {
       jest.spyOn(service, 'deleteUser').mockResolvedValue(null);
 
       try {
-        await controller.delete('123');
+        await controller.delete({ user: { id: '122', email: '', name: '' }});
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.message).toBe('User not found, invalid id');
-        expect(err.statusCode).toBe(HttpStatus.BAD_REQUEST);
+        expect(err.status).toBe(HttpStatus.BAD_REQUEST);
       }
     });
 
@@ -132,11 +133,11 @@ describe('UserController', () => {
       jest.spyOn(service, 'deleteUser').mockResolvedValue(undefined);
 
       try {
-        await controller.delete(usersMock[0].id);
+        await controller.delete({ user: { id: usersMock[0].id, email: '', name: '' }});
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.message).toBe('User not found');
-        expect(err.statusCode).toBe(HttpStatus.NOT_FOUND);
+        expect(err.status).toBe(HttpStatus.NOT_FOUND);
       }
     });
   });

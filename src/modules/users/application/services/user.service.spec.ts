@@ -13,7 +13,7 @@ describe('UserService', () => {
   let service: UserService;
   let repository: UserRepository;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,

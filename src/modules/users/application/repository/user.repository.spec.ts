@@ -11,7 +11,7 @@ describe('User Repository', () => {
     let repository: UserRepository;
     let prisma: PrismaProvider;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [ 
                 UserRepository, 

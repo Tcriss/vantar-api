@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Patch, Post, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Headers, HttpException, HttpStatus, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 import { UserService } from '../../application/services/user.service';
@@ -8,8 +8,11 @@ import { UpdateUserDto } from '../dtos/update-user.dto';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { AccessTokenGuard } from '../../../auth/application/guards/access-token/access-token.guard';
 import { ReqUser } from '../../domain/types/req-user.type';
+import { PublicAccess } from '../../../../common/decorators/public.decorator';
 
-@Controller('users') @ApiTags('Users')
+@UseGuards(AccessTokenGuard)
+@ApiTags('Users')
+@Controller('users')
 export class UserController {
 
     constructor(private service: UserService) { }
@@ -20,7 +23,6 @@ export class UserController {
     @ApiResponse({ status: 400, description: 'Invalid id' })
     @ApiResponse({ status: 404, description: 'User not found' })
     @ApiResponse({ status: 500, description: 'Server error' })
-    @UseGuards(AccessTokenGuard)
     @Get()
     public async find(@Req() req: ReqUser): Promise<UserEntity> {
         const user: UserEntity = await this.service.findUser(req.user.id);
@@ -36,9 +38,11 @@ export class UserController {
     @ApiResponse({ status: 400, description: 'Validations error' })
     @ApiResponse({ status: 409, description: 'User already exist or you are already logged, method not allowed' })
     @ApiResponse({ status: 500, description: 'Internal server error' })
+    @ApiParam({ name: 'Authorization', allowEmptyValue: true, required: false })
+    @PublicAccess()
     @Post()
-    public async create(@Req() req: ReqUser, @Body() body: CreateUserDto): Promise<UserEntity> {
-        const isLogged: boolean = req.user.id ? true : false;
+    public async create(@Body() body: CreateUserDto, @Headers('Authorization') token?: string): Promise<UserEntity> {
+        const isLogged: boolean = token ? true : false;
         const isExist: Boolean = await this.service.findUser(null, body.email) ? true : false;
 
         if (isLogged) throw new HttpException('You are already authenticated', HttpStatus.NOT_ACCEPTABLE);
@@ -55,7 +59,6 @@ export class UserController {
     @ApiResponse({ status: 400, description: 'Validations error' })
     @ApiResponse({ status: 404, description: 'User not found' })
     @ApiResponse({ status: 500, description: 'Internal server error' })
-    @UseGuards(AccessTokenGuard)
     @Patch()
     public async update(@Req() req: ReqUser, @Body() body: UpdateUserDto): Promise<UserEntity> {
         const user: User = await this.service.updateUser(req.user.id, body);
@@ -73,7 +76,6 @@ export class UserController {
     @ApiResponse({ status: 400, description: 'Validations error' })
     @ApiResponse({ status: 404, description: 'User not found' })
     @ApiResponse({ status: 500, description: 'Internal server error' })
-    @UseGuards(AccessTokenGuard)
     @Delete()
     public async delete(@Req() req: ReqUser): Promise<string> {
         const res: string = await this.service.deleteUser(req.user.id);
