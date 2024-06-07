@@ -10,7 +10,7 @@ describe('Customer', () => {
   let repository: CustomerRepository;
   let prisma: PrismaProvider;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CustomerRepository,
