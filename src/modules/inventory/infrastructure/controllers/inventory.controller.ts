@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { InventoryService } from '../../application/services/inventory.service';
 import { AccessTokenGuard } from '../../../auth/application/guards/access-token/access-token.guard';
@@ -19,6 +19,8 @@ export class InventoryController {
     @ApiOperation({ summary: "Get all customer's inventories" })
     @ApiResponse({ status: 200, type: InventoryEntity, isArray: true })
     @ApiResponse({ status: 400, description: 'Page param missing' })
+    @ApiQuery({ name: 'fields', required: false, description: 'Fields you want to fetch in your response' })
+    @ApiQuery({ name: 'q', required: false, description: 'Query earch term' })
     @Get(':customer')
     public async findAll(
         @Param('customer') customerId: string, 
@@ -26,7 +28,7 @@ export class InventoryController {
         @Query('fields') fields?: string, 
         @Query('q') query?: string
     ): Promise<Partial<InventoryEntity>[]> {
-        if (!page) throw new HttpException('Page query param is missing in url', HttpStatus.BAD_REQUEST);
+        if (!page) throw new HttpException('page query param is missing in url', HttpStatus.BAD_REQUEST);
 
         return this.service.findAllInventories(customerId, page, fields, query);
     }
@@ -35,8 +37,9 @@ export class InventoryController {
     @ApiResponse({ status: 200, type: InventoryEntity })
     @ApiResponse({ status: 400, description: 'Invalid id' })
     @ApiResponse({ status: 404, description: 'Inventory not found' })
-    @Get(':id')
-    public async findOne(@Param('id', ParseUUIDPipe) id: string, @Query('fields') fields?: string): Promise<Partial<InventoryEntity>> {
+    @ApiQuery({ name: 'fields', required: false })
+    @Get('/one/:id')
+    public async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Query('fields') fields?: string): Promise<Partial<InventoryEntity>> {
         const res: Partial<InventoryEntity> = await this.service.findOneInventory(id, fields);
 
         if (!res) throw new HttpException('Inventory not found', HttpStatus.NOT_FOUND);
@@ -64,7 +67,7 @@ export class InventoryController {
     @ApiResponse({ status: 400, description: 'Validations error' })
     @ApiResponse({ status: 404, description: 'Inventory not found' })
     @Patch(':id')
-    public async update(@Param('id', ParseUUIDPipe) id: string, @Body() inventory: UpdateInventoryDto): Promise<InventoyResponse> {
+    public async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() inventory: UpdateInventoryDto): Promise<InventoyResponse> {
         const res: InventoryEntity = await this.service.updateInventory(id, inventory);
 
         return {
@@ -78,11 +81,11 @@ export class InventoryController {
     @ApiResponse({ status: 400, description: 'Invalid id' })
     @ApiResponse({ status: 404, description: 'Inventory not found' })
     @Delete(':id')
-    public async delete(@Param('id', ParseUUIDPipe) id: string): Promise<InventoyResponse> {
+    public async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<InventoyResponse> {
         const res: InventoryEntity = await this.service.deleteInventory(id);
 
-        if (res === undefined) throw new HttpException('Inventory not found', HttpStatus.NOT_FOUND);
+        if (!res) throw new HttpException('Inventory not found', HttpStatus.NOT_FOUND);
 
-        return { message: 'Inventory deleted' };
+        return { message: 'Inventory deleted succesfully' };
     }
 }

@@ -8,15 +8,15 @@ export class UpdateInventoryDto extends PartialType(CreateInventoryDto) {
     @IsOptional()
     @IsString()
     @MaxLength(200)
-    company_name: string;
+    company_name?: string;
 
     @ApiProperty({ example: 30000.00, description: 'Financial capital' })
     @IsOptional()
     @IsNumber({ maxDecimalPlaces: 2 })
-    capital: number;
+    capital?: number;
 
     @ApiProperty({ example: 5000.0, description: 'The amount they have to pay you' })
     @IsOptional()
     @IsNumber({ maxDecimalPlaces: 2 })
-    service_charge: number;
+    service_charge?: number;
 }

@@ -41,3 +41,9 @@ export const mockPartialInventory2: Partial<InventoryEntity> = {
     products_amount: 3,
     company_name: 'Salón Irene',
 };
+
+export const mockPartialInventory3: Partial<InventoryEntity> = {
+    id: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
+    products_amount: 3,
+    company_name: 'Salón Irene',
+};

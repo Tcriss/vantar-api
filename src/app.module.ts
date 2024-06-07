@@ -9,6 +9,7 @@ import { CustomerModule } from './modules/customers/customer.module';
 import { CorrelationIdMiddleware } from './middlewares/correlation-id/correlation-id.middleware';
 import { loggerFactory } from './common/config/logger.factory';
 import { AuthModule } from './modules/auth/auth.module';
+import { InventoryModule } from './modules/inventory/inventory.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuthModule } from './modules/auth/auth.module';
     UserModule,
     CustomerModule,
     CategoryModule,
+    InventoryModule
   ],
 })
 export class AppModule implements NestModule {
