@@ -11,7 +11,7 @@ import { InventoyResponse } from '../../domain/types';
 @ApiTags('Inventories')
 @ApiBearerAuth()
 @UseGuards(AccessTokenGuard)
-@Controller('inventories')
+@Controller()
 export class InventoryController {
 
     constructor(private service: InventoryService) { }
@@ -21,7 +21,7 @@ export class InventoryController {
     @ApiResponse({ status: 400, description: 'Page param missing' })
     @ApiQuery({ name: 'fields', required: false, description: 'Fields you want to fetch in your response' })
     @ApiQuery({ name: 'q', required: false, description: 'Query earch term' })
-    @Get(':customer')
+    @Get('/inventories/:customer')
     public async findAll(
         @Param('customer') customerId: string, 
         @Query('page') page: Pagination, 
@@ -37,8 +37,8 @@ export class InventoryController {
     @ApiResponse({ status: 200, type: InventoryEntity })
     @ApiResponse({ status: 400, description: 'Invalid id' })
     @ApiResponse({ status: 404, description: 'Inventory not found' })
-    @ApiQuery({ name: 'fields', required: false })
-    @Get('/one/:id')
+    @ApiQuery({ name: 'fields', required: false, description: 'Fields you want to fetch in your response' })
+    @Get('/inventory/:id')
     public async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Query('fields') fields?: string): Promise<Partial<InventoryEntity>> {
         const res: Partial<InventoryEntity> = await this.service.findOneInventory(id, fields);
 
@@ -50,7 +50,7 @@ export class InventoryController {
     @ApiOperation({ summary: 'Create a inventory' })
     @ApiResponse({ status: 201, description: 'Inventory created succesfully' })
     @ApiResponse({ status: 400, description: 'Validations error' })
-    @Post()
+    @Post('/inventory')
     public async create(@Body() newInventory: CreateInventoryDto): Promise<InventoyResponse> {
         const res: InventoryEntity = await this.service.createInventory(newInventory);
 
@@ -66,7 +66,7 @@ export class InventoryController {
     @ApiResponse({ status: 200, description: 'Inventory updated' })
     @ApiResponse({ status: 400, description: 'Validations error' })
     @ApiResponse({ status: 404, description: 'Inventory not found' })
-    @Patch(':id')
+    @Patch('/inventory/:id')
     public async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() inventory: UpdateInventoryDto): Promise<InventoyResponse> {
         const res: InventoryEntity = await this.service.updateInventory(id, inventory);
 
@@ -80,7 +80,7 @@ export class InventoryController {
     @ApiResponse({ status: 200, description: 'Inventory deleted' })
     @ApiResponse({ status: 400, description: 'Invalid id' })
     @ApiResponse({ status: 404, description: 'Inventory not found' })
-    @Delete(':id')
+    @Delete('/inventory/:id')
     public async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<InventoyResponse> {
         const res: InventoryEntity = await this.service.deleteInventory(id);
 
