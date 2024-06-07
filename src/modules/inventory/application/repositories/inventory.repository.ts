@@ -10,7 +10,7 @@ export class InventoryRepository {
 
     constructor(private prisma: PrismaProvider) { }
 
-    public async findAll(customerId: string, page: Pagination, fields?: SelectedFields, query?: string): Promise<InventoryEntity[]> {
+    public async findAll(customerId: string, page: Pagination, fields?: SelectedFields, query?: string): Promise<Partial<InventoryEntity>[]> {
         return this.prisma.inventory.findMany({
             orderBy: { created_at: 'asc' },
             where: {
