@@ -49,7 +49,7 @@ model Inventory {
 model Product {
   id                      String         @id @default(uuid()) @db.Uuid
   name                    String         @db.VarChar(30)
-  stick                   Int            @db.Integer @default(0)
+  stock                   Int            @db.Integer @default(0)
   price                   Int            @db.Integer
   unit_measure            String         @db.VarChar(100)
   expiration              DateTime       @db.Timestamp()
