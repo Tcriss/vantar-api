@@ -52,45 +52,4 @@ export class CategoryController {
 
         return category;
     }
-
-    @ApiOperation({ summary: 'Creates one category' })
-    @ApiBody({ type: CreateCategoryDTO, schema: categoryMock })
-    @ApiResponse({ status: 200, type: CategoryEntity })
-    @ApiResponse({ status: 400, description: 'Validations error'})
-    @ApiResponse({ status: 500, description: 'Server error'})
-    @Post()
-    public async create(@Body() category: CreateCategoryDTO): Promise<Category> {
-        return this.service.createCategory(category);
-    }
-
-    @ApiOperation({ summary: 'Edits a category' })
-    @ApiResponse({ status: 200, type: CategoryEntity })
-    @ApiResponse({ status: 400, description: 'Validations error'})
-    @ApiResponse({ status: 404, description: 'Category not found' })
-    @ApiResponse({ status: 500, description: 'Server error'})
-    @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'The ID of the category'})
-    @ApiBody({ type: EditCategoryDTO })
-    @Put(':id')
-    public async update(@Param('id', new ParseUUIDPipe(uuidPipeOptions)) id: string, @Body() category: EditCategoryDTO): Promise<Category> {
-        const res: Category = await this.service.updateCategory(id, category);
-
-        if (res === null) throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
-
-        return res;
-    }
-
-    @ApiOperation({ summary: 'Deletes a category' })
-    @ApiResponse({ status: 200, description: 'Category deleted' })
-    @ApiResponse({ status: 400, description: 'Validations error'})
-    @ApiResponse({ status: 404, description: 'Category not found' })
-    @ApiResponse({ status: 500, description: 'Server error'})
-    @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'The ID of the category'})
-    @Delete(':id')
-    public async delete(@Param('id', new ParseUUIDPipe(uuidPipeOptions)) id: string): Promise<string> {
-        const res: Category = await this.service.deleteCategory(id);
-        
-        if (!res) throw new HttpException('Category not deleted', HttpStatus.BAD_REQUEST);
-
-        return 'Category deleted';
-    }
 }
