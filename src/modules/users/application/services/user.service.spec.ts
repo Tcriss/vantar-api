@@ -13,7 +13,7 @@ describe('UserService', () => {
   let service: UserService;
   let repository: UserRepository;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
@@ -50,7 +50,7 @@ describe('UserService', () => {
     it('should find user by email', async () => {
       jest.spyOn(repository, 'find').mockResolvedValue(usersMock[0]);
 
-      const res: User = await service.findUser(null, null, usersMock[0].email);
+      const res: User = await service.findUser(null, usersMock[0].email);
 
       expect(res).toEqual(usersMock[0]);
     });

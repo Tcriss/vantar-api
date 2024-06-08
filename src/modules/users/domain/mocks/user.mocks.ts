@@ -1,5 +1,12 @@
 import { User } from "@prisma/client";
 
+export const userMock: User = {
+    id: "a4b1c2d3-4567-890a-bcde-fghij1234567",
+    name: "Alice Smith",
+    email: "alice.smith@example.com",
+    password: "$2b$12$KIX8H7JypTzRa7B5F5qWpu1bOCtYX5bHCQJ4L2g7hAl4oEGd6Xb92",
+    created_at: new Date('2024-06-05T10:00:00Z')
+};
 export const usersMock: User[] = [
     {
         id: "a4b1c2d3-4567-890a-bcde-fghij1234567",

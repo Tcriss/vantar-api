@@ -11,7 +11,7 @@ describe('User Repository', () => {
     let repository: UserRepository;
     let prisma: PrismaProvider;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [ 
                 UserRepository, 
@@ -31,7 +31,8 @@ describe('User Repository', () => {
         it('should find user by id', async () => {
             jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(usersMock[0]);
 
-            const res: User = await repository.find(usersMock[0].id);
+            const { id, email } = usersMock[0];
+            const res: User = await repository.find({ id, email });
 
             expect(res).toEqual(usersMock[0]);
         });
@@ -39,7 +40,9 @@ describe('User Repository', () => {
         it('should be undefined if user was not found', async () => {
             jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(usersMock[0]);
 
-            const res: User = await repository.find(randomUUID());
+            const { email } = usersMock[0];
+            const id: string = randomUUID()
+            const res: User = await repository.find({ id, email });
 
             expect(res).toBeUndefined;
         });
@@ -87,7 +90,7 @@ describe('User Repository', () => {
         it('should be undefined if user was not found', async () => {
             jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(undefined);
 
-            const res: User = await repository.find(randomUUID());
+            const res: User = await repository.delete(randomUUID());
 
             expect(res).toBeUndefined;
         });

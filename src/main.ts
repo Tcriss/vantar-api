@@ -19,7 +19,9 @@ async function bootstrap() {
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: { tagsSorter: 'alpha' }
+  });
 
   await app.listen(configService.get<number>('PORT'));
   console.log(`Application running on: ${await app.getUrl()}`);
