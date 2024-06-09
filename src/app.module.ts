@@ -10,6 +10,7 @@ import { CorrelationIdMiddleware } from './middlewares/correlation-id/correlatio
 import { loggerFactory } from './common/config/logger.factory';
 import { AuthModule } from './modules/auth/auth.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
+import { ProductModule } from './modules/products/product.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { InventoryModule } from './modules/inventory/inventory.module';
     UserModule,
     CustomerModule,
     CategoryModule,
-    InventoryModule
+    InventoryModule,
+    ProductModule
   ],
 })
 export class AppModule implements NestModule {

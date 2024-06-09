@@ -4,10 +4,11 @@ import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@ne
 import { CustomerService } from '../../application/services/customer.service';
 import { AccessTokenGuard } from '../../../auth/application/guards/access-token/access-token.guard';
 import { ReqUser } from '../../../../common/types';
-import { Pagination, CustomerResponse } from '../../domain/types';
+import { CustomerResponse } from '../../domain/types';
 import { CustomerEntity } from '../../domain/entities/customer.entity';
 import { CreateCustomerDto, UpdateCustomerDto } from '../dtos';
 import { CustomerResponseEntity } from '../../domain/entities/customer-responses.entity';
+import { CustomerQuery } from '../../domain/types/customer-queries.type';
 
 @ApiTags('Customers')
 @ApiBearerAuth()
@@ -24,15 +25,10 @@ export class CustomerController {
     @ApiQuery({ name: 'fields', required: false, description: 'Fiels you want to fetch' })
     @ApiQuery({ name: 'q', required: false, description: 'Query to search results' })
     @Get()
-    public async findAll(
-        @Req() req: ReqUser, 
-        @Query('page') page: Pagination, 
-        @Query('fields') fields?: string,
-        @Query('q') query?: string
-    ): Promise<Partial<CustomerEntity>[]> {
-        if (!page) throw new HttpException('Page query param is missing in url', HttpStatus.BAD_REQUEST);
+    public async findAll(@Req() req: ReqUser, @Query() queries: CustomerQuery): Promise<Partial<CustomerEntity>[]> {
+        if (!queries.page) throw new HttpException('Page query param is missing in url', HttpStatus.BAD_REQUEST);
 
-        return this.service.findAllCustomers(req.user.id, page, query, fields);
+        return this.service.findAllCustomers(req.user.id, queries.page, queries.q, queries.fields);
     }
 
     @ApiOperation({ summary: 'Get a customer' })
