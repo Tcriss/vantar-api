@@ -26,6 +26,7 @@ describe('ProductService', () => {
   });
 
   it('should be defined', () => {
+    expect(repository).toBeDefined();
     expect(service).toBeDefined();
   });
 
@@ -86,7 +87,7 @@ describe('ProductService', () => {
 
   describe('Cteate Product', () => {
     it('should create a product', async () => {
-      jest.spyOn(service, 'createProduct').mockResolvedValue(productMock2);
+      jest.spyOn(repository, 'createProduct').mockResolvedValue(productMock2);
 
       const { name, inventory_id, stock, price, category_name, expiration, unit_measure } = productMock2;
       const res: ProductEntity = await service.createProduct({ name, inventory_id, stock, price, category_name, expiration, unit_measure });
@@ -97,7 +98,7 @@ describe('ProductService', () => {
 
   describe('Update Product', () => {
     it('should update product', async () => {
-      jest.spyOn(service,'updateProduct').mockResolvedValue(productMock6);
+      jest.spyOn(repository,'updateProduct').mockResolvedValue(productMock6);
 
       const { name, stock, price, unit_measure } = productMock2;
       const res: ProductEntity = await service.updateProduct(productMock1.id, { name, stock, price, unit_measure });
@@ -106,7 +107,7 @@ describe('ProductService', () => {
     });
 
     it('should return null if product was not found', async () => {
-      jest.spyOn(service, 'updateProduct').mockResolvedValue(null);
+      jest.spyOn(repository, 'updateProduct').mockResolvedValue(null);
 
       const { name, stock, price, unit_measure } = productMock2;
       const res: ProductEntity = await service.updateProduct('2323', { name, stock, price, unit_measure });
@@ -117,7 +118,7 @@ describe('ProductService', () => {
 
   describe('Delete Product', () => {
     it('should delete product', async () => {
-      jest.spyOn(service,'deleteProduct').mockResolvedValue(productMock6);
+      jest.spyOn(repository,'deleteProduct').mockResolvedValue(productMock6);
 
       const res: ProductEntity = await service.deleteProduct(productMock1.id);
 
@@ -125,7 +126,7 @@ describe('ProductService', () => {
     });
 
     it('should return null if product was not found', async () => {
-      jest.spyOn(service, 'deleteProduct').mockResolvedValue(null);
+      jest.spyOn(repository, 'deleteProduct').mockResolvedValue(null);
 
       const res: ProductEntity = await service.deleteProduct('2323');
 

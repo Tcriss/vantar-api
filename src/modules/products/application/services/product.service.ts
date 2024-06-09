@@ -60,7 +60,7 @@ export class ProductService {
 
         if (!isExist) return null;
         
-        return this.repository.updateproduct(id, product);
+        return this.repository.updateProduct(id, product);
     }
 
     public async deleteProduct(id: string): Promise<ProductEntity> {
