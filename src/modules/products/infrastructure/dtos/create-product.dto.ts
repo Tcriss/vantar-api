@@ -9,7 +9,6 @@ export class CreateProductDto {
 
     @ApiProperty({ example: 'Suavizante' })
     @IsString()
-    @Max(30)
     @IsNotEmpty()
     name: string;
 
@@ -25,7 +24,6 @@ export class CreateProductDto {
 
     @ApiProperty({ example: '1 litro' })
     @IsString()
-    @Max(100)
     @IsNotEmpty()
     unit_measure: string;
 

@@ -3,10 +3,10 @@ import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@ne
 
 import { InventoryService } from '../../application/services/inventory.service';
 import { AccessTokenGuard } from '../../../auth/application/guards/access-token/access-token.guard';
-import { Pagination } from '../../../../common/types';
 import { InventoryEntity } from '../../domain/entities/inventory.entity';
 import { CreateInventoryDto, UpdateInventoryDto } from '../dtos';
 import { InventoyResponse } from '../../domain/types';
+import { ProductQueries } from '../../domain/types/product-queries.type';
 
 @ApiTags('Inventories')
 @ApiBearerAuth()
@@ -19,18 +19,14 @@ export class InventoryController {
     @ApiOperation({ summary: "Get all customer's inventories" })
     @ApiResponse({ status: 200, type: InventoryEntity, isArray: true })
     @ApiResponse({ status: 400, description: 'Page param missing' })
+    @ApiQuery({ name: 'page', required: true })
     @ApiQuery({ name: 'fields', required: false, description: 'Fields you want to fetch in your response' })
     @ApiQuery({ name: 'q', required: false, description: 'Query earch term' })
-    @Get('/find-all/:customer-id')
-    public async findAll(
-        @Param('customer-id') customerId: string, 
-        @Query('page') page: Pagination, 
-        @Query('fields') fields?: string, 
-        @Query('q') query?: string
-    ): Promise<Partial<InventoryEntity>[]> {
-        if (!page) throw new HttpException('page query param is missing in url', HttpStatus.BAD_REQUEST);
+    @Get('/all/:customer-id')
+    public async findAll(@Param('customer-id') customerId: string, @Query() queries: ProductQueries): Promise<Partial<InventoryEntity>[]> {
+        if (!queries.page) throw new HttpException('page query param is missing in url', HttpStatus.BAD_REQUEST);
 
-        return this.service.findAllInventories(customerId, page, fields, query);
+        return this.service.findAllInventories(customerId, queries.page, queries.fields, queries.q);
     }
 
     @ApiOperation({ summary: "Get a inventory by id" })

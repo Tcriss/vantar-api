@@ -13,13 +13,8 @@ export class ProdcutRepository {
 
     public async findAllProducts(page: Pagination, inventoryId?: string, fields?: SelectedFields, query?: SearchTerms): Promise<Partial<ProductEntity>[]> {
         return this.prisma.product.findMany({
-            where: {
-                inventory_id: inventoryId,
-                name: { contains: query.name },
-                price: { equals: query.price },
-                stock: { equals: query.stock },
-            },
-            orderBy: { name: 'desc' },
+            where: { inventory_id: inventoryId },
+            orderBy: { name: 'asc' },
             select: fields,
             skip: page.skip,
             take: page.take

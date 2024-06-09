@@ -47,11 +47,11 @@ export class ProductService {
         return product;
     }
 
-    public async createProduct(product: Partial<ProductEntity>): Promise<Partial<ProductEntity>> {
+    public async createProduct(product: Partial<ProductEntity>): Promise<ProductEntity> {
         return this.repository.createProduct(product);
     }
 
-    public async updateProdcut(id: string, product: Partial<ProductEntity>): Promise<Partial<ProductEntity>> {
+    public async updateProdcut(id: string, product: Partial<ProductEntity>): Promise<ProductEntity> {
         const isExist: boolean = await this.findOneProduct(id) ? true : false;
 
         if (!isExist) return null;
@@ -59,7 +59,7 @@ export class ProductService {
         return this.repository.updateproduct(id, product);
     }
 
-    public async deleteProduct(id: string): Promise<Partial<ProductEntity>> {
+    public async deleteProduct(id: string): Promise<ProductEntity> {
         const isExist: boolean = await this.findOneProduct(id) ? true : false;
 
         if (!isExist) return null;
