@@ -4,7 +4,6 @@ import { IsDate, IsNumber, IsOptional, IsString, Max } from "class-validator";
 export class UpdateProductDto {
     @ApiProperty({ example: 'Suavizante' })
     @IsString()
-    @Max(30)
     @IsOptional()
     name?: string;
 
@@ -19,7 +18,6 @@ export class UpdateProductDto {
     price?: number;
 
     @ApiProperty({ example: '1 litro' })
-    @Max(100)
     @IsString()
     @IsOptional()
     unit_measure?: string;
