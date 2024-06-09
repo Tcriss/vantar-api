@@ -10,7 +10,11 @@ export class InventoryService {
 
     constructor(private repository: InventoryRepository) { }
 
-    public async findAllInventories(customerId: string, page: Pagination, selected?: string, query?: string): Promise<Partial<InventoryEntity>[]> {
+    public async findAllInventories(customerId: string, page: string, selected?: string, query?: string): Promise<Partial<InventoryEntity>[]> {
+        const pagination: Pagination = {
+            skip: +page.split(',')[0],
+            take: +page.split(',')[1]
+        };
         const fields: SelectedFields = selected ? {
             id: true,
             customer_id: true,
@@ -21,7 +25,7 @@ export class InventoryService {
             service_charge: selected.includes('service_charge') ? true : false,
         } : null;
 
-        return this.repository.findAll(customerId, page, fields, query);
+        return this.repository.findAll(customerId, pagination, fields, query);
     }
 
     public async findOneInventory(id: string, selected?: string): Promise<Partial<InventoryEntity>> {

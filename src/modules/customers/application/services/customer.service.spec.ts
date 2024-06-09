@@ -33,7 +33,7 @@ describe('CustomerService', () => {
     it('should fetch all customers', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue(mockCustomers);
 
-      const res: Partial<CustomerEntity>[] = await service.findAllCustomers('be702a7b-13a3-4e03-93f6-65b2a82e1905', {skip: 0, take: 3});
+      const res: Partial<CustomerEntity>[] = await service.findAllCustomers('be702a7b-13a3-4e03-93f6-65b2a82e1905', '0,3');
 
       expect(res).toBe(mockCustomers);
     });
@@ -41,7 +41,7 @@ describe('CustomerService', () => {
     it('should fetch some fields', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue(mockPartialCustomers);
 
-      const res: Partial<CustomerEntity>[] = await service.findAllCustomers('be702a7b-13a3-4e03-93f6-65b2a82e1905', { skip: 0, take: 3 }, null, 'name, contact, userId');
+      const res: Partial<CustomerEntity>[] = await service.findAllCustomers('be702a7b-13a3-4e03-93f6-65b2a82e1905', '0,3', null, 'name, contact, userId');
 
       expect(res).toBe(mockPartialCustomers);
     });
@@ -49,7 +49,7 @@ describe('CustomerService', () => {
     it('should fetch by search query', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue(mockSearchedCustomers);
 
-      const res: Partial<CustomerEntity>[] = await service.findAllCustomers('be702a7b-13a3-4e03-93f6-65b2a82e1905', { skip: 0, take: 3 }, 'John');
+      const res: Partial<CustomerEntity>[] = await service.findAllCustomers('be702a7b-13a3-4e03-93f6-65b2a82e1905', '0,3', 'John');
 
       expect(res).toBe(mockSearchedCustomers);
     });

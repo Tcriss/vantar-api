@@ -35,7 +35,7 @@ describe('CustomerController', () => {
     it('should fetch all customers', async () => {
       jest.spyOn(service, 'findAllCustomers').mockResolvedValue(mockCustomers);
 
-      const res: Partial<CustomerEntity>[] = await controller.findAll({ user: { id: 'be702a7b-13a3-4e03-93f6-65b2a82e1905', name: '', email: '' }}, {skip: 0, take: 3});
+      const res: Partial<CustomerEntity>[] = await controller.findAll({ user: { id: 'be702a7b-13a3-4e03-93f6-65b2a82e1905', name: '', email: '' }}, {page: '0,3'});
 
       expect(res).toBe(mockCustomers);
     });
@@ -43,7 +43,7 @@ describe('CustomerController', () => {
     it('should fetch some fields', async () => {
       jest.spyOn(service, 'findAllCustomers').mockResolvedValue(mockPartialCustomers);
 
-      const res: Partial<CustomerEntity>[] = await controller.findAll({ user: { id: 'be702a7b-13a3-4e03-93f6-65b2a82e1905', name: '', email: '' }}, { skip: 0, take: 3 }, null, 'name, contact, userId');
+      const res: Partial<CustomerEntity>[] = await controller.findAll({ user: { id: 'be702a7b-13a3-4e03-93f6-65b2a82e1905', name: '', email: '' }}, { page: '0,3', fields: 'name, contact, userId' });
 
       expect(res).toBe(mockPartialCustomers);
     });
@@ -51,7 +51,7 @@ describe('CustomerController', () => {
     it('should fetch by search query', async () => {
       jest.spyOn(service, 'findAllCustomers').mockResolvedValue(mockSearchedCustomers);
 
-      const res: Partial<CustomerEntity>[] = await controller.findAll({ user: { id: 'be702a7b-13a3-4e03-93f6-65b2a82e1905', name: '', email: '' }}, { skip: 0, take: 3 }, 'John');
+      const res: Partial<CustomerEntity>[] = await controller.findAll({ user: { id: 'be702a7b-13a3-4e03-93f6-65b2a82e1905', name: '', email: '' }}, { page: '0,3', q: 'John' });
 
       expect(res).toBe(mockSearchedCustomers);
     });

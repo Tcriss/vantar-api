@@ -84,7 +84,7 @@ describe('Customer', () => {
         jest.spyOn(prisma.product,'update').mockResolvedValue(productMock6);
 
         const { name, stock, price, unit_measure } = productMock2;
-        const res: ProductEntity = await repository.updateproduct(productMock1.id, { name, stock, price, unit_measure });
+        const res: ProductEntity = await repository.updateProduct(productMock1.id, { name, stock, price, unit_measure });
 
         expect(res).toBe(productMock6);
       });

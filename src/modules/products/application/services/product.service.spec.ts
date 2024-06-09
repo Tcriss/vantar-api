@@ -98,6 +98,7 @@ describe('ProductService', () => {
 
   describe('Update Product', () => {
     it('should update product', async () => {
+      jest.spyOn(repository, 'findOneProduct').mockResolvedValue(productMock6);
       jest.spyOn(repository,'updateProduct').mockResolvedValue(productMock6);
 
       const { name, stock, price, unit_measure } = productMock2;
@@ -107,6 +108,7 @@ describe('ProductService', () => {
     });
 
     it('should return null if product was not found', async () => {
+      jest.spyOn(repository, 'findOneProduct').mockResolvedValue(null);
       jest.spyOn(repository, 'updateProduct').mockResolvedValue(null);
 
       const { name, stock, price, unit_measure } = productMock2;
@@ -118,6 +120,7 @@ describe('ProductService', () => {
 
   describe('Delete Product', () => {
     it('should delete product', async () => {
+      jest.spyOn(repository, 'findOneProduct').mockResolvedValue(productMock6);
       jest.spyOn(repository,'deleteProduct').mockResolvedValue(productMock6);
 
       const res: ProductEntity = await service.deleteProduct(productMock1.id);

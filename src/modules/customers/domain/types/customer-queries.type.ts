@@ -1,7 +1,7 @@
 import { Pagination } from "."
 
 export type CustomerQuery = {
-    page: Pagination,
+    page: string,
     fields?: string,
     q?: string
 }

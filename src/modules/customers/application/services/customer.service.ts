@@ -9,7 +9,11 @@ export class CustomerService {
 
     constructor(private repository: CustomerRepository) {}
 
-    public async findAllCustomers(ownerId: string, page: Pagination, query?: string, selected?: string): Promise<Partial<CustomerEntity>[]> {
+    public async findAllCustomers(ownerId: string, page: string, query?: string, selected?: string): Promise<Partial<CustomerEntity>[]> {
+        const pagination: Pagination = {
+            skip: +page.split(',')[0],
+            take: +page.split(',')[1]
+        };
         const fields: SelectedFields = selected ? {
             id: true,
             user_id: selected.includes('userId') ? true : false,
@@ -20,7 +24,7 @@ export class CustomerService {
             created_at: selected.includes('created') ? true : false,
         } : null;
 
-        return this.repository.findAll(ownerId, page, query, fields);
+        return this.repository.findAll(ownerId, pagination, query, fields);
     }
 
     public async findOneCustomer(id: string, selected?: string): Promise<Partial<CustomerEntity>> {

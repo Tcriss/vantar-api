@@ -6,7 +6,7 @@ import { AccessTokenGuard } from '../../../auth/application/guards/access-token/
 import { InventoryEntity } from '../../domain/entities/inventory.entity';
 import { CreateInventoryDto, UpdateInventoryDto } from '../dtos';
 import { InventoyResponse } from '../../domain/types';
-import { ProductQueries } from '../../domain/types/product-queries.type';
+import { InventoryQueries } from '../../domain/types/inventory-queries.type';
 
 @ApiTags('Inventories')
 @ApiBearerAuth()
@@ -23,8 +23,8 @@ export class InventoryController {
     @ApiQuery({ name: 'fields', required: false, description: 'Fields you want to fetch in your response' })
     @ApiQuery({ name: 'q', required: false, description: 'Query earch term' })
     @Get('/all/:customer-id')
-    public async findAll(@Param('customer-id') customerId: string, @Query() queries: ProductQueries): Promise<Partial<InventoryEntity>[]> {
-        if (!queries.page) throw new HttpException('page query param is missing in url', HttpStatus.BAD_REQUEST);
+    public async findAll(@Param('customer-id') customerId: string, @Query() queries: InventoryQueries): Promise<Partial<InventoryEntity>[]> {
+        if (!queries.page || !queries) throw new HttpException('page query param is missing in url', HttpStatus.BAD_REQUEST);
 
         return this.service.findAllInventories(customerId, queries.page, queries.fields, queries.q);
     }

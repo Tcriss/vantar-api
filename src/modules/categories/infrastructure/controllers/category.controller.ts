@@ -1,11 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Put, Post, HttpException, HttpStatus, ParseUUIDPipe } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, HttpException, HttpStatus, ParseUUIDPipe } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Category } from '@prisma/client';
 
 import { CategoryService } from '../../application/services/category.service';
-import { CreateCategoryDTO } from '../dtos/create-category.dto';
-import { EditCategoryDTO } from '../dtos/edit-category.dto';
-import { categoryMock } from '../../domain/mocks/category.mock';
 import { uuidPipeOptions } from 'src/common/config/uuid-pipe.config';
 import { CategoryEntity } from '../../domain/entities/category.entity';
 

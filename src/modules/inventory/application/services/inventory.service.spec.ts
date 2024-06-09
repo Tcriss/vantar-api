@@ -34,7 +34,7 @@ describe('InventoryService', () => {
     it('should fetch all inventories', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([ mockInventory1, mockInventory3 ]);
 
-      const res: Partial<InventoryEntity>[] = await service.findAllInventories('be702a7b-13a3-4e03-93f6-65b2a82e1905', {skip: 0, take: 3});
+      const res: Partial<InventoryEntity>[] = await service.findAllInventories('be702a7b-13a3-4e03-93f6-65b2a82e1905', '0,3');
 
       expect(res).toStrictEqual([ mockInventory1, mockInventory3 ]);
     });
@@ -42,7 +42,7 @@ describe('InventoryService', () => {
     it('should fetch some fields', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([ mockPartialInventory1 ]);
 
-      const res: Partial<InventoryEntity>[] = await service.findAllInventories('be702a7b-13a3-4e03-93f6-65b2a82e1905', { skip: 0, take: 3 }, 'company_name, products_amount, id');
+      const res: Partial<InventoryEntity>[] = await service.findAllInventories('be702a7b-13a3-4e03-93f6-65b2a82e1905', '0,3', 'company_name, products_amount, id');
 
       expect(res).toStrictEqual([ mockPartialInventory1 ]);
     });
@@ -50,7 +50,7 @@ describe('InventoryService', () => {
     it('should fetch by search query', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([ mockInventory1 ]);
 
-      const res: Partial<InventoryEntity>[] = await service.findAllInventories('be702a7b-13a3-4e03-93f6-65b2a82e1905', { skip: 0, take: 3 }, '', 'Bodega');
+      const res: Partial<InventoryEntity>[] = await service.findAllInventories('be702a7b-13a3-4e03-93f6-65b2a82e1905', '0,3', '', 'Bodega');
 
       expect(res).toStrictEqual([ mockInventory1 ]);
     });
