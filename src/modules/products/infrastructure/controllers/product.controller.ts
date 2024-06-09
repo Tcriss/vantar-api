@@ -23,7 +23,7 @@ export class ProductController {
     //@ApiQuery({ name: 'q', required: false, description: 'search param to filter results' })
     @ApiQuery({ name: 'selected', required: false, description: 'fields you want to select from response' })
     @Get('all/:inventory_id')
-    public async findAll(@Param('inventory_id') inventory_id: string, @Query() queries?: ProductQueries ) {
+    public async findAll(@Param('inventory_id') inventory_id: string, @Query() queries: ProductQueries ) {
         if (!queries.page) throw new HttpException('page query param is missing', HttpStatus.BAD_REQUEST);
 
         return this.service.findAllProducts(queries.page, inventory_id, queries.q, queries.selected);
@@ -63,7 +63,7 @@ export class ProductController {
     @ApiResponse({ status: 404, description: 'Product not found' })
     @Patch(':id')
     public async update(@Param('id', ParseUUIDPipe) id: string, @Body() product: UpdateProductDto): Promise<ProductResponse> {
-        const res: ProductEntity = await this.service.updateProdcut(id, product);
+        const res: ProductEntity = await this.service.updateProduct(id, product);
 
         if (res === null) throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
 
