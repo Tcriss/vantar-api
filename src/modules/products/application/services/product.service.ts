@@ -11,7 +11,11 @@ export class ProductService {
 
     constructor(private repository: ProdcutRepository) { }
 
-    public async findAllProducts(page: Pagination, inventoryId?: string, query?: SearchTerms, selected?: string): Promise<Partial<ProductEntity>[]> {
+    public async findAllProducts(page: string, inventoryId?: string, query?: SearchTerms, selected?: string): Promise<Partial<ProductEntity>[]> {
+        const pagination: Pagination = {
+            skip: +page.split(',')[0],
+            take: +page.split(',')[1]
+        };
         const fields: SelectedFields = selected ? {
             id: true,
             inventory_id: selected.includes('inventory_id') ? true : false,
@@ -24,7 +28,7 @@ export class ProductService {
             expiration: selected.includes('expiration') ? true : false,
         } : null;
 
-        return this.repository.findAllProducts(page, inventoryId, fields, query);
+        return this.repository.findAllProducts(pagination, inventoryId, fields, query);
     }
 
     public async findOneProduct(id: string, selected?: string): Promise<Partial<ProductEntity>> {
