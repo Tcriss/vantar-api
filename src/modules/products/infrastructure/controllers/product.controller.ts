@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ProductService } from '../../application/services/product.service';
 import { ProductEntity } from '../../domain/entities/product.entity';
@@ -17,6 +17,8 @@ export class ProductController {
     constructor(private service: ProductService) { }
 
     @ApiOperation({ summary: 'Get all products' })
+    @ApiResponse({ status: 200, type: ProductEntity, isArray: true })
+    @ApiResponse({ status: 400, description: 'page param missing' })
     @ApiQuery({ name: 'page', required: true, example: '0, 10' })
     //@ApiQuery({ name: 'q', required: false, description: 'search param to filter results' })
     @ApiQuery({ name: 'selected', required: false, description: 'fields you want to select from response' })
@@ -28,6 +30,9 @@ export class ProductController {
     }
 
     @ApiOperation({ summary: 'Get one product' })
+    @ApiResponse({ status: 200, type: ProductEntity })
+    @ApiResponse({ status: 400, description: 'Invalid id' })
+    @ApiResponse({ status: 404, description: 'Product not found' })
     @Get(':id')
     public async findOne(@Param('id', ParseUUIDPipe) id: string, @Query('fields') selected?: string): Promise<Partial<ProductEntity>> {
         const product: Partial<ProductEntity> = await this.service.findOneProduct(id, selected);
@@ -38,6 +43,9 @@ export class ProductController {
     }
 
     @ApiOperation({ summary: 'Create product' })
+    @ApiResponse({ status: 200, description: 'Product created succesfully', type: ProductEntity, })
+    @ApiResponse({ status: 400, description: 'Validations error' })
+    @ApiResponse({ status: 404, description: 'Product not found' })
     @Post()
     public async create(@Body() product: CreateProductDto): Promise<ProductResponse> {
         const res: ProductEntity = await this.service.createProduct(product);
@@ -50,6 +58,9 @@ export class ProductController {
     }
 
     @ApiOperation({ summary: 'Update product' })
+    @ApiResponse({ status: 200, description: 'Product updated succesfully', type: ProductEntity })
+    @ApiResponse({ status: 400, description: 'Validations error' })
+    @ApiResponse({ status: 404, description: 'Product not found' })
     @Patch(':id')
     public async update(@Param('id', ParseUUIDPipe) id: string, @Body() product: UpdateProductDto): Promise<ProductResponse> {
         const res: ProductEntity = await this.service.updateProdcut(id, product);
@@ -63,6 +74,9 @@ export class ProductController {
     }
 
     @ApiOperation({ summary: 'Delete product' })
+    @ApiResponse({ status: 200, description: 'Product deleted succesfully' })
+    @ApiResponse({ status: 400, description: 'Id invalid' })
+    @ApiResponse({ status: 404, description: 'Product not found' })
     @Delete(':id')
     public async delete(@Param('id', ParseUUIDPipe) id: string): Promise<ProductResponse> {
         const res: ProductEntity = await this.service.deleteProduct(id);
