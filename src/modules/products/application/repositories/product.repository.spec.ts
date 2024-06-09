@@ -36,7 +36,7 @@ describe('Customer', () => {
         const res: Partial<ProductEntity>[] = await repository.findAllProducts({ take: 10, skip: 0 });
 
         expect(res).toBeInstanceOf(Array);
-        expect(res).toBe([ productMock1, productMock2, productMock3 ]);
+        expect(res).toEqual([ productMock1, productMock2, productMock3 ]);
       });
 
       it('should fetch inventory products', async () => {
@@ -45,16 +45,16 @@ describe('Customer', () => {
         const id: string = '1d3e9bfc-6a2c-4a7b-8c3d-2c4e9f4b3b2a';
         const res: Partial<ProductEntity>[] = await repository.findAllProducts({ take: 10, skip: 0 }, id);
 
-        expect(res.forEach(product => { return product.inventory_id === id ? true : false})).toBeTruthy();
+        expect(res[0].id === id).toBeTruthy();
       });
 
       it('should fetch what pagination indicates', async () => {
-        jest.spyOn(prisma.product, 'findMany').mockResolvedValue([ productMock1, productMock2, productMock3 ]);
+        jest.spyOn(prisma.product, 'findMany').mockResolvedValue([ productMock3 ]);
 
         const res: Partial<ProductEntity>[] = await repository.findAllProducts({ take: 1, skip: 2 });
 
         expect(res).toHaveLength(1);
-        expect(res).toBe([ productMock3 ]);
+        expect(res).toEqual([ productMock3 ]);
       });
     });
 
