@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaProvider } from "../../../prisma/providers/prisma.provider";
 import { SelectedFields } from "../../domain/types";
 import { ProductEntity } from "../../domain/entities/product.entity";
-import { SearchTerms } from "../../domain/types/search-terms.type";
+import { SearchTerms } from "../../domain/types";
 import { Pagination } from "../../../../common/types";
 
 @Injectable()
