@@ -7,7 +7,7 @@ import { SearchTerms } from "../../domain/types";
 import { Pagination } from "../../../../common/types";
 
 @Injectable()
-export class ProdcutRepository {
+export class ProductRepository {
 
     constructor(private prisma: PrismaProvider) { }
 

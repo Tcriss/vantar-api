@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { ProdcutRepository } from '../repositories/product.repository';
+import { ProductRepository } from '../repositories/product.repository';
 import { SelectedFields } from '../../domain/types';
 import { Pagination } from "../../../../common/types";
 import { SearchTerms } from '../../domain/types/search-terms.type';
@@ -9,7 +9,7 @@ import { ProductEntity } from '../../domain/entities/product.entity';
 @Injectable()
 export class ProductService {
 
-    constructor(private repository: ProdcutRepository) { }
+    constructor(private repository: ProductRepository) { }
 
     public async findAllProducts(page: string, inventoryId?: string, query?: SearchTerms, selected?: string): Promise<Partial<ProductEntity>[]> {
         const pagination: Pagination = {
@@ -55,7 +55,7 @@ export class ProductService {
         return this.repository.createProduct(product);
     }
 
-    public async updateProdcut(id: string, product: Partial<ProductEntity>): Promise<ProductEntity> {
+    public async updateProduct(id: string, product: Partial<ProductEntity>): Promise<ProductEntity> {
         const isExist: boolean = await this.findOneProduct(id) ? true : false;
 
         if (!isExist) return null;

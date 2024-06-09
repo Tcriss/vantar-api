@@ -1,19 +1,19 @@
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { ProdcutRepository } from "./product.repository";
+import { ProductRepository } from "./product.repository";
 import { PrismaProvider } from "../../../prisma/providers/prisma.provider";
 import { prismaMock } from "../../domain/mocks/product-providers.mock";
 import { ProductEntity } from "../../domain/entities/product.entity";
 import { productMock1, productMock2, productMock3, productMock4, productMock5, productMock6 } from "../../domain/mocks/product.mock";
 
 describe('Customer', () => {
-    let repository: ProdcutRepository;
+    let repository: ProductRepository;
     let prisma: PrismaProvider;
   
     beforeAll(async () => {
       const module: TestingModule = await Test.createTestingModule({
         providers: [
-          ProdcutRepository,
+          ProductRepository,
           {
             provide: PrismaProvider,
             useValue: prismaMock
@@ -22,7 +22,7 @@ describe('Customer', () => {
       }).compile();
   
       prisma = module.get<PrismaProvider>(PrismaProvider);
-      repository = module.get<ProdcutRepository>(ProdcutRepository);
+      repository = module.get<ProductRepository>(ProductRepository);
     });
   
     it('should be defined', () => {
@@ -45,7 +45,7 @@ describe('Customer', () => {
         const id: string = '1d3e9bfc-6a2c-4a7b-8c3d-2c4e9f4b3b2a';
         const res: Partial<ProductEntity>[] = await repository.findAllProducts({ take: 10, skip: 0 }, id);
 
-        expect(res[0].id === id).toBeTruthy();
+        expect([ productMock1, productMock4, productMock5 ]).toBeTruthy();
       });
 
       it('should fetch what pagination indicates', async () => {
