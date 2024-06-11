@@ -39,4 +39,6 @@ jobs:
       run: pnpm run build
 
     - name: 'Test 🧪'
+      env: 
+        HASH: ${{ secrets.HASH }}
       run: pnpm run test
