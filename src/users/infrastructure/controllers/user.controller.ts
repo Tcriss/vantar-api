@@ -30,14 +30,14 @@ export class UserController {
 
         return user;
     }
-
+    
+    @PublicAccess()
     @ApiOperation({ summary: 'Creates a user' })
     @ApiResponse({ status: 201, description: 'User created succesfully' })
     @ApiResponse({ status: 400, description: 'Validations error' })
     @ApiResponse({ status: 409, description: 'User already exist or you are already logged, method not allowed' })
     @ApiResponse({ status: 500, description: 'Internal server error' })
-    @ApiParam({ name: 'Authorization', allowEmptyValue: true, required: false })
-    @PublicAccess()
+    @ApiParam({ name: 'Authorization', required: false })
     @Post()
     public async create(@Body() body: CreateUserDto, @Headers('Authorization') token?: string): Promise<UserEntity> {
         const isLogged: boolean = token ? true : false;
