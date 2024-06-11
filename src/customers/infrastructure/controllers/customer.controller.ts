@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseU
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { CustomerService } from '../../application/services/customer.service';
-import { ReqUser } from '../../../common/types';
+import { ReqUser } from '../../../common/domain/types';
 import { CustomerResponse } from '../../domain/types';
 import { CustomerEntity } from '../../domain/entities/customer.entity';
 import { CreateCustomerDto, UpdateCustomerDto } from '../dtos';

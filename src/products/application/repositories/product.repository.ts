@@ -4,7 +4,7 @@ import { PrismaProvider } from "../../../prisma/providers/prisma.provider";
 import { SelectedFields } from "../../domain/types";
 import { ProductEntity } from "../../domain/entities/product.entity";
 import { SearchTerms } from "../../domain/types";
-import { Pagination } from "../../../common/types";
+import { Pagination } from "../../../common/domain/types";
 
 @Injectable()
 export class ProductRepository {

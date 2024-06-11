@@ -7,7 +7,7 @@ import { CreateUserDto } from '../dtos/create-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { ReqUser } from '../../domain/types/req-user.type';
-import { PublicAccess } from '../../../common/decorators/public.decorator';
+import { PublicAccess } from '../../../common/application/decorators/public.decorator';
 
 @ApiTags('Users')
 @Controller('users')

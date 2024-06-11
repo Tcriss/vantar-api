@@ -7,7 +7,7 @@ import { AuthService } from '../../application/services/auth.service';
 import { Token } from '../../domain/types';
 import { AuthEntity } from '../../domain/entities/auth.entity';
 import { GoogleGuard } from '../../application/guards/google/google.guard';
-import { PublicAccess } from '../../../common/decorators/public.decorator';
+import { PublicAccess } from '../../../common/application/decorators';
 
 @ApiTags('Authentication')
 @PublicAccess()
