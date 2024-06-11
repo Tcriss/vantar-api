@@ -1,8 +1,7 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { CustomerService } from '../../application/services/customer.service';
-import { AccessTokenGuard } from '../../../auth/application/guards/access-token/access-token.guard';
 import { ReqUser } from '../../../common/types';
 import { CustomerResponse } from '../../domain/types';
 import { CustomerEntity } from '../../domain/entities/customer.entity';
@@ -10,9 +9,8 @@ import { CreateCustomerDto, UpdateCustomerDto } from '../dtos';
 import { CustomerResponseEntity } from '../../domain/entities/customer-responses.entity';
 import { CustomerQuery } from '../../domain/types/customer-queries.type';
 
-@ApiTags('Customers')
 @ApiBearerAuth()
-@UseGuards(AccessTokenGuard)
+@ApiTags('Customers')
 @Controller('customers')
 export class CustomerController {
 

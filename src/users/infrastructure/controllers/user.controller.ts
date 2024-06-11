@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Headers, HttpException, HttpStatus, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Headers, HttpException, HttpStatus, Patch, Post, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
@@ -6,11 +6,9 @@ import { UserService } from '../../application/services/user.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
 import { UserEntity } from '../../domain/entities/user.entity';
-import { AccessTokenGuard } from '../../../auth/application/guards/access-token/access-token.guard';
 import { ReqUser } from '../../domain/types/req-user.type';
 import { PublicAccess } from '../../../common/decorators/public.decorator';
 
-@UseGuards(AccessTokenGuard)
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
