@@ -33,7 +33,7 @@ jobs:
         cache: 'pnpm'
 
     - name: 'Install dependencies 📦'
-      run: pnpm ci
+      run: pnpm install
 
     - name: 'build'
       run: pnpm run build
