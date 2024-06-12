@@ -14,7 +14,7 @@ import { AccessTokenGuard } from './application/guards/access-token/access-token
   providers: [
     AuthService,
     AccessTokenStrategy,
-    GoogleAuthStrategy,
+    //GoogleAuthStrategy,
     {
       provide: UseGuards,
       useValue: AccessTokenGuard

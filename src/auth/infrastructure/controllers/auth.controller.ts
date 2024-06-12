@@ -1,12 +1,10 @@
-import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
 
 import { LoginUserDto } from '../dto';
 import { AuthService } from '../../application/services/auth.service';
 import { Token } from '../../domain/types';
 import { AuthEntity } from '../../domain/entities/auth.entity';
-import { GoogleGuard } from '../../application/guards/google/google.guard';
 import { PublicAccess } from '../../../common/application/decorators';
 
 @ApiTags('Authentication')
@@ -32,27 +30,5 @@ export class AuthController {
             message: 'Login successful',
             access_token: res.access_token
         };
-    }
-
-    @ApiOperation({ summary: 'Sing in a user with google account' })
-    @ApiOkResponse({ type: AuthEntity, description: 'User logged in successfully' })
-    @ApiResponse({ status: 404, description: 'User not found' })
-    @ApiResponse({ status: 406, description: 'Wrong credentials' })
-    @UseGuards(GoogleGuard)
-    @Get('google')
-    public async loginWithGoogle(): Promise<void> { }
-
-    @Get('google/redirect')
-    @UseGuards(GoogleGuard)
-    async googleAuthCallback(@Req() req: { user: LoginUserDto }, @Res() res: Response): Promise<string> {
-        const token = await this.service.logIn(req.user);
-
-        res.cookie('access_token', token, {
-            maxAge: 2592000000,
-            sameSite: true,
-            secure: false,
-        });
-
-        return 'Login successful';
     }
 }
