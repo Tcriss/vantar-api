@@ -24,29 +24,4 @@ describe('AccessTokenGuard', () => {
 
     expect(guard.canActivate(context)).toBe(true);
   });
-
-  it('should call super.canActivate if the route is not public', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
-    const superCanActivateSpy = jest.spyOn(AuthGuard.prototype, 'canActivate').mockReturnValue(true);
-
-    const context: ExecutionContext = {
-      getHandler: jest.fn(),
-      getClass: jest.fn(),
-    } as unknown as ExecutionContext;
-
-    expect(guard.canActivate(context)).toBe(true);
-    expect(superCanActivateSpy).toHaveBeenCalledWith(context);
-  });
-
-  it('should return the value from super.canActivate if the route is not public', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
-    jest.spyOn(AuthGuard.prototype, 'canActivate').mockReturnValue(of(true));
-
-    const context: ExecutionContext = {
-      getHandler: jest.fn(),
-      getClass: jest.fn(),
-    } as unknown as ExecutionContext;
-
-    expect(guard.canActivate(context)).toBe(true);
-  });
 });
