@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { CategoryRepository } from './category.repository';
-import { PrismaProvider } from '../../../prisma/application/providers/prisma.provider';
+import { PrismaProvider } from '../../../prisma/infrastructure/providers/prisma.provider';
 import { prismaMock } from '../../domain/mocks/category-providers.mock';
 import { categories, category } from '../../domain/mocks/category.mock';
 
