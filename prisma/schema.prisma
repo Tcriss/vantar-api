@@ -14,39 +14,55 @@ datasource db {
 }
 
 model User {
-  id             String    @id @default(uuid()) @db.Uuid
-  name           String    @db.VarChar(30)
-  email          String    @unique @db.Char(100)
-  password       String    @db.VarChar(130)
-  inventories    Inventory[]
-  products       Product[]
+  id                      String         @id @default(uuid()) @db.Uuid
+  name                    String         @db.VarChar(30)
+  email                   String         @unique @db.Char(100)
+  password                String         @db.VarChar(130)
+  created_at              DateTime       @db.Timestamp() @default(now()) //dropped
+  clients                 Customer[]     //dropped
 }
 
-model Product {
-  id             String    @id @default(uuid()) @db.Uuid
-  name           String    @db.VarChar(30)
-  amount         Int       @db.Integer @default(0)
-  price          Int       @db.Integer
-  unit_measure   String    @db.VarChar(100)
-  category       Category  @relation(fields: [category_name], references: [name])
-  category_name  String
-  expiration     DateTime
-  user           User      @relation(fields: [userId], references: [id])
-  userId         String    @db.Uuid
-}
-
-model Category {
-  id             String    @id @default(uuid()) @db.Uuid
-  name           String    @unique @db.VarChar(30)
-  description    String    @db.VarChar(130)
-  products       Product[]
+model Customer {
+  id                      String         @id @default(uuid()) @db.Uuid
+  name                    String         @db.VarChar(50)
+  contact                 String?        @db.VarChar(150)
+  active                  Boolean        @default(true) //dropped
+  created_at              DateTime       @db.Timestamp() @default(now()) //dropped
+  companies               String[]       @db.VarChar(200) //dropped
+  user_id                 String         @db.Uuid
+  user                    User           @relation(fields: [user_id], references: [id]) //dropped
+  inventories             Inventory[]
 }
 
 model Inventory {
-  id             String    @id @default(uuid()) @db.Uuid
-  product_id     String
-  date           DateTime
-  amount         Int       @db.Integer @default(0)
-  user           User      @relation(fields: [user_id], references: [id])
-  user_id        String    @db.Uuid
+  id                      String         @id @default(uuid()) @db.Uuid
+  company_name            String         @db.VarChar(200)
+  created_at              DateTime       @db.Timestamp() @default(now())
+  products_amount         Int            @db.Integer @default(0)
+  service_charge          Int            @db.Integer @default(0)
+  capital                 Int            @db.Integer @default(0)
+  customer_id             String         @db.Uuid
+  customer                Customer       @relation(fields: [customer_id], references: [id])
+  products                Product[]
+}
+
+model Product {
+  id                      String         @id @default(uuid()) @db.Uuid
+  name                    String         @db.VarChar(30)
+  stock                   Int            @db.Integer @default(0)
+  price                   Int            @db.Integer
+  unit_measure            String         @db.VarChar(100)
+  expiration              DateTime       @db.Timestamp()
+  category_name           String         @db.VarChar(30)
+  inventory_id            String         @db.Uuid
+  created_at              DateTime       @db.Timestamp() @default(now())
+  category                Category       @relation(fields: [category_name], references: [name])
+  inventoy                Inventory      @relation(fields: [inventory_id], references: [id])
+}
+
+model Category {
+  id                      String         @id @default(uuid()) @db.Uuid
+  name                    String         @unique @db.VarChar(30)
+  description             String         @unique @db.VarChar(130)
+  products                Product[]
 }
