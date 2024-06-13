@@ -25,4 +25,4 @@ COPY . .
 EXPOSE 2000
 
 # Start the server using the production build
-CMD ["pnpm", "migrate:prod"]
+CMD ["pnpm", "migrate:dev"]
