@@ -1,11 +1,12 @@
 import { Controller, Get, Param, HttpException, HttpStatus, ParseUUIDPipe } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Category } from '@prisma/client';
 
 import { CategoryService } from '../../application/services/category.service';
-import { uuidPipeOptions } from 'src/common/config/uuid-pipe.config';
+import { uuidPipeOptions } from '../../../common/application/config';
 import { CategoryEntity } from '../../domain/entities/category.entity';
 
+@ApiBearerAuth()
 @ApiTags('Categories')
 @Controller('categories')
 export class CategoryController {

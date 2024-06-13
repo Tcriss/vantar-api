@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 
-import { PUBLIC_KEY } from '../../../../common/constants/public-key.decorator';
+import { PUBLIC_KEY } from '../../../../common/domain/constants';
 
 @Injectable()
 export class AccessTokenGuard extends AuthGuard('ats') { 

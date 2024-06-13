@@ -1,16 +1,14 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { InventoryService } from '../../application/services/inventory.service';
-import { AccessTokenGuard } from '../../../auth/application/guards/access-token/access-token.guard';
 import { InventoryEntity } from '../../domain/entities/inventory.entity';
 import { CreateInventoryDto, UpdateInventoryDto } from '../dtos';
 import { InventoyResponse } from '../../domain/types';
 import { InventoryQueries } from '../../domain/types/inventory-queries.type';
 
-@ApiTags('Inventories')
 @ApiBearerAuth()
-@UseGuards(AccessTokenGuard)
+@ApiTags('Inventories')
 @Controller('inventories')
 export class InventoryController {
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { CustomerRepository } from '../repositories/customer.repository';
-import { Pagination } from '../../../common/types/pagination.type';
+import { Pagination } from '../../../common/domain/types';
 import { SelectedFields } from '../../domain/types';
 import { CustomerEntity } from '../../domain/entities/customer.entity';
 

@@ -88,7 +88,7 @@ describe('UserService', () => {
     const { name, password } = usersMock[1];
 
     it('should update user', async () => {
-      jest.spyOn(repository, 'delete').mockResolvedValue(usersMock[3]);
+      jest.spyOn(repository, 'update').mockResolvedValue(usersMock[3]);
 
       const res: User = await service.updateUser(usersMock[2].id, { name, password });
 

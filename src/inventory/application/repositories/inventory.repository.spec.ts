@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { InventoryRepository } from './inventory.repository';
-import { PrismaProvider } from '../../../prisma/providers/prisma.provider';
+import { PrismaProvider } from '../../../prisma/infrastructure/providers/prisma.provider';
 import { prismaMock } from '../../domain/mocks/inventory-providers.mock';
 import { mockInventory1, mockInventory2, mockInventory3 } from '../../domain/mocks/inventory.mock';
 import { InventoryEntity } from '../../domain/entities/inventory.entity';

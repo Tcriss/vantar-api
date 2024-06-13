@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { User } from "@prisma/client";
 import { randomUUID } from "crypto";
 
-import { PrismaProvider } from "../../../prisma/providers/prisma.provider";
+import { PrismaProvider } from "../../../prisma/infrastructure/providers/prisma.provider";
 import { UserRepository } from "./user.repository";
 import { prismaMock } from "../../domain/mocks/user-providers.mock";
 import { usersMock } from "../../domain/mocks/user.mocks";

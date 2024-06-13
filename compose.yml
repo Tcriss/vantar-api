@@ -3,7 +3,7 @@ version: '3.8'
 services:
   database:
     image: postgres:16.0-alpine
-    container_name: vantar-db
+    container_name: vantar_db
     restart: unless-stopped
     networks: 
       - vantar_net
@@ -24,6 +24,11 @@ services:
         DB_USER: ${DB_USER}
         DB_PASSWORD: ${DB_PASSWORD}
         DB_NAME: ${DB_NAME}
+        HASH: ${HASH}
+        SECRET: ${SECRET}
+        CLIENT_ID: ${CLIENT_ID}
+        CLIENT_SECRET: ${CLIENT_SECRET}
+        CB_URL: ${CB_URL}
     container_name: vantar_api
     networks: 
       - vantar_net

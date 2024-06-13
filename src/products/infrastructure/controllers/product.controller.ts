@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ProductService } from '../../application/services/product.service';
@@ -6,9 +6,7 @@ import { ProductEntity } from '../../domain/entities/product.entity';
 import { CreateProductDto, UpdateProductDto } from '../dtos';
 import { ProductResponse } from '../../domain/types';
 import { ProductQueries } from '../../domain/types/product-queries.type';
-import { AccessTokenGuard } from '../../../auth/application/guards/access-token/access-token.guard';
 
-@UseGuards(AccessTokenGuard)
 @ApiBearerAuth()
 @ApiTags('Products')
 @Controller('products')

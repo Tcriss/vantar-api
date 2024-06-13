@@ -18,19 +18,19 @@ model User {
   name                    String         @db.VarChar(30)
   email                   String         @unique @db.Char(100)
   password                String         @db.VarChar(130)
-  created_at              DateTime       @db.Timestamp() @default(now())
-  clients                 Customer[]
+  created_at              DateTime       @db.Timestamp() @default(now()) //dropped
+  clients                 Customer[]     //dropped
 }
 
 model Customer {
   id                      String         @id @default(uuid()) @db.Uuid
   name                    String         @db.VarChar(50)
   contact                 String?        @db.VarChar(150)
-  active                  Boolean        @default(true)
-  created_at              DateTime       @db.Timestamp() @default(now())
-  companies               String[]       @db.VarChar(200)
+  active                  Boolean        @default(true) //dropped
+  created_at              DateTime       @db.Timestamp() @default(now()) //dropped
+  companies               String[]       @db.VarChar(200) //dropped
   user_id                 String         @db.Uuid
-  user                    User           @relation(fields: [user_id], references: [id])
+  user                    User           @relation(fields: [user_id], references: [id]) //dropped
   inventories             Inventory[]
 }
 

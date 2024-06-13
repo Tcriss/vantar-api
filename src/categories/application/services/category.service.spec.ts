@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Category } from '@prisma/client';
 
 import { CategoryService } from './category.service';
 import { CategoryRepository } from '../repositories/category.repository';
-import { mockCategoryRepository, prismaMock } from '../../domain/mocks/category-providers.mock';
+import { mockCategoryRepository } from '../../domain/mocks/category-providers.mock';
 import { categories, category } from '../../domain/mocks/category.mock';
 
 describe('CategoryService', () => {
