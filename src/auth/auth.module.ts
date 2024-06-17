@@ -9,11 +9,13 @@ import { jwtFactory } from './application/config/jwt.factory';
 import { AccessTokenStrategy } from './application/strategies/access-token/access-token.strategy';
 import { GoogleAuthStrategy } from './application/strategies/google/google.strategy';
 import { AccessTokenGuard } from './application/guards/access-token/access-token.guard';
+import { RefreshTokenStrategy } from './application/strategies/refresh-token/refresh-token.strategy';
 
 @Module({
   providers: [
     AuthService,
     AccessTokenStrategy,
+    RefreshTokenStrategy,
     //GoogleAuthStrategy,
     {
       provide: UseGuards,

@@ -26,7 +26,7 @@ export class AuthService {
         return this.getToken(user);
     }
 
-    public async getToken(user: UserEntity): Promise<Token> {
+    private async getToken(user: UserEntity): Promise<Token> {
         const payload: Payload = {
             id: user.id,
             name: user.name,
@@ -35,9 +35,12 @@ export class AuthService {
 
         const token: string =  await this.jwt.signAsync(payload, {
             secret: this.config.get<string>('SECRET'), 
-            expiresIn: '6h'
+            expiresIn: '24m'
         })
 
-        return { access_token: token };
+        return {
+            access_token: token,
+            refresh_token: ''
+        };
     }
 }

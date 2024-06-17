@@ -3,19 +3,20 @@ import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 
-import { Payload } from "../../../domain/types/payload.type";
-
 @Injectable()
-export class AccessTokenStrategy extends PassportStrategy(Strategy, 'ats') {
+export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'rts') {
 
     constructor(private config: ConfigService) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             secretOrKey: config.get<string>('SECRET'),
+            passReqToCallback: true
         })
     }
 
-    async validate(payload: Payload): Promise<Payload> {
-        return { id: payload.id, name: payload.name, email: payload.email };
+    async validate(req: Request, payload: unknown): Promise<unknown> {
+        const refresh_token: string = await req.headers['Authorization'].split(' ')[0];
+
+        return { payload, refresh_token };
     }
 }
