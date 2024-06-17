@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { PUBLIC_KEY } from '../../../../common/domain/constants';
 
 @Injectable()
-export class AccessTokenGuard extends AuthGuard('ats') { 
+export class AccessTokenGuard extends AuthGuard('access') { 
 
     constructor(private reflector: Reflector) {
         super()

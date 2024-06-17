@@ -14,55 +14,41 @@ datasource db {
 }
 
 model User {
-  id                      String         @id @default(uuid()) @db.Uuid
-  name                    String         @db.VarChar(30)
-  email                   String         @unique @db.Char(100)
-  password                String         @db.VarChar(130)
-  created_at              DateTime       @db.Timestamp() @default(now()) //dropped
-  clients                 Customer[]     //dropped
+  id                String         @id @default(uuid()) @db.Uuid
+  name              String         @db.VarChar(30)
+  email             String         @unique @db.Char(100)
+  password          String         @db.VarChar(130)
+  role              String         @db.VarChar(8) @default("customer")
+  created_at        DateTime       @db.Timestamp() @default(now())
+  refresh_token     String         
+  products          Product[]
+  Invoices          Invoice[]
+  inventories       Inventory[]
 }
 
-model Customer {
-  id                      String         @id @default(uuid()) @db.Uuid
-  name                    String         @db.VarChar(50)
-  contact                 String?        @db.VarChar(150)
-  active                  Boolean        @default(true) //dropped
-  created_at              DateTime       @db.Timestamp() @default(now()) //dropped
-  companies               String[]       @db.VarChar(200) //dropped
-  user_id                 String         @db.Uuid
-  user                    User           @relation(fields: [user_id], references: [id]) //dropped
-  inventories             Inventory[]
+model Invoice {
+  id                String         @id @default(uuid()) @db.Uuid
+  user_id           String         @db.Uuid
+  user              User           @relation(fields: [user_id], references: [id])
 }
 
 model Inventory {
-  id                      String         @id @default(uuid()) @db.Uuid
-  company_name            String         @db.VarChar(200)
-  created_at              DateTime       @db.Timestamp() @default(now())
-  products_amount         Int            @db.Integer @default(0)
-  service_charge          Int            @db.Integer @default(0)
-  capital                 Int            @db.Integer @default(0)
-  customer_id             String         @db.Uuid
-  customer                Customer       @relation(fields: [customer_id], references: [id])
-  products                Product[]
+  id                String         @id @default(uuid()) @db.Uuid
+  created_at        DateTime       @db.Timestamp() @default(now())
+  cost              Int            @db.Integer @default(0)
+  subtotal          Int            @db.Integer @default(0)
+  total             Int            @db.Integer @default(0)
+  user_id           String         @db.Uuid
+  user              User           @relation(fields: [user_id], references: [id])
+  products          Product[]
 }
 
 model Product {
-  id                      String         @id @default(uuid()) @db.Uuid
-  name                    String         @db.VarChar(30)
-  stock                   Int            @db.Integer @default(0)
-  price                   Int            @db.Integer
-  unit_measure            String         @db.VarChar(100)
-  expiration              DateTime       @db.Timestamp()
-  category_name           String         @db.VarChar(30)
-  inventory_id            String         @db.Uuid
-  created_at              DateTime       @db.Timestamp() @default(now())
-  category                Category       @relation(fields: [category_name], references: [name])
-  inventoy                Inventory      @relation(fields: [inventory_id], references: [id])
-}
-
-model Category {
-  id                      String         @id @default(uuid()) @db.Uuid
-  name                    String         @unique @db.VarChar(30)
-  description             String         @unique @db.VarChar(130)
-  products                Product[]
+  id                String         @id @default(uuid()) @db.Uuid
+  name              String         @db.VarChar(30)
+  price             Int            @db.Integer
+  user              User           @relation(fields: [user_id], references: [id])
+  user_id           String         @db.Uuid
+  inventory         Inventory?     @relation(fields: [inventory_id], references: [id])
+  inventory_id      String?        @db.Uuid
 }

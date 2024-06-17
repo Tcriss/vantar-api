@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { LoginUserDto } from '../dto';
@@ -6,7 +6,8 @@ import { AuthService } from '../../application/services/auth.service';
 import { Token } from '../../domain/types';
 import { AuthEntity } from '../../domain/entities/auth.entity';
 import { PublicAccess } from '../../../common/application/decorators';
-import { AuthResponseI } from 'src/auth/domain/interfaces/auth-response.interface';
+import { AuthResponseI } from '../../domain/interfaces/auth-response.interface';
+import { RefreshTokenGuard } from '../../application/guards/refresh-token/refresh-token.guard';
 
 @ApiTags('Authentication')
 @PublicAccess()
@@ -32,5 +33,19 @@ export class AuthController {
             access_token: res.access_token,
             refresh_token: res.refresh_token
         };
+    }
+
+    @ApiOperation({ summary: 'Log out a user' })
+    @ApiResponse({ description: 'User logOut successfully' })
+    @ApiResponse({ status: 404, description: 'User not found' })
+    @ApiResponse({ status: 406, description: 'Wrong credentials' })
+    @UseGuards(RefreshTokenGuard)
+    @Get()
+    public async logOut(@Req() req: Request): Promise<string> {
+        const res: string = await this.service.logOut(req['user']['id']);
+
+        if (!res) throw new HttpException('User nor found', HttpStatus.NOT_FOUND);
+
+        return res;
     }
 }
