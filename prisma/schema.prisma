@@ -29,6 +29,8 @@ model User {
 model Invoice {
   id                String         @id @default(uuid()) @db.Uuid
   user_id           String         @db.Uuid
+  total             Int            @db.Integer
+  date              DateTime       @db.Time() @default(now())
   user              User           @relation(fields: [user_id], references: [id])
 }
 
@@ -40,7 +42,6 @@ model Inventory {
   total             Int            @db.Integer @default(0)
   user_id           String         @db.Uuid
   user              User           @relation(fields: [user_id], references: [id])
-  products          Product[]
 }
 
 model Product {
@@ -49,6 +50,4 @@ model Product {
   price             Int            @db.Integer
   user              User           @relation(fields: [user_id], references: [id])
   user_id           String         @db.Uuid
-  inventory         Inventory?     @relation(fields: [inventory_id], references: [id])
-  inventory_id      String?        @db.Uuid
 }
