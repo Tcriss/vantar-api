@@ -33,7 +33,7 @@ describe('Customer', () => {
     it('should find all inventories', async () => {
       jest.spyOn(prisma.inventory, 'findMany').mockResolvedValue([ mockInventory1, mockInventory3 ]);
 
-      const res: Partial<InventoryEntity>[] = await repository.findAll(mockInventory1.customer_id, { skip: 1, take: 2 });
+      const res: Partial<InventoryEntity>[] = await repository.findAll(mockInventory1.user_id, { skip: 1, take: 2 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toHaveLength(2);
@@ -43,7 +43,7 @@ describe('Customer', () => {
     it('should only bring one element', async () => {
       jest.spyOn(prisma.inventory, 'findMany').mockResolvedValue([mockInventory1]);
 
-      const res: Partial<InventoryEntity>[] = await repository.findAll(mockInventory1.customer_id, { skip: 0, take: 1 });
+      const res: Partial<InventoryEntity>[] = await repository.findAll(mockInventory1.user_id, { skip: 0, take: 1 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toHaveLength(1);
@@ -64,13 +64,12 @@ describe('Customer', () => {
       jest.spyOn(prisma.inventory, 'findUnique').mockResolvedValue(mockInventory2);
 
       const res: Partial<InventoryEntity> = await repository.findOne(mockInventory2.id, {
-        company_name: true,
         id: true,
-        products_amount: true,
-        created_at: false,
-        capital: false,
-        customer_id: false,
-        service_charge: false
+        cost: true,
+        subtotal: false,
+        total: false,
+        user_id: false,
+        created_at: false
       });
 
       expect(res).toEqual(mockInventory2);
@@ -81,8 +80,8 @@ describe('Customer', () => {
     it('should create a inventory', async () => {
       jest.spyOn(prisma.inventory, 'create').mockResolvedValue(mockInventory2);
 
-      const { company_name, capital, customer_id, service_charge } = mockInventory2;
-      const res: Partial<InventoryEntity> = await repository.create({ company_name, capital, customer_id, service_charge });
+      const { user_id, total, subtotal, cost } = mockInventory2;
+      const res: Partial<InventoryEntity> = await repository.create({ user_id, total, subtotal, cost });
 
       expect(res).toEqual(mockInventory2);
     });
@@ -92,8 +91,8 @@ describe('Customer', () => {
     it('should update a inventory', async () => {
       jest.spyOn(prisma.inventory, 'update').mockResolvedValue(mockInventory3);
 
-      const { company_name, capital, customer_id, service_charge } = mockInventory2;
-      const res: Partial<InventoryEntity> = await repository.update(mockInventory1.id, { company_name, capital, customer_id, service_charge });
+      const { user_id, total, subtotal, cost } = mockInventory2;
+      const res: Partial<InventoryEntity> = await repository.update(mockInventory1.id, { user_id, total, subtotal, cost });
 
       expect(res).toEqual(mockInventory3);
     });

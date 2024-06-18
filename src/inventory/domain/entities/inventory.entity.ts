@@ -6,20 +6,17 @@ export class InventoryEntity implements Inventory {
     id: string;
 
     @ApiProperty({ format: 'uuid' })
-    customer_id: string;
+    user_id: string;
+    
+    @ApiProperty()
+    cost: number;
 
     @ApiProperty()
-    products_amount: number;
+    total: number;
 
     @ApiProperty()
-    capital: number;
-
-    @ApiProperty()
-    company_name: string;
+    subtotal: number;
 
     @ApiProperty()
     created_at: Date;
-
-    @ApiProperty()
-    service_charge: number;
 }

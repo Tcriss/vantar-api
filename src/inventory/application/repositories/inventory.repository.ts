@@ -13,10 +13,7 @@ export class InventoryRepository {
     public async findAll(customerId: string, page: Pagination, fields?: SelectedFields, query?: string): Promise<Partial<InventoryEntity>[]> {
         return this.prisma.inventory.findMany({
             orderBy: { created_at: 'asc' },
-            where: {
-                customer_id: customerId,
-                company_name: { contains: query }
-            },
+            where: { user_id: customerId },
             select: fields,
             skip: page.skip,
             take: page.take
@@ -33,10 +30,10 @@ export class InventoryRepository {
     public async create(newInventory: Partial<InventoryEntity>): Promise<InventoryEntity> {
         return this.prisma.inventory.create({
             data: {
-                company_name: newInventory.company_name,
-                capital: newInventory.capital,
-                customer_id: newInventory.customer_id,
-                service_charge: newInventory.service_charge
+                user_id: newInventory.user_id,
+                cost: newInventory.cost,
+                total: newInventory.total,
+                subtotal: newInventory.subtotal,
             }
         })
     }

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { LoginUserDto } from '../dto';
 import { AuthService } from '../../application/services/auth.service';
@@ -17,7 +17,7 @@ export class AuthController {
     constructor(private service: AuthService) { }
 
     @ApiOperation({ summary: 'Sing in a user' })
-    @ApiOkResponse({ type: AuthEntity, description: 'User logged in successfully' })
+    @ApiResponse({ status: 200, type: AuthEntity })
     @ApiResponse({ status: 404, description: 'User not found' })
     @ApiResponse({ status: 406, description: 'Wrong credentials' })
     @HttpCode(200)
@@ -35,8 +35,23 @@ export class AuthController {
         };
     }
 
+    @ApiOperation({ summary: 'Refresh user token' })
+    @ApiResponse({ status: 200, type: AuthEntity })
+    @ApiResponse({ status: 401, description: 'Wrong credentials' })
+    @ApiResponse({ status: 404, description: 'User not found' })
+    @UseGuards(RefreshTokenGuard)
+    @Post()
+    public async refresh(@Req() req: Request): Promise<any> {
+        const res = await this.service.refreshTokens(req['user']['id'], req.headers['Authorization']);
+
+        if (res === null) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        if (res === undefined) throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+
+        return res;
+    }
+
     @ApiOperation({ summary: 'Log out a user' })
-    @ApiResponse({ description: 'User logOut successfully' })
+    @ApiResponse({ status: 200, description: 'User logOut successfully' })
     @ApiResponse({ status: 404, description: 'User not found' })
     @ApiResponse({ status: 406, description: 'Wrong credentials' })
     @UseGuards(RefreshTokenGuard)
