@@ -5,21 +5,20 @@ export class CreateInventoryDto {
     @ApiProperty({ format: 'uuid' })
     @IsNotEmpty()
     @IsString()
-    customer_id: string;
+    user_id: string;
 
-    @ApiProperty({ example: 'Ferreteria', description: 'Financial capital' })
-    @IsNotEmpty()
-    @IsString()
-    @MaxLength(200)
-    company_name: string;
-
-    @ApiProperty({ example: 30000.00, description: 'Financial capital' })
+    @ApiProperty({ example: 3000.00 })
     @IsNotEmpty()
     @IsNumber({ maxDecimalPlaces: 2 })
-    capital: number;
+    cost: number;
 
-    @ApiProperty({ example: 5000.0, description: 'The amount they have to pay you' })
+    @ApiProperty({ example: 3000.00 })
     @IsNotEmpty()
     @IsNumber({ maxDecimalPlaces: 2 })
-    service_charge: number;
+    subtotal: number;
+
+    @ApiProperty({ example: 6000.0 })
+    @IsNotEmpty()
+    @IsNumber({ maxDecimalPlaces: 2 })
+    total: number;
 }
