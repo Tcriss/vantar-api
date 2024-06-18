@@ -18,7 +18,7 @@ model User {
   name              String         @db.VarChar(30)
   email             String         @unique @db.Char(100)
   password          String         @db.VarChar(130)
-  role              String         @db.VarChar(8) @default("customer")
+  role              Role           @default(CUSTOMER)
   created_at        DateTime       @db.Timestamp() @default(now())
   refresh_token     String         
   products          Product[]
@@ -50,4 +50,9 @@ model Product {
   price             Int            @db.Integer
   user              User           @relation(fields: [user_id], references: [id])
   user_id           String         @db.Uuid
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
 }

@@ -3,7 +3,7 @@ import { User } from "@prisma/client";
 import { Exclude } from "class-transformer";
 import { IsEnum } from "class-validator";
 
-import { Role } from "../../application/enums/role.enum";
+import { Role } from "src/users/application/enums/role.enum";
 
 export class UserEntity implements User {
     @ApiProperty({ format: 'uuid', uniqueItems: true })
@@ -14,7 +14,7 @@ export class UserEntity implements User {
 
     @ApiProperty({ format: 'email', uniqueItems: true })
     email: string;
-
+get
     @IsEnum(Role)
     role: Role;
 
