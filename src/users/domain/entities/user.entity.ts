@@ -24,7 +24,7 @@ export class UserEntity implements User {
     @Exclude()
     password: string;
 
-    @Exclude()
+    @Exclude({ toPlainOnly: true })
     refresh_token: string | null;
 
     constructor(partial: Partial<UserEntity>) {

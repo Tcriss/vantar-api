@@ -8,17 +8,20 @@ import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
 import { appConfig, swaggerOptions, validationOptions } from './common/application/config';
 import { PrismaClientExceptionFilter } from './prisma/application/filters/prisma-client-exception/prisma-client-exception.filter';
+import { AccessTokenGuard } from './auth/application/guards/access-token/access-token.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, appConfig);
   const document = SwaggerModule.createDocument(app, swaggerOptions);
   const configService: ConfigService = app.get(ConfigService);
   const { httpAdapter } = app.get(HttpAdapterHost);
+  const reflector = app.get(Reflector);
 
   app.useLogger(app.get(Logger));
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  app.useGlobalGuards(new AccessTokenGuard(reflector));
   SwaggerModule.setup('api', app, document, {
     swaggerOptions: { tagsSorter: 'alpha' }
   });

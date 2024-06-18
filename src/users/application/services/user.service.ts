@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
-import { UserRepository } from '../repository/user.repository';
+import { UserRepositoryI, UserRepositoryToken } from 'src/users/domain/interfaces';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { Pagination } from '../../../common/domain/types';
 import { SelectedFields } from '../../domain/types/selected-fields.type';
@@ -11,7 +11,10 @@ import { Role } from '../enums';
 @Injectable()
 export class UserService {
 
-    constructor(private repository: UserRepository, private config: ConfigService) {}
+    constructor(
+        @Inject(UserRepositoryToken) private repository: UserRepositoryI,
+        private config: ConfigService
+    ) {}
 
     public async findAllUsers(role: Role, page: string, selected?: string, query?: string) {
         const pagination: Pagination = {
@@ -29,7 +32,9 @@ export class UserService {
 
         if (role === 'CUSTOMER') return null;
         
-        return this.repository.findAllUsers(pagination, fields, query);
+        const users: Partial<UserEntity>[] = await this.repository.findAllUsers(pagination, fields, query);
+
+        return users.map(user => (new UserEntity(user)));
     }
 
     public async findOneUser(id?: string, email?: string): Promise<UserEntity> {

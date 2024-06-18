@@ -5,7 +5,7 @@ import { randomUUID } from 'crypto';
 
 import { UserService } from './user.service';
 import { mockUserRepository } from '../../domain/mocks/user-providers.mock';
-import { UserRepository } from '../repository/user.repository';
+import { UserRepository } from '../../infrastructure/repositories/user.repository';
 import { usersMock } from '../../domain/mocks/user.mocks';
 import { PrismaModule } from '../../../prisma/prisma.module';
 import { Role } from '../enums';

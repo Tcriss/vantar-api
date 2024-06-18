@@ -26,6 +26,8 @@ export class UserController {
     @ApiQuery({ name: 'selected', required: false, description: 'fields you want to select from response' })
     @Get()
     public async findAll(@Req() req: ReqUser, @Query() queries?: UserQueries): Promise<Partial<UserEntity>[]> {
+        if (!req.user) throw new HttpException('credentials missing', HttpStatus.BAD_REQUEST);
+
         const users: Partial<UserEntity>[] = await this.service.findAllUsers(req.user.role, queries.page, queries.selected, queries.q);
 
         if (users === null) throw new HttpException('Without enough permissions', HttpStatus.FORBIDDEN);

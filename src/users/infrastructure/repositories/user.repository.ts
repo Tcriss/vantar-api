@@ -4,9 +4,10 @@ import { PrismaProvider } from "../../../prisma/infrastructure/providers/prisma.
 import { UserEntity } from "../../domain/entities/user.entity";
 import { SelectedFields } from "../../domain/types/selected-fields.type";
 import { Pagination } from "../../../common/domain/types";
+import { UserRepositoryI } from "../../domain/interfaces";
 
 @Injectable()
-export class UserRepository {
+export class UserRepository implements UserRepositoryI {
 
     constructor(private prisma: PrismaProvider) { }
 

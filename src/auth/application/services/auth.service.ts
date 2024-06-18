@@ -37,9 +37,9 @@ export class AuthService {
     public async refreshTokens(userId: string, refreshToken: string) {
         const user = await this.userService.findOneUser(userId);
 
-        if (!user || !user.refresh_token) return null;
+        if (user.refresh_token === null) return null;
 
-        const match: boolean = await bcrypt.compare(user.refresh_token, refreshToken);
+        const match: boolean = await bcrypt.compare(refreshToken, user.refresh_token);
 
         if (!match) return undefined;
 
@@ -77,11 +77,14 @@ export class AuthService {
     }
 
     private async updateRefreshToken(userId: string, token: string): Promise<void> {
+        console.log('called: ', token);
         const hashedToken = await bcrypt.hash(token, this.config.get<string>('HASH'));
-
-        this.prisma.user.update({
+        console.log('token: ', hashedToken, userId)
+        const res = await this.prisma.user.update({
             where: { id: userId },
             data: { refresh_token: hashedToken }
         });
+
+        console.log(res)
     }
 }

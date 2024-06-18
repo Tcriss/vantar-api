@@ -16,6 +16,11 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'access') {
     }
 
     async validate(payload: Payload): Promise<Payload> {
-        return { id: payload.id, name: payload.name, email: payload.email };
+        return {
+            id: payload.id,
+            name: payload.name,
+            email: payload.email,
+            role: payload.role
+        };
     }
 }

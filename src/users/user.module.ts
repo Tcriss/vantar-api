@@ -1,11 +1,18 @@
 import { Module } from '@nestjs/common';
 
-import { UserRepository } from './application/repository/user.repository';
+import { UserRepository } from './infrastructure/repositories/user.repository';
 import { UserService } from './application/services/user.service';
 import { UserController } from './infrastructure/controllers/user.controller';
+import { UserRepositoryToken } from './domain/interfaces';
 
 @Module({
-    providers: [UserRepository, UserService],
+    providers: [
+        {
+            provide: UserRepositoryToken,
+            useClass: UserRepository
+        },
+        UserService
+    ],
     controllers: [UserController],
     exports: [UserService]
 })

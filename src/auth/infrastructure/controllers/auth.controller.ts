@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { LoginUserDto } from '../dto';
 import { AuthService } from '../../application/services/auth.service';
@@ -8,6 +8,7 @@ import { AuthEntity } from '../../domain/entities/auth.entity';
 import { PublicAccess } from '../../../common/application/decorators';
 import { AuthResponseI } from '../../domain/interfaces/auth-response.interface';
 import { RefreshTokenGuard } from '../../application/guards/refresh-token/refresh-token.guard';
+import { ReqUser } from 'src/common/domain/types';
 
 @ApiTags('Authentication')
 @PublicAccess()
@@ -20,6 +21,7 @@ export class AuthController {
     @ApiResponse({ status: 200, type: AuthEntity })
     @ApiResponse({ status: 404, description: 'User not found' })
     @ApiResponse({ status: 406, description: 'Wrong credentials' })
+    @PublicAccess()
     @HttpCode(200)
     @Post('/login')
     public async login(@Body() credentials: LoginUserDto): Promise<AuthResponseI> {
@@ -35,6 +37,7 @@ export class AuthController {
         };
     }
 
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Refresh user token' })
     @ApiResponse({ status: 200, type: AuthEntity })
     @ApiResponse({ status: 401, description: 'Wrong credentials' })
@@ -42,8 +45,8 @@ export class AuthController {
     @HttpCode(200)
     @UseGuards(RefreshTokenGuard)
     @Post('/refresh')
-    public async refresh(@Req() req: Request): Promise<any> {
-        const res = await this.service.refreshTokens(req['user']['id'], req.headers['Authorization']);
+    public async refresh(@Req() req: ReqUser): Promise<any> {
+        const res = await this.service.refreshTokens(req.user.id, req['refresh']);
 
         if (res === null) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         if (res === undefined) throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
