@@ -67,7 +67,7 @@ describe('InventoryService', () => {
     it('should get some fields', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockPartialInventory1);
 
-      const res: Partial<InventoryEntity> = await service.findOneInventory(mockInventory1.customer_id, 'id, products_amount, company_name');
+      const res: Partial<InventoryEntity> = await service.findOneInventory(mockInventory1.user_id, 'id, products_amount, company_name');
 
       expect(res).toBe(mockPartialInventory1);
     });
@@ -77,8 +77,8 @@ describe('InventoryService', () => {
     it('should create an inventory', async () => {
       jest.spyOn(repository, 'create').mockResolvedValue(mockInventory2);
 
-      const { company_name, capital, service_charge } = mockInventory2;
-      const res: InventoryEntity = await service.createInventory({ company_name, capital, service_charge });
+      const { user_id, total, subtotal, cost } = mockInventory2;
+      const res: InventoryEntity = await service.createInventory({ user_id, total, subtotal, cost });
 
       expect(res).toBe(mockInventory2);
     });
@@ -88,8 +88,8 @@ describe('InventoryService', () => {
     it('should update inventory', async () => {
       jest.spyOn(repository, 'update').mockResolvedValue(mockInventory3);
 
-      const { company_name, service_charge } = mockInventory2;
-      const res: InventoryEntity = await service.updateInventory(mockInventory1.id, { company_name, service_charge });
+      const { total, subtotal, cost } = mockInventory2;
+      const res: InventoryEntity = await service.updateInventory(mockInventory1.id, { total, subtotal, cost });
 
       expect(res).toBe(mockInventory3);
     });
@@ -97,8 +97,8 @@ describe('InventoryService', () => {
     it('should not update if inventory was not found', async () => {
       jest.spyOn(repository, 'update').mockResolvedValue(null);
 
-      const { company_name, service_charge } = mockInventory2;
-      const res: InventoryEntity = await service.updateInventory(mockInventory2.id, { company_name, service_charge });
+      const { total, subtotal, cost } = mockInventory2;
+      const res: InventoryEntity = await service.updateInventory(mockInventory2.id, { total, subtotal, cost });
 
       expect(res).toBe(null);
     });

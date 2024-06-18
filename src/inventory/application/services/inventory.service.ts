@@ -17,12 +17,11 @@ export class InventoryService {
         };
         const fields: SelectedFields = selected ? {
             id: true,
-            customer_id: true,
-            products_amount: selected.includes('products_amount') ? true : false,
-            capital: selected.includes('capital') ? true : false,
-            company_name: selected.includes('company_name') ? true : false,
-            created_at: selected.includes('created_at') ? true : false,
-            service_charge: selected.includes('service_charge') ? true : false,
+            user_id: selected.includes('user_id') ? true : false,
+            cost: selected.includes('cost') ? true : false,
+            subtotal: selected.includes('subtotal') ? true : false,
+            total: selected.includes('total') ? true : false,
+            created_at: selected.includes('created_at') ? true : false
         } : null;
 
         return this.repository.findAll(customerId, pagination, fields, query);
@@ -31,12 +30,11 @@ export class InventoryService {
     public async findOneInventory(id: string, selected?: string): Promise<Partial<InventoryEntity>> {
         const fields: SelectedFields = selected ? {
             id: true,
-            customer_id: true,
-            products_amount: selected.includes('products_amount') ? true : false,
-            capital: selected.includes('capital') ? true : false,
-            company_name: selected.includes('company_name') ? true : false,
-            created_at: selected.includes('created_at') ? true : false,
-            service_charge: selected.includes('service_charge') ? true : false,
+            user_id: selected.includes('user_id') ? true : false,
+            cost: selected.includes('cost') ? true : false,
+            subtotal: selected.includes('subtotal') ? true : false,
+            total: selected.includes('total') ? true : false,
+            created_at: selected.includes('created_at') ? true : false
         } : null;
 
         const inventory: Partial<InventoryEntity> = await this.repository.findOne(id, fields);
