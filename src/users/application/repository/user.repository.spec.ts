@@ -32,7 +32,7 @@ describe('User Repository', () => {
             jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(usersMock[0]);
 
             const { id, email } = usersMock[0];
-            const res: User = await repository.find({ id, email });
+            const res: User = await repository.findOneUser({ id, email });
 
             expect(res).toEqual(usersMock[0]);
         });
@@ -42,7 +42,7 @@ describe('User Repository', () => {
 
             const { email } = usersMock[0];
             const id: string = randomUUID()
-            const res: User = await repository.find({ id, email });
+            const res: User = await repository.findOneUser({ id, email });
 
             expect(res).toBeUndefined;
         });
@@ -52,7 +52,7 @@ describe('User Repository', () => {
         it('should create a user', async () => {
             jest.spyOn(prisma.user, 'create').mockResolvedValue(usersMock[1]);
 
-            const res: User = await repository.create(usersMock[1]);
+            const res: User = await repository.createUser(usersMock[1]);
 
             expect(res).toEqual(usersMock[1]);
         });
@@ -64,7 +64,7 @@ describe('User Repository', () => {
         it('should update a user if some fields are missing', async () => {
             jest.spyOn(prisma.user, 'update').mockResolvedValue(usersMock[3]);
 
-            const res: User = await repository.update(usersMock[2].id, { name, password });
+            const res: User = await repository.updateUser(usersMock[2].id, { name, password });
 
             expect(res).toEqual(usersMock[3]);
         });
@@ -72,7 +72,7 @@ describe('User Repository', () => {
         it('should be undefined if user was not found', async () => {
             jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(undefined);
 
-            const res: User = await repository.update(randomUUID(), { name, password });
+            const res: User = await repository.updateUser(randomUUID(), { name, password });
 
             expect(res).toBeUndefined;
         });
@@ -82,7 +82,7 @@ describe('User Repository', () => {
         it('should delte a user', async () => {
             jest.spyOn(prisma.user, 'delete').mockResolvedValue(usersMock[0]);
 
-            const res: User = await repository.delete(usersMock[0].id);
+            const res: User = await repository.deleteUser(usersMock[0].id);
 
             expect(res).toEqual(usersMock[0]);
         });
@@ -90,7 +90,7 @@ describe('User Repository', () => {
         it('should be undefined if user was not found', async () => {
             jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(undefined);
 
-            const res: User = await repository.delete(randomUUID());
+            const res: User = await repository.deleteUser(randomUUID());
 
             expect(res).toBeUndefined;
         });

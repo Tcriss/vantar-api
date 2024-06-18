@@ -20,7 +20,7 @@ export class AuthService {
 
     public async logIn(credentials: Partial<UserEntity>): Promise<Token> {
         const { email, password } = credentials;
-        const user: UserEntity = await this.userService.findUser(null, email);
+        const user: UserEntity = await this.userService.findOneUser(null, email);
 
         if (!user) return undefined;
 
@@ -35,7 +35,7 @@ export class AuthService {
     }
 
     public async refreshTokens(userId: string, refreshToken: string) {
-        const user = await this.userService.findUser(userId);
+        const user = await this.userService.findOneUser(userId);
 
         if (!user || !user.refresh_token) return null;
 
@@ -50,7 +50,7 @@ export class AuthService {
     }      
 
     public async logOut(userId: string): Promise<string> {
-        const user: UserEntity = await this.userService.findUser(userId);
+        const user: UserEntity = await this.userService.findOneUser(userId);
 
         if (user) return null;
 

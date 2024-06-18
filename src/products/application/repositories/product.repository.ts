@@ -13,8 +13,8 @@ export class ProductRepository {
     public async findAllProducts(page: Pagination, userId?: string, fields?: SelectedFields, query?: string): Promise<Partial<ProductEntity>[]> {
         return this.prisma.product.findMany({
             where: {
-                user_id: userId, name:
-                { contains: query }
+                user_id: userId,
+                name: { contains: query }
             },
             orderBy: { name: 'asc' },
             select: fields,
