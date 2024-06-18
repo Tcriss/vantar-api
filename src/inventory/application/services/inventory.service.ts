@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { InventoryRepository } from '../repositories/inventory.repository';
 import { Pagination } from '../../../common/domain/types';
 import { SelectedFields } from '../../domain/types';
 import { InventoryEntity } from '../../domain/entities/inventory.entity';
+import { InventoryRepositoryI } from 'src/inventory/domain/interfaces/inventory-repository.interface';
+import { Repository } from '../decorators/repository.decorator';
 
 @Injectable()
 export class InventoryService {
 
-    constructor(private repository: InventoryRepository) { }
+    constructor(@Repository() private repository: InventoryRepositoryI) { }
 
     public async findAllInventories(customerId: string, page: string, selected?: string, query?: string): Promise<Partial<InventoryEntity>[]> {
         const pagination: Pagination = {
@@ -24,7 +25,7 @@ export class InventoryService {
             created_at: selected.includes('created_at') ? true : false
         } : null;
 
-        return this.repository.findAll(customerId, pagination, fields, query);
+        return this.repository.findAllInventories(customerId, pagination, fields, query);
     }
 
     public async findOneInventory(id: string, selected?: string): Promise<Partial<InventoryEntity>> {
@@ -37,7 +38,7 @@ export class InventoryService {
             created_at: selected.includes('created_at') ? true : false
         } : null;
 
-        const inventory: Partial<InventoryEntity> = await this.repository.findOne(id, fields);
+        const inventory: Partial<InventoryEntity> = await this.repository.findOneInventory(id, fields);
 
         if (!inventory) return undefined;
 
@@ -45,7 +46,7 @@ export class InventoryService {
     }
 
     public async createInventory(inventory: Partial<InventoryEntity>): Promise<InventoryEntity> {
-        return this.repository.create(inventory);
+        return this.repository.createInventory(inventory);
     }
 
     public async updateInventory(id: string, inventory: Partial<InventoryEntity>): Promise<InventoryEntity> {
@@ -53,7 +54,7 @@ export class InventoryService {
 
         if (!isExist) return null;
         
-        return this.repository.update(id, inventory);
+        return this.repository.updateInventory(id, inventory);
     }
 
     public async deleteInventory(id: string): Promise<InventoryEntity> {
@@ -61,6 +62,6 @@ export class InventoryService {
 
         if (!isExist) return null;
         
-        return this.repository.delete(id);
+        return this.repository.deleteInventory(id);
     }
 }

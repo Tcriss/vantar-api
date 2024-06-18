@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ProductService } from './product.service';
-import { ProductRepository } from '../repositories/product.repository';
+import { ProductRepository } from '../../infrastructure/repositories/product.repository';
 import { ProductEntity } from '../../domain/entities/product.entity';
 import { partialProductMock1, partialProductMock2, productMock1, productMock2, productMock3, productMock6 } from '../../domain/mocks/product.mock';
 import { mockProductRepository } from '../../domain/mocks/product-providers.mock';

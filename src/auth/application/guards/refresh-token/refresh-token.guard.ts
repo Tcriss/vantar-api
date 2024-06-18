@@ -22,8 +22,9 @@ export class RefreshTokenGuard implements CanActivate {
     }
 
     private async extractTokenFromHeader(headers: Headers): Promise<string> {
-        const [type, token] = headers['Authorization']?.split(' ') ?? [];
+        const [type, token]: string[] = headers['Authorization']?.split(' ') ?? [];
     
+        console.log(token)
         return type === 'Bearer' ? token : undefined;
     }
 }

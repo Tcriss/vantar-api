@@ -1,18 +1,19 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
-import { UserRepositoryI, UserRepositoryToken } from 'src/users/domain/interfaces';
+import { UserRepositoryI } from 'src/users/domain/interfaces';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { Pagination } from '../../../common/domain/types';
 import { SelectedFields } from '../../domain/types/selected-fields.type';
+import { Repository } from '../decorators/repository.decorator';
 import { Role } from '../enums';
 
 @Injectable()
 export class UserService {
 
     constructor(
-        @Inject(UserRepositoryToken) private repository: UserRepositoryI,
+        @Repository() private repository: UserRepositoryI,
         private config: ConfigService
     ) {}
 

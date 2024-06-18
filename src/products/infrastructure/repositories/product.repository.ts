@@ -1,12 +1,14 @@
 import { Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
 
 import { PrismaProvider } from "../../../prisma/infrastructure/providers/prisma.provider";
 import { SelectedFields } from "../../domain/types";
 import { ProductEntity } from "../../domain/entities/product.entity";
 import { Pagination } from "../../../common/domain/types";
+import { ProductRepositoryI } from "../../domain/interfaces/product-repository.interface";
 
 @Injectable()
-export class ProductRepository {
+export class ProductRepository implements ProductRepositoryI {
 
     constructor(private prisma: PrismaProvider) { }
 
@@ -30,7 +32,13 @@ export class ProductRepository {
         });
     }
 
-    public async createProduct(product: Partial<ProductEntity>): Promise<ProductEntity> {
+    public async createManyProducts(products: ProductEntity[]): Promise<Prisma.BatchPayload> {
+        return this.prisma.product.createMany({
+            data: [...products]
+        });
+    };
+
+    public async createOneProduct(product: Partial<ProductEntity>): Promise<ProductEntity> {
         return this.prisma.product.create({
             data: {
                 user_id: product.user_id,

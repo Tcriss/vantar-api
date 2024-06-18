@@ -4,13 +4,14 @@ import { PrismaProvider } from '../../../prisma/infrastructure/providers/prisma.
 import { Pagination } from '../../../common/domain/types';
 import { InventoryEntity } from '../../domain/entities/inventory.entity';
 import { SelectedFields } from '../../domain/types';
+import { InventoryRepositoryI } from '../../domain/interfaces/inventory-repository.interface';
 
 @Injectable()
-export class InventoryRepository {
+export class InventoryRepository implements InventoryRepositoryI {
 
     constructor(private prisma: PrismaProvider) { }
 
-    public async findAll(customerId: string, page: Pagination, fields?: SelectedFields, query?: string): Promise<Partial<InventoryEntity>[]> {
+    public async findAllInventories(customerId: string, page: Pagination, fields?: SelectedFields, query?: string): Promise<Partial<InventoryEntity>[]> {
         return this.prisma.inventory.findMany({
             orderBy: { created_at: 'asc' },
             where: { user_id: customerId },
@@ -20,14 +21,14 @@ export class InventoryRepository {
         });
     }
 
-    public async findOne(id: string, fields?: SelectedFields): Promise<Partial<InventoryEntity>> {
+    public async findOneInventory(id: string, fields?: SelectedFields): Promise<Partial<InventoryEntity>> {
         return this.prisma.inventory.findUnique({
             where: { id: id },
             select: fields
         });
     }
 
-    public async create(newInventory: Partial<InventoryEntity>): Promise<InventoryEntity> {
+    public async createInventory(newInventory: Partial<InventoryEntity>): Promise<InventoryEntity> {
         return this.prisma.inventory.create({
             data: {
                 user_id: newInventory.user_id,
@@ -38,14 +39,14 @@ export class InventoryRepository {
         })
     }
 
-    public async update(id: string, inventory: Partial<InventoryEntity>): Promise<InventoryEntity> {
+    public async updateInventory(id: string, inventory: Partial<InventoryEntity>): Promise<InventoryEntity> {
         return this.prisma.inventory.update({ 
             where: { id: id },
             data: inventory
         });
     }
 
-    public async delete(id: string): Promise<InventoryEntity>  {
+    public async deleteInventory(id: string): Promise<InventoryEntity>  {
         return this.prisma.inventory.delete({ where: { id: id }})
     }
 }

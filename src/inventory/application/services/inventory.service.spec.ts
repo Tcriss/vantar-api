@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { InventoryService } from './inventory.service';
-import { InventoryRepository } from '../repositories/inventory.repository';
+import { InventoryRepository } from '../../infrastructure/repositories/inventory.repository';
 import { mockInventoryRepository } from '../../domain/mocks/inventory-providers.mock';
 import { mockInventory1, mockInventory2, mockInventory3, mockPartialInventory1 } from '../../domain/mocks/inventory.mock';
 import { InventoryEntity } from '../../domain/entities/inventory.entity';
