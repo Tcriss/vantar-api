@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { ProductRepository } from '../repositories/product.repository';
 import { SelectedFields } from '../../domain/types';
 import { Pagination } from "../../../common/domain/types/pagination.type";
-import { SearchTerms } from '../../domain/types/search-terms.type';
 import { ProductEntity } from '../../domain/entities/product.entity';
 
 @Injectable()

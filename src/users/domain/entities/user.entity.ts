@@ -1,9 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { User } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 import { Exclude } from "class-transformer";
-import { IsEnum } from "class-validator";
-
-import { Role } from "src/users/application/enums/role.enum";
 
 export class UserEntity implements User {
     @ApiProperty({ format: 'uuid', uniqueItems: true })
@@ -14,9 +11,12 @@ export class UserEntity implements User {
 
     @ApiProperty({ format: 'email', uniqueItems: true })
     email: string;
-get
-    @IsEnum(Role)
+
+    @ApiProperty({ enum: Role })
     role: Role;
+
+    @ApiProperty({ example: true })
+    active: boolean;
 
     @ApiProperty({ format: 'date' })
     created_at: Date;
@@ -25,7 +25,7 @@ get
     password: string;
 
     @Exclude()
-    refresh_token: string;
+    refresh_token: string | null;
 
     constructor(partial: Partial<UserEntity>) {
         Object.assign(this, partial);

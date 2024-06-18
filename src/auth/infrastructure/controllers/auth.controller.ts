@@ -21,7 +21,7 @@ export class AuthController {
     @ApiResponse({ status: 404, description: 'User not found' })
     @ApiResponse({ status: 406, description: 'Wrong credentials' })
     @HttpCode(200)
-    @Post('login')
+    @Post('/login')
     public async login(@Body() credentials: LoginUserDto): Promise<AuthResponseI> {
         const res: Token = await this.service.logIn(credentials);
 
@@ -39,8 +39,9 @@ export class AuthController {
     @ApiResponse({ status: 200, type: AuthEntity })
     @ApiResponse({ status: 401, description: 'Wrong credentials' })
     @ApiResponse({ status: 404, description: 'User not found' })
+    @HttpCode(200)
     @UseGuards(RefreshTokenGuard)
-    @Post()
+    @Post('/refresh')
     public async refresh(@Req() req: Request): Promise<any> {
         const res = await this.service.refreshTokens(req['user']['id'], req.headers['Authorization']);
 
@@ -55,7 +56,7 @@ export class AuthController {
     @ApiResponse({ status: 404, description: 'User not found' })
     @ApiResponse({ status: 406, description: 'Wrong credentials' })
     @UseGuards(RefreshTokenGuard)
-    @Get()
+    @Get('/logout')
     public async logOut(@Req() req: Request): Promise<string> {
         const res: string = await this.service.logOut(req['user']['id']);
 

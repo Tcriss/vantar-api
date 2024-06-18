@@ -19,7 +19,8 @@ export class UserRepository {
             data: {
                 name: user.name,
                 email: user.email,
-                password: user.password
+                password: user.password,
+                role: user.role,
             }
         });
     }
@@ -28,10 +29,10 @@ export class UserRepository {
         return this.prisma.user.update({
             where: { id: id },
             data: user
-        })
+        });
     }
 
     public async delete(id: string): Promise<UserEntity> {
-        return this.prisma.user.delete({ where: { id: id } })
+        return this.prisma.user.delete({ where: { id: id } });
     }
 }

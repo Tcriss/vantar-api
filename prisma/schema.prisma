@@ -20,7 +20,8 @@ model User {
   password          String         @db.VarChar(130)
   role              Role           @default(CUSTOMER)
   created_at        DateTime       @db.Timestamp() @default(now())
-  refresh_token     String         
+  active            Boolean        @default(true)
+  refresh_token     String?         
   products          Product[]
   Invoices          Invoice[]
   inventories       Inventory[]
