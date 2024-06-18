@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ProductService } from '../../application/services/product.service';
@@ -6,6 +6,7 @@ import { ProductEntity } from '../../domain/entities/product.entity';
 import { CreateProductDto, UpdateProductDto } from '../dtos';
 import { ProductResponse } from '../../domain/types';
 import { ProductQueries } from '../../domain/types/product-queries.type';
+import { ReqUser } from '../../../common/domain/types';
 
 @ApiBearerAuth()
 @ApiTags('Products')
@@ -20,11 +21,11 @@ export class ProductController {
     @ApiQuery({ name: 'page', required: true, example: '0, 10' })
     @ApiQuery({ name: 'q', required: false, description: 'search param to filter results' })
     @ApiQuery({ name: 'selected', required: false, description: 'fields you want to select from response' })
-    @Get('all/:inventory_id')
-    public async findAll(@Param('inventory_id') inventory_id: string, @Query() queries: ProductQueries ) {
+    @Get()
+    public async findAll(@Req() req: ReqUser, @Query() queries: ProductQueries ) {
         if (!queries.page) throw new HttpException('page query param is missing', HttpStatus.BAD_REQUEST);
 
-        return this.service.findAllProducts(queries.page, inventory_id, queries.q, queries.selected);
+        return this.service.findAllProducts(queries.page, req.user.id, queries.q, queries.selected);
     }
 
     @ApiOperation({ summary: 'Get one product' })

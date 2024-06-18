@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { InventoryService } from '../../application/services/inventory.service';
@@ -6,6 +6,7 @@ import { InventoryEntity } from '../../domain/entities/inventory.entity';
 import { CreateInventoryDto, UpdateInventoryDto } from '../dtos';
 import { InventoyResponse } from '../../domain/types';
 import { InventoryQueries } from '../../domain/types/inventory-queries.type';
+import { ReqUser } from '../../../common/domain/types';
 
 @ApiBearerAuth()
 @ApiTags('Inventories')
@@ -20,11 +21,11 @@ export class InventoryController {
     @ApiQuery({ name: 'page', required: true })
     @ApiQuery({ name: 'fields', required: false, description: 'Fields you want to fetch in your response' })
     @ApiQuery({ name: 'q', required: false, description: 'Query earch term' })
-    @Get('/all/:customer-id')
-    public async findAll(@Param('customer-id') customerId: string, @Query() queries: InventoryQueries): Promise<Partial<InventoryEntity>[]> {
+    @Get()
+    public async findAll(@Req() req: ReqUser, @Query() queries: InventoryQueries): Promise<Partial<InventoryEntity>[]> {
         if (!queries.page || !queries) throw new HttpException('page query param is missing in url', HttpStatus.BAD_REQUEST);
 
-        return this.service.findAllInventories(customerId, queries.page, queries.fields, queries.q);
+        return this.service.findAllInventories(req.user.id, queries.page, queries.fields, queries.q);
     }
 
     @ApiOperation({ summary: "Get a inventory by id" })

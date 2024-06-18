@@ -31,7 +31,7 @@ describe('ProductController', () => {
     it('should find all products', async () => {
       jest.spyOn(service, 'findAllProducts').mockResolvedValue([productMock1, productMock4, productMock5]);
 
-      const res: Partial<ProductEntity>[] = await controller.findAll(productMock1.user_id, { page: '0,10' });
+      const res: Partial<ProductEntity>[] = await controller.findAll({ user: { id: productMock1.user_id, name: '', email: '' }}, { page: '0,10' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([productMock1, productMock4, productMock5]);
@@ -40,7 +40,7 @@ describe('ProductController', () => {
     it('should find all products from pagination', async () => {
       jest.spyOn(service, 'findAllProducts').mockResolvedValue([productMock2]);
 
-      const res: Partial<ProductEntity>[] = await controller.findAll(productMock1.user_id, { page: '0,10' });
+      const res: Partial<ProductEntity>[] = await controller.findAll({ user: { id: productMock1.user_id, name: '', email: '' }}, { page: '0,10' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([productMock2]);
@@ -49,7 +49,7 @@ describe('ProductController', () => {
     it('should find all products with some fields', async () => {
       jest.spyOn(service, 'findAllProducts').mockResolvedValue([partialProductMock1, partialProductMock2]);
 
-      const res: Partial<ProductEntity>[] = await controller.findAll(productMock1.user_id, { page: '0,10', selected: 'name, user_id' });
+      const res: Partial<ProductEntity>[] = await controller.findAll({ user: { id: productMock1.user_id, name: '', email: '' }}, { page: '0,10', selected: 'name, user_id' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([partialProductMock1, partialProductMock2]);
@@ -59,7 +59,7 @@ describe('ProductController', () => {
       jest.spyOn(service, 'findAllProducts').mockResolvedValue([partialProductMock1, partialProductMock2]);
 
       try {
-        await controller.findAll(productMock1.user_id, { page: null });
+        await controller.findAll({ user: { id: productMock1.user_id, name: '', email: '' }}, { page: null });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.BAD_REQUEST);

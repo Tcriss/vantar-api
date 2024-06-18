@@ -36,7 +36,7 @@ describe('InventoryController', () => {
     it('should get all inventories', async () => {
       jest.spyOn(service, 'findAllInventories').mockResolvedValue([ mockInventory1, mockInventory3 ]);
 
-      const res: Partial<InventoryEntity>[] = await controller.findAll(mockInventory1.user_id, {page: '0,3'});
+      const res: Partial<InventoryEntity>[] = await controller.findAll({ user: { id: mockInventory1.user_id, name: '', email: '' }}, {page: '0,3'});
 
       expect(res.length).toBe(2);
       expect(res).toStrictEqual([ mockInventory1, mockInventory3 ]);
@@ -45,7 +45,7 @@ describe('InventoryController', () => {
     it('should get all inventories with some fiedls', async () => {
       jest.spyOn(service, 'findAllInventories').mockResolvedValue([ mockPartialInventory1, mockPartialInventory3 ]);
 
-      const res: Partial<InventoryEntity>[] = await controller.findAll(mockInventory1.user_id, { page: '0,3', fields: 'name, contact, userId' });
+      const res: Partial<InventoryEntity>[] = await controller.findAll({ user: { id: mockInventory1.user_id, name: '', email: '' }}, { page: '0,3', fields: 'name, contact, userId' });
 
       expect(res.length).toBe(2);
       expect(res).toStrictEqual([ mockPartialInventory1, mockPartialInventory3 ]);
@@ -66,7 +66,7 @@ describe('InventoryController', () => {
       jest.spyOn(service, 'findAllInventories').mockResolvedValue(null);
 
       try {
-        await controller.findAll(mockInventory1.user_id, { page: null });
+        await controller.findAll({ user: { id: mockInventory1.user_id, name: '', email: '' }}, { page: null });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.BAD_REQUEST);
