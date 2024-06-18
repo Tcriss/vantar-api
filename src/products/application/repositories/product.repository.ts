@@ -3,7 +3,6 @@ import { Injectable } from "@nestjs/common";
 import { PrismaProvider } from "../../../prisma/infrastructure/providers/prisma.provider";
 import { SelectedFields } from "../../domain/types";
 import { ProductEntity } from "../../domain/entities/product.entity";
-import { SearchTerms } from "../../domain/types";
 import { Pagination } from "../../../common/domain/types";
 
 @Injectable()
@@ -11,9 +10,12 @@ export class ProductRepository {
 
     constructor(private prisma: PrismaProvider) { }
 
-    public async findAllProducts(page: Pagination, inventoryId?: string, fields?: SelectedFields, query?: SearchTerms): Promise<Partial<ProductEntity>[]> {
+    public async findAllProducts(page: Pagination, userId?: string, fields?: SelectedFields, query?: string): Promise<Partial<ProductEntity>[]> {
         return this.prisma.product.findMany({
-            where: { inventory_id: inventoryId },
+            where: {
+                user_id: userId, name:
+                { contains: query }
+            },
             orderBy: { name: 'asc' },
             select: fields,
             skip: page.skip,
@@ -31,13 +33,9 @@ export class ProductRepository {
     public async createProduct(product: Partial<ProductEntity>): Promise<ProductEntity> {
         return this.prisma.product.create({
             data: {
-                inventory_id: product.inventory_id,
+                user_id: product.user_id,
                 name: product.name,
-                stock: product.stock,
                 price: product.price,
-                unit_measure: product.unit_measure,
-                category_name: product.category_name,
-                expiration: product.expiration
             }
         });
     }

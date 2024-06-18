@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProductController } from './product.controller';
 import { ProductService } from '../../application/services/product.service';
 import { mockProductService } from '../../domain/mocks/product-providers.mock';
-import { partialProductMock1, partialProductMock2, productMock1, productMock2, productMock3, productMock4, productMock5, productMock6 } from '../../domain/mocks/product.mock';
+import { partialProductMock1, partialProductMock2, productMock1, productMock2, productMock4, productMock5, productMock6 } from '../../domain/mocks/product.mock';
 import { ProductEntity } from '../../domain/entities/product.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { ProductResponse } from '../../domain/types';
@@ -31,7 +31,7 @@ describe('ProductController', () => {
     it('should find all products', async () => {
       jest.spyOn(service, 'findAllProducts').mockResolvedValue([productMock1, productMock4, productMock5]);
 
-      const res: Partial<ProductEntity>[] = await controller.findAll(productMock1.inventory_id, { page: '0,10' });
+      const res: Partial<ProductEntity>[] = await controller.findAll(productMock1.user_id, { page: '0,10' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([productMock1, productMock4, productMock5]);
@@ -40,7 +40,7 @@ describe('ProductController', () => {
     it('should find all products from pagination', async () => {
       jest.spyOn(service, 'findAllProducts').mockResolvedValue([productMock2]);
 
-      const res: Partial<ProductEntity>[] = await controller.findAll(productMock1.inventory_id, { page: '0,10' });
+      const res: Partial<ProductEntity>[] = await controller.findAll(productMock1.user_id, { page: '0,10' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([productMock2]);
@@ -49,7 +49,7 @@ describe('ProductController', () => {
     it('should find all products with some fields', async () => {
       jest.spyOn(service, 'findAllProducts').mockResolvedValue([partialProductMock1, partialProductMock2]);
 
-      const res: Partial<ProductEntity>[] = await controller.findAll(productMock1.inventory_id, { page: '0,10', selected: 'name, inventory_id' });
+      const res: Partial<ProductEntity>[] = await controller.findAll(productMock1.user_id, { page: '0,10', selected: 'name, user_id' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([partialProductMock1, partialProductMock2]);
@@ -59,7 +59,7 @@ describe('ProductController', () => {
       jest.spyOn(service, 'findAllProducts').mockResolvedValue([partialProductMock1, partialProductMock2]);
 
       try {
-        await controller.findAll(productMock1.inventory_id, { page: null });
+        await controller.findAll(productMock1.user_id, { page: null });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.BAD_REQUEST);
@@ -80,7 +80,7 @@ describe('ProductController', () => {
     it('should find one product with some fields', async () => {
       jest.spyOn(service, 'findOneProduct').mockResolvedValue(partialProductMock1);
 
-      const res: Partial<ProductEntity> = await controller.findOne(productMock1.id, 'name, inventory_id');
+      const res: Partial<ProductEntity> = await controller.findOne(productMock1.id, 'name, user_id');
 
       expect(res).toBe(partialProductMock1);
     });
@@ -89,7 +89,7 @@ describe('ProductController', () => {
       jest.spyOn(service, 'findOneProduct').mockResolvedValue(undefined);
 
       try {
-        await controller.findOne(productMock1.id, 'name, inventory_id');
+        await controller.findOne(productMock1.id, 'name, user_id');
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -102,8 +102,8 @@ describe('ProductController', () => {
     it('should create a product', async () => {
       jest.spyOn(service, 'createProduct').mockResolvedValue(productMock2);
 
-      const { name, inventory_id, stock, price, category_name, expiration, unit_measure } = productMock2;
-      const res: ProductResponse = await controller.create({ name, inventory_id, stock, price, category_name, expiration, unit_measure });
+      const { name, user_id, price } = productMock2;
+      const res: ProductResponse = await controller.create({ user_id, name, price });
 
       expect(res.message).toBe('Product created succesfully');
       expect(res.product).toBe(productMock2);
@@ -114,8 +114,8 @@ describe('ProductController', () => {
     it('should update product', async () => {
       jest.spyOn(service,'updateProduct').mockResolvedValue(productMock6);
 
-      const { name, stock, price, unit_measure } = productMock2;
-      const res: ProductResponse = await controller.update(productMock1.id, { name, stock, price, unit_measure });
+      const { name, price } = productMock2;
+      const res: ProductResponse = await controller.update(productMock1.id, { name, price });
 
       expect(res.message).toBe('Product updated succesfully');
       expect(res.product).toBe(productMock6);
@@ -124,10 +124,10 @@ describe('ProductController', () => {
     it('should return null if product was not found', async () => {
       jest.spyOn(service, 'updateProduct').mockResolvedValue(null);
 
-      const { name, stock, price, unit_measure } = productMock2;
+      const { name, price } = productMock2;
 
       try {
-        await controller.update(productMock1.id, { name, stock, price, unit_measure });
+        await controller.update(productMock1.id, { name, price });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);

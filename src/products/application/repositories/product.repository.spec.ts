@@ -72,8 +72,8 @@ describe('Customer', () => {
       it('should create a product', async () => {
         jest.spyOn(prisma.product,'create').mockResolvedValue(productMock1);
 
-        const { inventory_id, name, stock, price, unit_measure, category_name, expiration } = productMock1;
-        const res: ProductEntity = await repository.createProduct({ inventory_id, name, stock, price, unit_measure, category_name, expiration });
+        const { user_id, name, price } = productMock1;
+        const res: ProductEntity = await repository.createProduct({ user_id, name, price });
 
         expect(res).toBe(productMock1);
       });
@@ -83,8 +83,8 @@ describe('Customer', () => {
       it('should update a prodcut', async () => {
         jest.spyOn(prisma.product,'update').mockResolvedValue(productMock6);
 
-        const { name, stock, price, unit_measure } = productMock2;
-        const res: ProductEntity = await repository.updateProduct(productMock1.id, { name, stock, price, unit_measure });
+        const { user_id, name, price } = productMock2;
+        const res: ProductEntity = await repository.updateProduct(productMock1.id, { user_id, name, price });
 
         expect(res).toBe(productMock6);
       });

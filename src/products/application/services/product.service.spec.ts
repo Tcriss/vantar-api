@@ -89,8 +89,8 @@ describe('ProductService', () => {
     it('should create a product', async () => {
       jest.spyOn(repository, 'createProduct').mockResolvedValue(productMock2);
 
-      const { name, inventory_id, stock, price, category_name, expiration, unit_measure } = productMock2;
-      const res: ProductEntity = await service.createProduct({ name, inventory_id, stock, price, category_name, expiration, unit_measure });
+      const { user_id, name, price } = productMock2;
+      const res: ProductEntity = await service.createProduct({ user_id, name, price });
 
       expect(res).toBe(res);
     });
@@ -101,8 +101,8 @@ describe('ProductService', () => {
       jest.spyOn(repository, 'findOneProduct').mockResolvedValue(productMock6);
       jest.spyOn(repository,'updateProduct').mockResolvedValue(productMock6);
 
-      const { name, stock, price, unit_measure } = productMock2;
-      const res: ProductEntity = await service.updateProduct(productMock1.id, { name, stock, price, unit_measure });
+      const { name, price } = productMock2;
+      const res: ProductEntity = await service.updateProduct(productMock1.id, { name, price });
 
       expect(res).toBe(productMock6);
     });
@@ -111,8 +111,8 @@ describe('ProductService', () => {
       jest.spyOn(repository, 'findOneProduct').mockResolvedValue(null);
       jest.spyOn(repository, 'updateProduct').mockResolvedValue(null);
 
-      const { name, stock, price, unit_measure } = productMock2;
-      const res: ProductEntity = await service.updateProduct('2323', { name, stock, price, unit_measure });
+      const { name, price } = productMock2;
+      const res: ProductEntity = await service.updateProduct('2323', { name, price });
 
       expect(res).toBe(null)
     });

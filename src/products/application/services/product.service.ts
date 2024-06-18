@@ -11,21 +11,16 @@ export class ProductService {
 
     constructor(private repository: ProductRepository) { }
 
-    public async findAllProducts(page: string, inventoryId?: string, query?: SearchTerms, selected?: string): Promise<Partial<ProductEntity>[]> {
+    public async findAllProducts(page: string, inventoryId?: string, query?: string, selected?: string): Promise<Partial<ProductEntity>[]> {
         const pagination: Pagination = {
             skip: +page.split(',')[0],
             take: +page.split(',')[1]
         };
         const fields: SelectedFields = selected ? {
             id: true,
-            inventory_id: selected.includes('inventory_id') ? true : false,
+            user_id: false,
             name: selected.includes('name') ? true : false,
-            stock: selected.includes('stock') ? true : false,
-            price: selected.includes('price') ? true : false,
-            unit_measure: selected.includes('unit_measure') ? true : false,
-            category_name: selected.includes('category_name') ? true : false,
-            created_at: selected.includes('created_at') ? true : false,
-            expiration: selected.includes('expiration') ? true : false,
+            price: selected.includes('price') ? true : false
         } : null;
 
         return this.repository.findAllProducts(pagination, inventoryId, fields, query);
@@ -34,14 +29,9 @@ export class ProductService {
     public async findOneProduct(id: string, selected?: string): Promise<Partial<ProductEntity>> {
         const fields: SelectedFields = selected ? {
             id: true,
-            inventory_id: selected.includes('inventory_id') ? true : false,
+            user_id: false,
             name: selected.includes('name') ? true : false,
-            stock: selected.includes('stock') ? true : false,
-            price: selected.includes('price') ? true : false,
-            unit_measure: selected.includes('unit_measure') ? true : false,
-            category_name: selected.includes('category_name') ? true : false,
-            created_at: selected.includes('created_at') ? true : false,
-            expiration: selected.includes('expiration') ? true : false,
+            price: selected.includes('price') ? true : false
         } : null;
 
         const product: Partial<ProductEntity> = await this.repository.findOneProduct(id, fields);

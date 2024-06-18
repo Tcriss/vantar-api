@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsNumber, IsOptional, IsString, Max } from "class-validator";
+import { IsNumber, IsOptional, IsString } from "class-validator";
 
 export class UpdateProductDto {
     @ApiProperty({ example: 'Suavizante' })
@@ -7,28 +7,8 @@ export class UpdateProductDto {
     @IsOptional()
     name?: string;
 
-    @ApiProperty({ example: 3 })
-    @IsNumber()
-    @IsOptional()
-    stock?: number;
-
     @ApiProperty({ example: 75.00 })
     @IsNumber()
     @IsOptional()
     price?: number;
-
-    @ApiProperty({ example: '1 litro' })
-    @IsString()
-    @IsOptional()
-    unit_measure?: string;
-
-    @ApiProperty({ example: 'Limpieza' })
-    @IsString()
-    @IsOptional()
-    category_name?: string;
-
-    @ApiProperty({ format: 'date' })
-    @IsDate()
-    @IsOptional()
-    expiration?: Date;
 }

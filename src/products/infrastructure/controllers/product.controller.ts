@@ -18,7 +18,7 @@ export class ProductController {
     @ApiResponse({ status: 200, type: ProductEntity, isArray: true })
     @ApiResponse({ status: 400, description: 'page param missing' })
     @ApiQuery({ name: 'page', required: true, example: '0, 10' })
-    //@ApiQuery({ name: 'q', required: false, description: 'search param to filter results' })
+    @ApiQuery({ name: 'q', required: false, description: 'search param to filter results' })
     @ApiQuery({ name: 'selected', required: false, description: 'fields you want to select from response' })
     @Get('all/:inventory_id')
     public async findAll(@Param('inventory_id') inventory_id: string, @Query() queries: ProductQueries ) {
