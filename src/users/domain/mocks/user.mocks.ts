@@ -55,3 +55,9 @@ export const usersMock4: UserEntity = {
   password: '2b$12$QmS1K/X7I5H7/CB5V7P9u.eRtPfX6s6JFF9CJYy3FZ5QABw0cN3mK',
   created_at: new Date('2024-06-05T10:00:00Z'),
 };
+
+export const partialUserMock1: Partial<UserEntity> = {
+  id: 'a4b1c2d3-4567-890a-bcde-fghij1234567',
+  name: 'Alice Smith',
+  role: Role.CUSTOMER,
+};

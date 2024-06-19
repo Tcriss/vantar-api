@@ -5,6 +5,7 @@ import { UserEntity } from "../../domain/entities/user.entity";
 import { SelectedFields } from "../../domain/types/selected-fields.type";
 import { Pagination } from "../../../common/domain/types";
 import { UserRepositoryI } from "../../domain/interfaces";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class UserRepository implements UserRepositoryI {
@@ -18,7 +19,7 @@ export class UserRepository implements UserRepositoryI {
             select: fields,
             take: page.take,
             skip: page.skip
-        }).catch();
+        });
     }
 
     public async findOneUser(params: { id?: string, email?: string }): Promise<UserEntity> {
