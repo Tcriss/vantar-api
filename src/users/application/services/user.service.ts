@@ -31,7 +31,7 @@ export class UserService {
             created_at: selected.includes('created_at')
         } : null;
 
-        if (role === 'CUSTOMER') return null;
+        if (role === Role.CUSTOMER) return null;
         
         const users: Partial<UserEntity>[] = await this.repository.findAllUsers(pagination, fields, query);
 
