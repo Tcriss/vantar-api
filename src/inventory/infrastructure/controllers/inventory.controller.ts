@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { InventoryService } from '../../application/services/inventory.service';
 import { InventoryEntity } from '../../domain/entities/inventory.entity';
@@ -7,6 +7,7 @@ import { CreateInventoryDto, UpdateInventoryDto } from '../dtos';
 import { InventoyResponse } from '../../domain/types';
 import { InventoryQueries } from '../../domain/types/inventory-queries.type';
 import { ReqUser } from '../../../common/domain/types';
+import { ApiCreateInventory, ApiDeleteInventory, ApiGetInventories, ApiGetInventory, ApiUpdateInventory } from 'src/inventory/application/decorators/open-api.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Inventories')
@@ -15,12 +16,7 @@ export class InventoryController {
 
     constructor(private service: InventoryService) { }
 
-    @ApiOperation({ summary: "Get all customer's inventories" })
-    @ApiResponse({ status: 200, type: InventoryEntity, isArray: true })
-    @ApiResponse({ status: 400, description: 'Page param missing' })
-    @ApiQuery({ name: 'page', required: true })
-    @ApiQuery({ name: 'fields', required: false, description: 'Fields you want to fetch in your response' })
-    @ApiQuery({ name: 'q', required: false, description: 'Query earch term' })
+    @ApiGetInventories()
     @Get()
     public async findAll(@Req() req: ReqUser, @Query() queries: InventoryQueries): Promise<Partial<InventoryEntity>[]> {
         if (!queries.page || !queries) throw new HttpException('page query param is missing in url', HttpStatus.BAD_REQUEST);
@@ -28,11 +24,7 @@ export class InventoryController {
         return this.service.findAllInventories(req.user.id, queries.page, queries.fields, queries.q);
     }
 
-    @ApiOperation({ summary: "Get a inventory by id" })
-    @ApiResponse({ status: 200, type: InventoryEntity })
-    @ApiResponse({ status: 400, description: 'Invalid id' })
-    @ApiResponse({ status: 404, description: 'Inventory not found' })
-    @ApiQuery({ name: 'fields', required: false, description: 'Fields you want to fetch in your response' })
+    @ApiGetInventory()
     @Get(':id')
     public async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Query('fields') fields?: string): Promise<Partial<InventoryEntity>> {
         const res: Partial<InventoryEntity> = await this.service.findOneInventory(id, fields);
@@ -42,9 +34,7 @@ export class InventoryController {
         return res;
     }
 
-    @ApiOperation({ summary: 'Create a inventory' })
-    @ApiResponse({ status: 201, description: 'Inventory created succesfully' })
-    @ApiResponse({ status: 400, description: 'Validations error' })
+    @ApiCreateInventory()
     @Post()
     public async create(@Body() newInventory: CreateInventoryDto): Promise<InventoyResponse> {
         const res: InventoryEntity = await this.service.createInventory(newInventory);
@@ -57,10 +47,7 @@ export class InventoryController {
         };
     }
 
-    @ApiOperation({ summary: 'Update inventory' })
-    @ApiResponse({ status: 200, description: 'Inventory updated' })
-    @ApiResponse({ status: 400, description: 'Validations error' })
-    @ApiResponse({ status: 404, description: 'Inventory not found' })
+    @ApiUpdateInventory()
     @Patch(':id')
     public async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() inventory: UpdateInventoryDto): Promise<InventoyResponse> {
         const res: InventoryEntity = await this.service.updateInventory(id, inventory);
@@ -71,10 +58,7 @@ export class InventoryController {
         };
     }
 
-    @ApiOperation({ summary: 'Delete inventory' })
-    @ApiResponse({ status: 200, description: 'Inventory deleted' })
-    @ApiResponse({ status: 400, description: 'Invalid id' })
-    @ApiResponse({ status: 404, description: 'Inventory not found' })
+    @ApiDeleteInventory()
     @Delete(':id')
     public async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<InventoyResponse> {
         const res: InventoryEntity = await this.service.deleteInventory(id);

@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { ProductService } from '../../application/services/product.service';
 import { ProductEntity } from '../../domain/entities/product.entity';
@@ -7,6 +7,7 @@ import { CreateProductDto, UpdateProductDto } from '../dtos';
 import { ProductResponse } from '../../domain/types';
 import { ProductQueries } from '../../domain/types/product-queries.type';
 import { ReqUser } from '../../../common/domain/types';
+import { ApiCreateProduct, ApiDeleteProduct, ApiGetProduct, ApiGetProducts, ApiUpdateProduct } from '../../application/decotators/open-api.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Products')
@@ -15,12 +16,7 @@ export class ProductController {
 
     constructor(private service: ProductService) { }
 
-    @ApiOperation({ summary: 'Get all products' })
-    @ApiResponse({ status: 200, type: ProductEntity, isArray: true })
-    @ApiResponse({ status: 400, description: 'page param missing' })
-    @ApiQuery({ name: 'page', required: true, example: '0, 10' })
-    @ApiQuery({ name: 'q', required: false, description: 'search param to filter results' })
-    @ApiQuery({ name: 'selected', required: false, description: 'fields you want to select from response' })
+    @ApiGetProducts()
     @Get()
     public async findAll(@Req() req: ReqUser, @Query() queries: ProductQueries ) {
         if (!queries.page) throw new HttpException('page query param is missing', HttpStatus.BAD_REQUEST);
@@ -28,10 +24,7 @@ export class ProductController {
         return this.service.findAllProducts(queries.page, req.user.id, queries.q, queries.selected);
     }
 
-    @ApiOperation({ summary: 'Get one product' })
-    @ApiResponse({ status: 200, type: ProductEntity })
-    @ApiResponse({ status: 400, description: 'Invalid id' })
-    @ApiResponse({ status: 404, description: 'Product not found' })
+    @ApiGetProduct()    
     @Get(':id')
     public async findOne(@Param('id', ParseUUIDPipe) id: string, @Query('fields') selected?: string): Promise<Partial<ProductEntity>> {
         const product: Partial<ProductEntity> = await this.service.findOneProduct(id, selected);
@@ -41,10 +34,7 @@ export class ProductController {
         return product;
     }
 
-    @ApiOperation({ summary: 'Create product' })
-    @ApiResponse({ status: 200, description: 'Product created succesfully', type: ProductEntity, })
-    @ApiResponse({ status: 400, description: 'Validations error' })
-    @ApiResponse({ status: 404, description: 'Product not found' })
+    @ApiCreateProduct()
     @Post()
     public async create(@Body() product: CreateProductDto): Promise<ProductResponse> {
         const res: ProductEntity = await this.service.createProduct(product);
@@ -56,10 +46,7 @@ export class ProductController {
 
     }
 
-    @ApiOperation({ summary: 'Update product' })
-    @ApiResponse({ status: 200, description: 'Product updated succesfully', type: ProductEntity })
-    @ApiResponse({ status: 400, description: 'Validations error' })
-    @ApiResponse({ status: 404, description: 'Product not found' })
+    @ApiUpdateProduct()
     @Patch(':id')
     public async update(@Param('id', ParseUUIDPipe) id: string, @Body() product: UpdateProductDto): Promise<ProductResponse> {
         const res: ProductEntity = await this.service.updateProduct(id, product);
@@ -72,10 +59,7 @@ export class ProductController {
         };
     }
 
-    @ApiOperation({ summary: 'Delete product' })
-    @ApiResponse({ status: 200, description: 'Product deleted succesfully' })
-    @ApiResponse({ status: 400, description: 'Id invalid' })
-    @ApiResponse({ status: 404, description: 'Product not found' })
+    @ApiDeleteProduct()
     @Delete(':id')
     public async delete(@Param('id', ParseUUIDPipe) id: string): Promise<ProductResponse> {
         const res: ProductEntity = await this.service.deleteProduct(id);

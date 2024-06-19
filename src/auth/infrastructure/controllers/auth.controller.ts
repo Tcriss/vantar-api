@@ -1,26 +1,22 @@
 import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
 import { LoginUserDto } from '../dto';
-import { AuthService } from '../../application/services/auth.service';
 import { Token } from '../../domain/types';
-import { AuthEntity } from '../../domain/entities/auth.entity';
+import { AuthService } from '../../application/services/auth.service';
 import { PublicAccess } from '../../../common/application/decorators';
 import { AuthResponseI } from '../../domain/interfaces/auth-response.interface';
 import { RefreshTokenGuard } from '../../application/guards/refresh-token/refresh-token.guard';
-import { ReqUser } from 'src/common/domain/types';
+import { ReqUser } from '../../../common/domain/types';
+import { ApiLogin, ApiLogout, ApiRefresh } from '../../application/decorators/open-api.decorator';
 
 @ApiTags('Authentication')
-@PublicAccess()
 @Controller('auth')
 export class AuthController {
 
     constructor(private service: AuthService) { }
 
-    @ApiOperation({ summary: 'Sing in a user' })
-    @ApiResponse({ status: 200, type: AuthEntity })
-    @ApiResponse({ status: 404, description: 'User not found' })
-    @ApiResponse({ status: 406, description: 'Wrong credentials' })
+    @ApiLogin()
     @PublicAccess()
     @HttpCode(200)
     @Post('/login')
@@ -37,11 +33,7 @@ export class AuthController {
         };
     }
 
-    @ApiBearerAuth()
-    @ApiOperation({ summary: 'Refresh user token' })
-    @ApiResponse({ status: 200, type: AuthEntity })
-    @ApiResponse({ status: 401, description: 'Wrong credentials' })
-    @ApiResponse({ status: 404, description: 'User not found' })
+    @ApiRefresh()
     @HttpCode(200)
     @UseGuards(RefreshTokenGuard)
     @Post('/refresh')
@@ -54,10 +46,7 @@ export class AuthController {
         return res;
     }
 
-    @ApiOperation({ summary: 'Log out a user' })
-    @ApiResponse({ status: 200, description: 'User logOut successfully' })
-    @ApiResponse({ status: 404, description: 'User not found' })
-    @ApiResponse({ status: 406, description: 'Wrong credentials' })
+    @ApiLogout()
     @UseGuards(RefreshTokenGuard)
     @Get('/logout')
     public async logOut(@Req() req: Request): Promise<string> {

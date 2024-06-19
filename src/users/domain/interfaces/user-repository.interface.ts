@@ -1,4 +1,4 @@
-import { Pagination } from "src/common/domain/types";
+import { Pagination } from "../../../common/domain/types";
 import { SelectedFields } from "../types/selected-fields.type";
 import { UserEntity } from "../entities/user.entity";
 
