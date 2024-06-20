@@ -1,7 +1,8 @@
 import { applyDecorators } from "@nestjs/common";
-import { ApiOperation, ApiQuery, ApiResponse } from "@nestjs/swagger";
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from "@nestjs/swagger";
 
 import { ProductEntity } from "../../domain/entities/product.entity";
+import { CreateProductDto } from "src/products/infrastructure/dtos";
 
 export const ApiGetProducts = () => applyDecorators(
     ApiOperation({ summary: 'Get all products' }),
@@ -19,8 +20,16 @@ export const ApiGetProduct = () => applyDecorators(
     ApiResponse({ status: 404, description: 'Product not found' })
 );
 
+export const ApiCreateProducts = () => applyDecorators(
+    ApiOperation({ summary: 'Create many products' }),
+    ApiBody({ type: CreateProductDto, isArray: true }),
+    ApiResponse({ status: 200, description: 'Product created succesfully', type: ProductEntity, isArray: true }),
+    ApiResponse({ status: 400, description: 'Validations error' }),
+    ApiResponse({ status: 404, description: 'Product not found' })
+);
+
 export const ApiCreateProduct = () => applyDecorators(
-    ApiOperation({ summary: 'Create product' }),
+    ApiOperation({ summary: 'Create one product' }),
     ApiResponse({ status: 200, description: 'Product created succesfully', type: ProductEntity, }),
     ApiResponse({ status: 400, description: 'Validations error' }),
     ApiResponse({ status: 404, description: 'Product not found' })

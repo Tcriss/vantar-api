@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 
 import { SelectedFields } from '../../domain/types';
 import { Pagination } from "../../../common/domain/types/pagination.type";
@@ -42,7 +43,15 @@ export class ProductService implements ProductServiceI {
         return product;
     }
 
-    public async createProduct(product: Partial<ProductEntity>): Promise<ProductEntity> {
+    public async createManyProducts(userId: string, products: Partial<ProductEntity>[]): Promise<number> {
+        products.map(product => product.user_id = userId);
+        const res: Prisma.BatchPayload = await this.repository.createManyProducts(products);
+
+        return res.count
+    }
+
+    public async createOneProduct(userId: string, product: Partial<ProductEntity>): Promise<ProductEntity> {
+        product.user_id = userId;
         return this.repository.createOneProduct(product);
     }
 

@@ -10,7 +10,7 @@ export class UserRepository implements UserRepositoryI {
 
     constructor(private prisma: PrismaProvider) { }
 
-    public async findAllUsers(page: Pagination, query?: string): Promise<Partial<UserEntity>[]> {
+    public async findAllUsers(page: Pagination, query?: string): Promise<UserEntity[]> {
         return this.prisma.user.findMany({
             where: { name: { contains: query } },
             orderBy: { name: 'asc' },

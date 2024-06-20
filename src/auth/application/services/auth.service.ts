@@ -82,7 +82,5 @@ export class AuthService {
             where: { id: userId },
             data: { refresh_token: hashedToken }
         });
-
-        console.log(res)
     }
 }

@@ -17,7 +17,7 @@ async function bootstrap() {
   const { httpAdapter } = app.get(HttpAdapterHost);
   const reflector = app.get(Reflector);
 
-  app.useLogger(app.get(Logger));
+  //app.useLogger(app.get(Logger));
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));

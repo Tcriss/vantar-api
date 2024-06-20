@@ -1,12 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsString, IsUUID } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateProductDto {
-    @ApiProperty({ format: 'uuid' })
-    @IsUUID()
-    @IsNotEmpty()
-    user_id: string;
-
     @ApiProperty({ example: 'Suavizante' })
     @IsString()
     @IsNotEmpty()
