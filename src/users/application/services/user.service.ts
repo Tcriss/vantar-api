@@ -17,7 +17,7 @@ export class UserService {
         private config: ConfigService
     ) {}
 
-    public async findAllUsers(role: Role, page: string, selected?: string, query?: string) {
+    public async findAllUsers(role: Role, page: string, selected?: string, query?: string): Promise<Partial<UserEntity>[]> {
         const pagination: Pagination = {
             skip: +page.split(',')[0],
             take: +page.split(',')[1]
@@ -33,9 +33,7 @@ export class UserService {
 
         if (role === Role.CUSTOMER) return null;
         
-        const users: Partial<UserEntity>[] = await this.repository.findAllUsers(pagination, fields, query);
-
-        return users.map(user => (new UserEntity(user)));
+        return this.repository.findAllUsers(pagination, fields, query);
     }
 
     public async findOneUser(id?: string, email?: string): Promise<UserEntity> {
@@ -57,8 +55,11 @@ export class UserService {
     }
 
     public async updateUser(id: string, user: Partial<UserEntity>, role: Role): Promise<UserEntity> {
+        const isExist: boolean = await this.findOneUser(id) ? true : false;
+
+        if (!isExist) return null;
         if (user.password) {
-            if (role === 'CUSTOMER') {
+            if (role === Role.CUSTOMER) {
                 const originalUser: UserEntity = await this.findOneUser(id);
                 const match: boolean = await bcrypt.compare(user.password, originalUser.password);
 
@@ -70,7 +71,7 @@ export class UserService {
 
         const res: UserEntity = await this.repository.updateUser(id, user);
 
-        return res ? new UserEntity(user) : undefined;
+        return res ? new UserEntity(res) : undefined;
     }
 
     public async deleteUser(id: string): Promise<string> {

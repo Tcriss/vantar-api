@@ -16,7 +16,11 @@ export class UserRepository implements UserRepositoryI {
         return this.prisma.user.findMany({
             where: { name: { contains: query } },
             orderBy: { name: 'asc' },
-            select: fields,
+            select: {
+                ...fields,
+                password: false,
+                refresh_token: false
+            },
             take: page.take,
             skip: page.skip
         });

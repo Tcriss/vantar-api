@@ -61,10 +61,12 @@ export const partialUserMock1: Partial<UserEntity> = {
   id: 'a4b1c2d3-4567-890a-bcde-fghij1234567',
   name: 'Alice Smith',
   role: Role.CUSTOMER,
+  active: true
 };
 
 export const partialUserMock2: Partial<UserEntity> = {
   id: 'b5c2d3e4-5678-901a-bcde-fghij2345678',
   name: 'Bob Johnson',
   role: Role.CUSTOMER,
+  active: true
 };

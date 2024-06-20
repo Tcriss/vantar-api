@@ -8,14 +8,14 @@ export const prismaMock = {
     }
 };
 export const mockUserService = {
-    findAllUser: jest.fn(),
+    findAllUsers: jest.fn(),
     findOneUser: jest.fn(),
     createUser: jest.fn(),
     updateUser: jest.fn(),
     deleteUser: jest.fn(),
 };
 export const mockUserRepository = {
-    findAllUser: jest.fn(),
+    findAllUsers: jest.fn(),
     findOneUser: jest.fn(),
     createUser: jest.fn(),
     updateUser: jest.fn(),
