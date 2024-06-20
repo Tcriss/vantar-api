@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { SelectedFields } from '../../domain/types';
 import { Pagination } from "../../../common/domain/types/pagination.type";
 import { ProductEntity } from '../../domain/entities/product.entity';
-import { ProductRepositoryI } from 'src/products/domain/interfaces/product-repository.interface';
-import { Repository } from '../decotators/repository.decorator';
+import { ProductRepositoryI } from '../../domain/interfaces/product-repository.interface';
+import { Repository } from '../decotators';
 
 @Injectable()
 export class ProductService {

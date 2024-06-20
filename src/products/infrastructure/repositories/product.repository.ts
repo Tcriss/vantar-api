@@ -5,7 +5,7 @@ import { PrismaProvider } from "../../../prisma/infrastructure/providers/prisma.
 import { SelectedFields } from "../../domain/types";
 import { ProductEntity } from "../../domain/entities/product.entity";
 import { Pagination } from "../../../common/domain/types";
-import { ProductRepositoryI } from "../../domain/interfaces/product-repository.interface";
+import { ProductRepositoryI } from "../../domain/interfaces";
 
 @Injectable()
 export class ProductRepository implements ProductRepositoryI {

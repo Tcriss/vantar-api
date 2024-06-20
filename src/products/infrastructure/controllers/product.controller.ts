@@ -7,7 +7,7 @@ import { CreateProductDto, UpdateProductDto } from '../dtos';
 import { ProductResponse } from '../../domain/types';
 import { ProductQueries } from '../../domain/types/product-queries.type';
 import { ReqUser } from '../../../common/domain/types';
-import { ApiCreateProduct, ApiDeleteProduct, ApiGetProduct, ApiGetProducts, ApiUpdateProduct } from '../../application/decotators/open-api.decorator';
+import { ApiCreateProduct, ApiDeleteProduct, ApiGetProduct, ApiGetProducts, ApiUpdateProduct } from '../../application/decotators';
 
 @ApiBearerAuth()
 @ApiTags('Products')
