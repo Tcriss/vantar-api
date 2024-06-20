@@ -58,9 +58,9 @@ export class AuthService {
     }
 
     private async getTokens(user: Partial<UserEntity>): Promise<Token> {
-        const { id, name, email } = user;
+        const { id, name, email, role } = user;
         const [ accessToken, refreshToken ] = await Promise.all([
-            this.jwt.signAsync({ id, name, email }, {
+            this.jwt.signAsync({ id, name, email, role }, {
                 secret: this.config.get<string>('SECRET'), 
                 expiresIn: '15m'
             }),

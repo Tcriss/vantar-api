@@ -45,16 +45,6 @@ describe('User Repository', () => {
     
             expect(res).toEqual([ userMock1 ]);
         });
-
-        it('shuld fetch some fields', async () => {
-            jest.spyOn(prisma.user, 'findMany').mockResolvedValue([ userMock, userMock1 ]);
-    
-            const q: string = 'al'
-            const res: Partial<UserEntity>[] = await repository.findAllUsers({ take: 1, skip: 1 }, null, q);
-    
-            expect(res).toEqual([ userMock, userMock1 ]);
-            expect(res[0].name.toLowerCase()).toContain(q);
-        });
     });
 
     describe('Find One User', () => {

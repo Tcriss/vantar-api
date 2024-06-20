@@ -15,7 +15,7 @@ export class UserEntity implements User {
     email: string;
 
     @ApiProperty({ enum: Role })
-    role: Role;
+    role: string;
 
     @ApiProperty({ example: true })
     active: boolean;

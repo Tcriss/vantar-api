@@ -4,8 +4,7 @@ import { randomUUID } from 'crypto';
 
 import { UserService } from './user.service';
 import { mockUserRepository } from '../../domain/mocks/user-providers.mock';
-import { UserRepository } from '../../infrastructure/repositories/user.repository';
-import { partialUserMock1, partialUserMock2, userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
+import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
 import { PrismaModule } from '../../../prisma/prisma.module';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { UserRepositoryI, UserRepositoryToken } from 'src/users/domain/interfaces';
@@ -49,19 +48,11 @@ describe('UserService', () => {
       expect(res).toBeNull();
     });
 
-    it('shoudl fetch some fields with selected', async () => {
-      jest.spyOn(repository, 'findAllUsers').mockResolvedValue([ partialUserMock1, partialUserMock2 ]);
-
-      const res: Partial<UserEntity>[] = await service.findAllUsers(userMock1.role, '0,10', 'name');
-
-      expect(res).toStrictEqual([ partialUserMock1, partialUserMock2 ]);
-    });
-
     it('should return users that match query search', async () => {
       jest.spyOn(repository, 'findAllUsers').mockResolvedValue([ userMock, userMock1 ]);
 
       const q: string = 'A'
-      const res: Partial<UserEntity>[] = await service.findAllUsers(userMock1.role, '0,10', null, q);
+      const res: Partial<UserEntity>[] = await service.findAllUsers(userMock1.role, '0,10', q);
 
       expect(res).toEqual([ userMock, userMock1 ]);
       expect(res[0].name.includes(q) && res[1].name.includes(q)).toBeTruthy();

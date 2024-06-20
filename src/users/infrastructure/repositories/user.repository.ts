@@ -2,25 +2,18 @@ import { Injectable } from "@nestjs/common";
 
 import { PrismaProvider } from "../../../prisma/infrastructure/providers/prisma.provider";
 import { UserEntity } from "../../domain/entities/user.entity";
-import { SelectedFields } from "../../domain/types/selected-fields.type";
 import { Pagination } from "../../../common/domain/types";
 import { UserRepositoryI } from "../../domain/interfaces";
-import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class UserRepository implements UserRepositoryI {
 
     constructor(private prisma: PrismaProvider) { }
 
-    public async findAllUsers(page: Pagination, fields?: SelectedFields, query?: string): Promise<Partial<UserEntity>[]> {
+    public async findAllUsers(page: Pagination, query?: string): Promise<Partial<UserEntity>[]> {
         return this.prisma.user.findMany({
             where: { name: { contains: query } },
             orderBy: { name: 'asc' },
-            select: {
-                ...fields,
-                password: false,
-                refresh_token: false
-            },
             take: page.take,
             skip: page.skip
         });

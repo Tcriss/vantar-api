@@ -5,7 +5,6 @@ import * as bcrypt from 'bcrypt';
 import { UserRepositoryI } from 'src/users/domain/interfaces';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { Pagination } from '../../../common/domain/types';
-import { SelectedFields } from '../../domain/types/selected-fields.type';
 import { Repository } from '../decorators/repository.decorator';
 import { Role } from '../enums';
 
@@ -17,23 +16,15 @@ export class UserService {
         private config: ConfigService
     ) {}
 
-    public async findAllUsers(role: Role, page: string, selected?: string, query?: string): Promise<Partial<UserEntity>[]> {
+    public async findAllUsers(role: Role, page: string, query?: string): Promise<Partial<UserEntity>[]> {
+        if (role === Role.CUSTOMER) return null;
+
         const pagination: Pagination = {
             skip: +page.split(',')[0],
             take: +page.split(',')[1]
         };
-        const fields: SelectedFields = selected ? {
-            id: true,
-            active: true,
-            role: true,
-            name: selected.includes('name'),
-            email: selected.includes('email'),
-            created_at: selected.includes('created_at')
-        } : null;
-
-        if (role === Role.CUSTOMER) return null;
         
-        return this.repository.findAllUsers(pagination, fields, query);
+        return this.repository.findAllUsers(pagination, query);
     }
 
     public async findOneUser(id?: string, email?: string): Promise<UserEntity> {

@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client"
+import { Role } from "../../../users/application/enums"
 
 export type Payload = {
     id: string,
