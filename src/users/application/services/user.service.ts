@@ -16,7 +16,7 @@ export class UserService {
         private config: ConfigService
     ) {}
 
-    public async findAllUsers(role: Role, page: string, query?: string): Promise<Partial<UserEntity>[]> {
+    public async findAllUsers(role: Role, page: string, query?: string): Promise<UserEntity[]> {
         if (role === Role.CUSTOMER) return null;
 
         const pagination: Pagination = {
@@ -24,7 +24,9 @@ export class UserService {
             take: +page.split(',')[1]
         };
         
-        return this.repository.findAllUsers(pagination, query);
+        const users: UserEntity[] = await this.repository.findAllUsers(pagination, query);
+
+        return users.map(user => (new UserEntity(user)));
     }
 
     public async findOneUser(id?: string, email?: string): Promise<UserEntity> {

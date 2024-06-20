@@ -19,10 +19,10 @@ export class UserController {
 
     @ApiGetUsers()
     @Get()
-    public async findAll(@Req() req: ReqUser, @Query() queries?: UserQueries): Promise<Partial<UserEntity>[]> {
+    public async findAll(@Req() req: ReqUser, @Query() queries?: UserQueries): Promise<UserEntity[]> {
         if (!req.user) throw new HttpException('credentials missing', HttpStatus.BAD_REQUEST);
 
-        const users: Partial<UserEntity>[] = await this.service.findAllUsers(req.user.role, queries.page, queries.q);
+        const users: UserEntity[] = await this.service.findAllUsers(req.user.role, queries.page, queries.q);
 
         if (users === null) throw new HttpException('Without enough permissions', HttpStatus.FORBIDDEN);
 
@@ -32,7 +32,7 @@ export class UserController {
     @ApiGetUser()
     @Get(':id')
     public async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser): Promise<UserEntity> {
-        if (req.user.id !== id && req.user.role === Role.CUSTOMER) throw new HttpException('Wrong credentials', HttpStatus.FORBIDDEN);
+        if (req.user.id !== id && req.user.role === Role.CUSTOMER) throw new HttpException('Without enough permissions', HttpStatus.FORBIDDEN);
 
         const user: UserEntity = await this.service.findOneUser(id);
 
@@ -60,7 +60,7 @@ export class UserController {
     @ApiUpdateUser()
     @Patch(':id')
     public async update(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser, @Body() body: UpdateUserDto): Promise<UserEntity> {
-        if (req.user.id !== id && req.user.role === Role.CUSTOMER) throw new HttpException('Wrong credentials', HttpStatus.FORBIDDEN);
+        if (req.user.id !== id && req.user.role === Role.CUSTOMER) throw new HttpException('Without enough permissions', HttpStatus.FORBIDDEN);
 
         const user: UserEntity = await this.service.updateUser(id, body, req.user.role);
 
@@ -74,7 +74,7 @@ export class UserController {
     @ApiDeleteUser()
     @Delete(':id')
     public async delete(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser): Promise<string> {
-        if (req.user.id !== id && req.user.role === Role.CUSTOMER) throw new HttpException('Wrong credentials', HttpStatus.FORBIDDEN);
+        if (req.user.id !== id && req.user.role === Role.CUSTOMER) throw new HttpException('Without enough permissions', HttpStatus.FORBIDDEN);
 
         const res: string = await this.service.deleteUser(id);
 
