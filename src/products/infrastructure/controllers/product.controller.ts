@@ -3,22 +3,23 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { ProductService } from '../../application/services/product.service';
 import { ProductEntity } from '../../domain/entities/product.entity';
-import { CreateProductDto, UpdateProductDto } from '../dtos';
 import { ProductResponse } from '../../domain/types';
 import { ProductQueries } from '../../domain/types/product-queries.type';
 import { ReqUser } from '../../../common/domain/types';
+import { ProductControllerI } from '../../domain/interfaces';
 import { ApiCreateProduct, ApiDeleteProduct, ApiGetProduct, ApiGetProducts, ApiUpdateProduct } from '../../application/decotators';
+import { CreateProductDto, UpdateProductDto } from '../dtos';
 
 @ApiBearerAuth()
 @ApiTags('Products')
 @Controller('products')
-export class ProductController {
+export class ProductController implements ProductControllerI {
 
     constructor(private service: ProductService) { }
 
     @ApiGetProducts()
     @Get()
-    public async findAll(@Req() req: ReqUser, @Query() queries: ProductQueries ) {
+    public async findAll(@Req() req: ReqUser, @Query() queries: ProductQueries ): Promise<Partial<ProductEntity>[]> {
         if (!queries.page) throw new HttpException('page query param is missing', HttpStatus.BAD_REQUEST);
 
         return this.service.findAllProducts(queries.page, req.user.id, queries.q, queries.selected);

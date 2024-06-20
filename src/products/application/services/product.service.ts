@@ -4,10 +4,11 @@ import { SelectedFields } from '../../domain/types';
 import { Pagination } from "../../../common/domain/types/pagination.type";
 import { ProductEntity } from '../../domain/entities/product.entity';
 import { ProductRepositoryI } from '../../domain/interfaces/product-repository.interface';
+import { ProductServiceI } from '../../domain/interfaces';
 import { Repository } from '../decotators';
 
 @Injectable()
-export class ProductService {
+export class ProductService implements ProductServiceI {
 
     constructor(@Repository() private repository: ProductRepositoryI) { }
 
