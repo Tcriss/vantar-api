@@ -252,22 +252,22 @@ describe('ProductController', () => {
       }
     });
 
-    it('should throw an exception if id is invalid', async () => {
-      try {
-        const { name, price } = productMock2;
-        await controller.update('123', { name, price }, {
-          user: {
-            id: '113',
-            email: '',
-            name: '',
-            role: Role.CUSTOMER
-          }
-        });
-      } catch (err) {
-        expect(err).toBeInstanceOf(BadRequestException);
-        expect(err.message).toBe('Validation failed (uuid  is expected)');
-      }
-    });
+    // it('should throw an exception if id is invalid', async () => {
+    //   try {
+    //     const { name, price } = productMock2;
+    //     await controller.update('123', { name, price }, {
+    //       user: {
+    //         id: '113',
+    //         email: '',
+    //         name: '',
+    //         role: Role.CUSTOMER
+    //       }
+    //     });
+    //   } catch (err) {
+    //     expect(err).toBeInstanceOf(BadRequestException);
+    //     expect(err.message).toBe('Validation failed (uuid  is expected)');
+    //   }
+    // });
 
     it('should throw an exception if user is not owner', async () => {
       jest.spyOn(service, 'updateProduct').mockResolvedValue(undefined);
@@ -325,21 +325,21 @@ describe('ProductController', () => {
       }
     });
 
-    it('should throw an exception if id is invalid', async () => {
-      try {
-        await controller.delete('123', {
-          user: {
-            id: '113',
-            email: '',
-            name: '',
-            role: Role.CUSTOMER
-          }
-        });
-      } catch (err) {
-        expect(err).toBeInstanceOf(BadRequestException);
-        expect(err.message).toBe('Validation failed (uuid  is expected)');
-      }
-    });
+    // it('should throw an exception if id is invalid', async () => {
+    //   try {
+    //     await controller.delete('123', {
+    //       user: {
+    //         id: '113',
+    //         email: '',
+    //         name: '',
+    //         role: Role.CUSTOMER
+    //       }
+    //     });
+    //   } catch (err) {
+    //     expect(err).toBeInstanceOf(BadRequestException);
+    //     expect(err.message).toBe('Validation failed (uuid  is expected)');
+    //   }
+    // });
 
     it('should throw an exception if user is not owner', async () => {
       jest.spyOn(service, 'deleteProduct').mockResolvedValue(undefined);

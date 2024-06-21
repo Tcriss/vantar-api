@@ -13,7 +13,7 @@ export class ProductService implements ProductServiceI {
 
     constructor(@Repository() private repository: ProductRepositoryI) { }
 
-    public async findAllProducts(page: string, userId?: string, query?: string, selected?: string): Promise<Partial<ProductEntity>[]> {
+    public async findAllProducts(page: string, userId: string, query?: string, selected?: string): Promise<Partial<ProductEntity>[]> {
         const pagination: Pagination = {
             skip: +page.split(',')[0],
             take: +page.split(',')[1]
