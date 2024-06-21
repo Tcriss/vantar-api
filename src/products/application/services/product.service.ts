@@ -13,7 +13,7 @@ export class ProductService implements ProductServiceI {
 
     constructor(@Repository() private repository: ProductRepositoryI) { }
 
-    public async findAllProducts(page: string, inventoryId?: string, query?: string, selected?: string): Promise<Partial<ProductEntity>[]> {
+    public async findAllProducts(page: string, userId?: string, query?: string, selected?: string): Promise<Partial<ProductEntity>[]> {
         const pagination: Pagination = {
             skip: +page.split(',')[0],
             take: +page.split(',')[1]
@@ -25,10 +25,10 @@ export class ProductService implements ProductServiceI {
             price: selected.includes('price') ? true : false
         } : null;
 
-        return this.repository.findAllProducts(pagination, inventoryId, fields, query);
+        return this.repository.findAllProducts(pagination, userId, fields, query);
     }
 
-    public async findOneProduct(id: string, selected?: string): Promise<Partial<ProductEntity>> {
+    public async findOneProduct(id: string, userId: string, selected?: string): Promise<Partial<ProductEntity>> {
         const fields: SelectedFields = selected ? {
             id: true,
             user_id: false,
@@ -37,8 +37,10 @@ export class ProductService implements ProductServiceI {
         } : null;
 
         const product: Partial<ProductEntity> = await this.repository.findOneProduct(id, fields);
+        const isOwner: boolean = product.user_id === userId;
 
-        if (!product) return undefined;
+        if (!isOwner) return undefined;
+        if (!product) return null;
 
         return product;
     }
@@ -55,17 +57,23 @@ export class ProductService implements ProductServiceI {
         return this.repository.createOneProduct(product);
     }
 
-    public async updateProduct(id: string, product: Partial<ProductEntity>): Promise<ProductEntity> {
-        const isExist: boolean = await this.findOneProduct(id) ? true : false;
+    public async updateProduct(id: string, product: Partial<ProductEntity>, userId: string): Promise<ProductEntity> {
+        const originalProduct: Partial<ProductEntity> = await this.findOneProduct(id, userId);
+        const isOwner: boolean = originalProduct.user_id === userId;
+        const isExist: boolean = originalProduct  ? true : false;
 
+        if (!isOwner) return undefined;
         if (!isExist) return null;
         
         return this.repository.updateProduct(id, product);
     }
 
-    public async deleteProduct(id: string): Promise<ProductEntity> {
-        const isExist: boolean = await this.findOneProduct(id) ? true : false;
+    public async deleteProduct(id: string, userId: string): Promise<ProductEntity> {
+        const product: Partial<ProductEntity> = await this.findOneProduct(id, userId);
+        const isOwner: boolean = product.user_id === userId;
+        const isExist: boolean = product  ? true : false;
 
+        if (!isOwner) return undefined;
         if (!isExist) return null;
         
         return this.repository.deleteProduct(id);

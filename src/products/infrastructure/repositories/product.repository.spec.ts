@@ -5,6 +5,7 @@ import { PrismaProvider } from "../../../prisma/infrastructure/providers/prisma.
 import { prismaMock } from "../../domain/mocks/product-providers.mock";
 import { ProductEntity } from "../../domain/entities/product.entity";
 import { productMock1, productMock2, productMock3, productMock4, productMock5, productMock6 } from "../../domain/mocks/product.mock";
+import { Prisma } from "@prisma/client";
 
 describe('Customer', () => {
     let repository: ProductRepository;
@@ -33,7 +34,8 @@ describe('Customer', () => {
       it('should fetch all products', async () => {
         jest.spyOn(prisma.product, 'findMany').mockResolvedValue([ productMock1, productMock2, productMock3 ]);
 
-        const res: Partial<ProductEntity>[] = await repository.findAllProducts({ take: 10, skip: 0 });
+        const id: string = 'b5c2d3e4-5678-901a-bcde-fghij2345678';
+        const res: Partial<ProductEntity>[] = await repository.findAllProducts({ take: 10, skip: 0 }, id);
 
         expect(res).toBeInstanceOf(Array);
         expect(res).toEqual([ productMock1, productMock2, productMock3 ]);
@@ -45,13 +47,14 @@ describe('Customer', () => {
         const id: string = '1d3e9bfc-6a2c-4a7b-8c3d-2c4e9f4b3b2a';
         const res: Partial<ProductEntity>[] = await repository.findAllProducts({ take: 10, skip: 0 }, id);
 
-        expect([ productMock1, productMock4, productMock5 ]).toBeTruthy();
+        expect(res).toEqual([ productMock1, productMock4, productMock5 ]);
       });
 
       it('should fetch what pagination indicates', async () => {
         jest.spyOn(prisma.product, 'findMany').mockResolvedValue([ productMock3 ]);
 
-        const res: Partial<ProductEntity>[] = await repository.findAllProducts({ take: 1, skip: 2 });
+        const id: string = 'b5c2d3e4-5678-901a-bcde-fghij2345678';
+        const res: Partial<ProductEntity>[] = await repository.findAllProducts({ take: 1, skip: 2 }, id);
 
         expect(res).toHaveLength(1);
         expect(res).toEqual([ productMock3 ]);
@@ -68,12 +71,35 @@ describe('Customer', () => {
       });
     });
 
-    describe('Create Product', () => {
+    describe('Create Many Products', () => {
+      it('should create many products', async () => {
+        jest.spyOn(prisma.product, 'createMany').mockResolvedValue({ count: 2 });
+
+        const res: Prisma.BatchPayload = await repository.createManyProducts([
+          {
+            id:null,
+            user_id: productMock1.user_id,
+            name: productMock1.name,
+            price: productMock1.price,
+          },
+          {
+            id:null,
+            user_id: productMock2.user_id,
+            name: productMock2.name,
+            price: productMock2.price,
+          }
+        ]);
+
+        expect(res.count).toBe(2);
+      });
+    });
+
+    describe('Create One Product', () => {
       it('should create a product', async () => {
         jest.spyOn(prisma.product,'create').mockResolvedValue(productMock1);
 
         const { user_id, name, price } = productMock1;
-        const res: ProductEntity = await repository.createProduct({ user_id, name, price });
+        const res: ProductEntity = await repository.createOneProduct({ user_id, name, price });
 
         expect(res).toBe(productMock1);
       });

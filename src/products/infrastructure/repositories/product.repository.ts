@@ -12,7 +12,7 @@ export class ProductRepository implements ProductRepositoryI {
 
     constructor(private prisma: PrismaProvider) { }
 
-    public async findAllProducts(page: Pagination, userId?: string, fields?: SelectedFields, query?: string): Promise<Partial<ProductEntity>[]> {
+    public async findAllProducts(page: Pagination, userId: string, fields?: SelectedFields, query?: string): Promise<Partial<ProductEntity>[]> {
         return this.prisma.product.findMany({
             where: {
                 user_id: userId,

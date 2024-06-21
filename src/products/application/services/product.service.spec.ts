@@ -1,28 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ProductService } from './product.service';
-import { ProductRepository } from '../../infrastructure/repositories/product.repository';
+import { ProductRepositoryI, ProductRepositoryToken } from '../../domain/interfaces';
 import { ProductEntity } from '../../domain/entities/product.entity';
 import { partialProductMock1, partialProductMock2, productMock1, productMock2, productMock3, productMock6 } from '../../domain/mocks/product.mock';
 import { mockProductRepository } from '../../domain/mocks/product-providers.mock';
 
 describe('ProductService', () => {
   let service: ProductService;
-  let repository: ProductRepository;
+  let repository: ProductRepositoryI;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProductService,
         {
-          provide: ProductRepository,
+          provide: ProductRepositoryToken,
           useValue: mockProductRepository
         }
       ],
     }).compile();
 
     service = module.get<ProductService>(ProductService);
-    repository = module.get<ProductRepository>(ProductRepository);
+    repository = module.get<ProductRepositoryI>(ProductRepositoryToken);
   });
 
   it('should be defined', () => {
@@ -63,7 +63,7 @@ describe('ProductService', () => {
     it('should find one product', async () => {
       jest.spyOn(repository, 'findOneProduct').mockResolvedValue(productMock1);
 
-      const res: Partial<ProductEntity> = await service.findOneProduct(productMock1.id);
+      const res: Partial<ProductEntity> = await service.findOneProduct(productMock1.id, productMock1.user_id);
 
       expect(res).toBe(productMock1)
     });
@@ -71,28 +71,57 @@ describe('ProductService', () => {
     it('should find one product with some fields', async () => {
       jest.spyOn(repository, 'findOneProduct').mockResolvedValue(partialProductMock1);
 
-      const res: Partial<ProductEntity> = await service.findOneProduct(productMock1.id, 'name, inventory_id');
+      const res: Partial<ProductEntity> = await service.findOneProduct(productMock1.id, productMock1.user_id, 'name, inventory_id');
 
       expect(res).toBe(partialProductMock1);
     });
 
-    it('should retunr undefined if product was not found', async () => {
+    it('should return undefined if not the owner', async () => {
       jest.spyOn(repository, 'findOneProduct').mockResolvedValue(undefined);
 
-      const res: Partial<ProductEntity> = await service.findOneProduct(productMock1.id, 'name, inventory_id');
+      const res: Partial<ProductEntity> = await service.findOneProduct(productMock1.id, productMock2.user_id, 'name, inventory_id');
 
       expect(res).toBe(undefined);
     });
+
+    it('should return null if product was not found', async () => {
+      jest.spyOn(repository, 'findOneProduct').mockResolvedValue(null);
+
+      const res: Partial<ProductEntity> = await service.findOneProduct(productMock1.id, productMock1.user_id, 'name, inventory_id');
+
+      expect(res).toBe(null);
+    });
   });
 
-  describe('Cteate Product', () => {
+  describe('Cteate Many Products', () => {
+    it('should create many products', async () => {
+      jest.spyOn(repository, 'createManyProducts').mockResolvedValue({ count: 2 });
+
+      const res: number = await service.createManyProducts(productMock1.user_id, [
+        {
+          id:null,
+          name: productMock1.name,
+          price: productMock1.price,
+        },
+        {
+          id:null,
+          name: productMock2.name,
+          price: productMock2.price,
+        }
+      ]);
+
+      expect(res).toBe(2);
+    });
+  });
+
+  describe('Cteate One Product', () => {
     it('should create a product', async () => {
-      jest.spyOn(repository, 'createProduct').mockResolvedValue(productMock2);
+      jest.spyOn(repository, 'createOneProduct').mockResolvedValue(productMock2);
 
       const { user_id, name, price } = productMock2;
-      const res: ProductEntity = await service.createProduct({ user_id, name, price });
+      const res: ProductEntity = await service.createOneProduct(user_id, { name, price });
 
-      expect(res).toBe(res);
+      expect(res).toBe(productMock2);
     });
   });
 
@@ -102,9 +131,18 @@ describe('ProductService', () => {
       jest.spyOn(repository,'updateProduct').mockResolvedValue(productMock6);
 
       const { name, price } = productMock2;
-      const res: ProductEntity = await service.updateProduct(productMock1.id, { name, price });
+      const res: ProductEntity = await service.updateProduct(productMock1.id, { name, price }, productMock1.user_id);
 
       expect(res).toBe(productMock6);
+    });
+
+    it('should return undefined if not the owner', async () => {
+      jest.spyOn(repository, 'findOneProduct').mockResolvedValue(undefined);
+
+      const { name, price } = productMock2;
+      const res: Partial<ProductEntity> = await service.updateProduct(productMock1.id, { name, price }, productMock2.user_id);
+
+      expect(res).toBe(undefined);
     });
 
     it('should return null if product was not found', async () => {
@@ -112,7 +150,7 @@ describe('ProductService', () => {
       jest.spyOn(repository, 'updateProduct').mockResolvedValue(null);
 
       const { name, price } = productMock2;
-      const res: ProductEntity = await service.updateProduct('2323', { name, price });
+      const res: ProductEntity = await service.updateProduct('2323', { name, price }, productMock1.user_id);
 
       expect(res).toBe(null)
     });
@@ -123,15 +161,21 @@ describe('ProductService', () => {
       jest.spyOn(repository, 'findOneProduct').mockResolvedValue(productMock6);
       jest.spyOn(repository,'deleteProduct').mockResolvedValue(productMock6);
 
-      const res: ProductEntity = await service.deleteProduct(productMock1.id);
+      const res: ProductEntity = await service.deleteProduct(productMock1.id, productMock1.user_id);
 
       expect(res).toBe(productMock6);
+    });
+
+    it('should return undefined if not the owner', async () => {
+      const res: Partial<ProductEntity> = await service.deleteProduct(productMock1.id, productMock2.user_id);
+
+      expect(res).toBe(undefined);
     });
 
     it('should return null if product was not found', async () => {
       jest.spyOn(repository, 'deleteProduct').mockResolvedValue(null);
 
-      const res: ProductEntity = await service.deleteProduct('2323');
+      const res: ProductEntity = await service.deleteProduct('2323', productMock1.user_id);
 
       expect(res).toBe(null)
     });

@@ -5,9 +5,9 @@ import { ProductResponse } from "../types";
 
 export interface ProductControllerI {
     findAll: (req: ReqUser, queries: ProductQueries) => Promise<Partial<ProductEntity>[]>;
-    findOne: (id: string, selected?: string) => Promise<Partial<ProductEntity>>;
+    findOne: (id: string, req: ReqUser, selected?: string) => Promise<Partial<ProductEntity>>;
     createMany: (req: ReqUser, products: ProductEntity[]) => any;
     createOne: (req: ReqUser, product: Partial<ProductEntity>) => Promise<ProductResponse>;
-    update: (id: string, product: Partial<ProductEntity>) => Promise<ProductResponse>;
-    delete: (id: string) => Promise<ProductResponse>;
+    update: (id: string, product: Partial<ProductEntity>, req: ReqUser) => Promise<ProductResponse>;
+    delete: (id: string, req: ReqUser) => Promise<ProductResponse>;
 }
