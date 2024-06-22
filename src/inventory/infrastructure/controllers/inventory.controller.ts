@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { InventoryService } from '../../application/services/inventory.service';
@@ -7,10 +7,15 @@ import { CreateInventoryDto, UpdateInventoryDto } from '../dtos';
 import { InventoyResponse } from '../../domain/types';
 import { InventoryQueries } from '../../domain/types/inventory-queries.type';
 import { ReqUser } from '../../../common/domain/types';
-import { ApiCreateInventory, ApiDeleteInventory, ApiGetInventories, ApiGetInventory, ApiUpdateInventory } from 'src/inventory/application/decorators/open-api.decorator';
+import { ApiCreateInventory, ApiDeleteInventory, ApiGetInventories, ApiGetInventory, ApiUpdateInventory } from '../../../inventory/application/decorators/open-api.decorator';
+import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
+import { Role } from '../../../common/application/decorators';
+import { Roles } from '../../../common/domain/enums';
 
 @ApiBearerAuth()
 @ApiTags('Inventories')
+@Role(Roles.CUSTOMER)
+@UseGuards(RoleGuard)
 @Controller('inventories')
 export class InventoryController {
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { ProductService } from '../../application/services/product.service';
@@ -9,9 +9,14 @@ import { ReqUser } from '../../../common/domain/types';
 import { ProductControllerI } from '../../domain/interfaces';
 import { ApiCreateProduct, ApiCreateProducts, ApiDeleteProduct, ApiGetProduct, ApiGetProducts, ApiUpdateProduct } from '../../application/decotators';
 import { CreateProductDto, UpdateProductDto } from '../dtos';
+import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
+import { Role } from '../../../common/application/decorators';
+import { Roles } from '../../../common/domain/enums';
 
 @ApiBearerAuth()
 @ApiTags('Products')
+@Role(Roles.CUSTOMER)
+@UseGuards(RoleGuard)
 @Controller('products')
 export class ProductController implements ProductControllerI {
 
