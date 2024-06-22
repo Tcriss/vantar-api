@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 
-import { PUBLIC_KEY } from '../../../../common/domain/constants';
+import { PUBLIC_KEY } from '../../../../common/application/decorators';
 
 @Injectable()
 export class AccessTokenGuard extends AuthGuard('access') { 
@@ -13,7 +13,7 @@ export class AccessTokenGuard extends AuthGuard('access') {
     }
 
     public canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-        const isPublic = this.reflector.getAllAndOverride<boolean>(PUBLIC_KEY, [
+        const isPublic: boolean = this.reflector.getAllAndOverride<boolean>(PUBLIC_KEY, [
             context.getHandler(),
             context.getClass(),
         ]);

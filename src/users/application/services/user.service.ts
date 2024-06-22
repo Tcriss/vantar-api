@@ -6,7 +6,7 @@ import { UserRepositoryI } from 'src/users/domain/interfaces';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { Pagination } from '../../../common/domain/types';
 import { Repository } from '../decorators/repository.decorator';
-import { Role } from '../enums';
+import { Role } from '../../../common/domain/enums';
 
 @Injectable()
 export class UserService {
@@ -16,14 +16,11 @@ export class UserService {
         private config: ConfigService
     ) {}
 
-    public async findAllUsers(role: Role, page: string, query?: string): Promise<UserEntity[]> {
-        if (role === Role.CUSTOMER) return null;
-
+    public async findAllUsers(page: string, query?: string): Promise<UserEntity[]> {
         const pagination: Pagination = {
             skip: +page.split(',')[0],
             take: +page.split(',')[1]
         };
-        
         const users: UserEntity[] = await this.repository.findAllUsers(pagination, query);
 
         return users.map(user => (new UserEntity(user)));

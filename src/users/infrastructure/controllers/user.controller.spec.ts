@@ -6,7 +6,7 @@ import { UserController } from './user.controller';
 import { UserService } from '../../application/services/user.service';
 import { mockUserService } from '../../domain/mocks/user-providers.mock';
 import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
-import { Role } from '../../application/enums';
+import { Role } from '../../../common/domain/enums';
 import { UserEntity } from 'src/users/domain/entities/user.entity';
 
 describe('UserController', () => {

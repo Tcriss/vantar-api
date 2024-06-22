@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { UserService } from '../../application/services/user.service';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import { UpdateUserDto } from '../dtos/update-user.dto';
+import { Role } from '../../../common/domain/enums';
+import { CreateUserDto, UpdateUserDto } from '../dtos';
+import { ReqUser, UserQueries } from '../../domain/types';
 import { UserEntity } from '../../domain/entities/user.entity';
-import { ReqUser } from '../../domain/types/req-user.type';
-import { PublicAccess } from '../../../common/application/decorators/public.decorator';
-import { UserQueries } from '../../domain/types/user-queries.type';
+import { UserService } from '../../application/services/user.service';
+import { PublicAccess, Roles } from '../../../common/application/decorators';
 import { ApiCreateUser, ApiDeleteUser, ApiGetUser, ApiGetUsers, ApiUpdateUser } from '../../application/decorators/open-api.decorator';
-import { Role } from '../../application/enums';
+import { RoleGuard } from 'src/auth/application/guards/role/role.guard';
 
 @ApiTags('Users')
 @Controller('users')
@@ -18,18 +17,18 @@ export class UserController {
     constructor(private service: UserService) { }
 
     @ApiGetUsers()
+    @Roles(Role.ADMIN)
+    @UseGuards(RoleGuard)
     @Get()
     public async findAll(@Req() req: ReqUser, @Query() queries?: UserQueries): Promise<UserEntity[]> {
         if (!req.user) throw new HttpException('credentials missing', HttpStatus.BAD_REQUEST);
 
-        const users: UserEntity[] = await this.service.findAllUsers(req.user.role, queries.page, queries.q);
-
-        if (users === null) throw new HttpException('Without enough permissions', HttpStatus.FORBIDDEN);
-
-        return users;
+        return this.service.findAllUsers(queries.page, queries.q);
     }
 
     @ApiGetUser()
+    @Roles(Role.ADMIN, Role.CUSTOMER)
+    @UseGuards(RoleGuard)
     @Get(':id')
     public async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser): Promise<UserEntity> {
         if (req.user.id !== id && req.user.role === Role.CUSTOMER) throw new HttpException('Without enough permissions', HttpStatus.FORBIDDEN);
@@ -58,6 +57,8 @@ export class UserController {
     }
 
     @ApiUpdateUser()
+    @Roles(Role.ADMIN, Role.CUSTOMER)
+    @UseGuards(RoleGuard)
     @Patch(':id')
     public async update(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser, @Body() body: UpdateUserDto): Promise<UserEntity> {
         if (req.user.id !== id && req.user.role === Role.CUSTOMER) throw new HttpException('Without enough permissions', HttpStatus.FORBIDDEN);
@@ -72,6 +73,8 @@ export class UserController {
     }
 
     @ApiDeleteUser()
+    @Roles(Role.ADMIN, Role.CUSTOMER)
+    @UseGuards(RoleGuard)
     @Delete(':id')
     public async delete(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser): Promise<string> {
         if (req.user.id !== id && req.user.role === Role.CUSTOMER) throw new HttpException('Without enough permissions', HttpStatus.FORBIDDEN);

@@ -1,4 +1,4 @@
-import { Role } from '../../application/enums';
+import { Role } from '../../../common/domain/enums';
 
 export type Payload = {
     id: string,

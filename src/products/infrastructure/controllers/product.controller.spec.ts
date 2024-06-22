@@ -7,7 +7,7 @@ import { mockProductService } from '../../domain/mocks/product-providers.mock';
 import { partialProductMock1, partialProductMock2, productMock1, productMock2, productMock6 } from '../../domain/mocks/product.mock';
 import { ProductEntity } from '../../domain/entities/product.entity';
 import { ProductResponse } from '../../domain/types';
-import { Role } from '../../../users/application/enums';
+import { Role } from '../../../common/domain/enums';
 
 describe('ProductController', () => {
   let controller: ProductController;
