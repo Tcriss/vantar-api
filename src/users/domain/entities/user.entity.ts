@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { User } from "@prisma/client";
 import { Exclude } from "class-transformer";
 
-import { Role } from '../../../common/domain/enums'
+import { Roles } from '../../../common/domain/enums'
 
 export class UserEntity implements User {
     @ApiProperty({ format: 'uuid', uniqueItems: true })
@@ -14,7 +14,7 @@ export class UserEntity implements User {
     @ApiProperty({ format: 'email', uniqueItems: true })
     email: string;
 
-    @ApiProperty({ enum: Role })
+    @ApiProperty({ enum: Roles })
     role: string;
 
     @ApiProperty({ example: true })

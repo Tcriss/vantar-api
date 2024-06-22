@@ -2,13 +2,15 @@ import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseU
 import { ApiTags } from '@nestjs/swagger';
 
 import { CreateUserDto, UpdateUserDto } from '../dtos';
-import { ReqUser, UserQueries } from '../../domain/types';
+import { ReqUser } from '../../../common/domain/types';
+import { UserQueries } from '../../domain/types';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { UserService } from '../../application/services/user.service';
 import { PublicAccess, Role } from '../../../common/application/decorators';
 import { ApiCreateUser, ApiDeleteUser, ApiGetUser, ApiGetUsers, ApiUpdateUser } from '../../application/decorators/open-api.decorator';
 import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
 import { Roles } from '../../../common/domain/enums';
+import { OwnerGuard } from '../../../auth/application/guards/owner/owner.guard';
 
 @ApiTags('Users')
 @Controller('users')
@@ -27,11 +29,10 @@ export class UserController {
     }
 
     @ApiGetUser()
-    @UseGuards(RoleGuard)
+    @Role(Roles.ADMIN, Roles.CUSTOMER)
+    @UseGuards(RoleGuard, OwnerGuard)
     @Get(':id')
     public async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser): Promise<UserEntity> {
-        if (req.user.id !== id && req.user.role === Roles.CUSTOMER) throw new HttpException('Without enough permissions', HttpStatus.FORBIDDEN);
-
         const user: UserEntity = await this.service.findOneUser(id);
 
         if (user === null) throw new HttpException('User not found, invalid id', HttpStatus.BAD_REQUEST);
@@ -56,11 +57,10 @@ export class UserController {
     }
 
     @ApiUpdateUser()
-    @UseGuards(RoleGuard)
+    @Role(Roles.ADMIN, Roles.CUSTOMER)
+    @UseGuards(RoleGuard, OwnerGuard)
     @Patch(':id')
     public async update(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser, @Body() body: UpdateUserDto): Promise<UserEntity> {
-        if (req.user.id !== id && req.user.role === Roles.CUSTOMER) throw new HttpException('Without enough permissions', HttpStatus.FORBIDDEN);
-
         const user: UserEntity = await this.service.updateUser(id, body, req.user.role);
 
         if (user === null) throw new HttpException('Wrong credentials', HttpStatus.NOT_ACCEPTABLE);
@@ -71,11 +71,10 @@ export class UserController {
     }
 
     @ApiDeleteUser()
-    @UseGuards(RoleGuard)
+    @Role(Roles.ADMIN, Roles.CUSTOMER)
+    @UseGuards(RoleGuard, OwnerGuard)
     @Delete(':id')
     public async delete(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser): Promise<string> {
-        if (req.user.id !== id && req.user.role === Roles.CUSTOMER) throw new HttpException('Without enough permissions', HttpStatus.FORBIDDEN);
-
         const res: string = await this.service.deleteUser(id);
 
         if (res === undefined) throw new HttpException('User not found', HttpStatus.NOT_FOUND);

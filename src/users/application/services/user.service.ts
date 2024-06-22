@@ -6,7 +6,7 @@ import { UserRepositoryI } from 'src/users/domain/interfaces';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { Pagination } from '../../../common/domain/types';
 import { Repository } from '../decorators/repository.decorator';
-import { Role } from '../../../common/domain/enums';
+import { Roles } from '../../../common/domain/enums';
 
 @Injectable()
 export class UserService {
@@ -44,12 +44,12 @@ export class UserService {
         return new UserEntity(res);
     }
 
-    public async updateUser(id: string, user: Partial<UserEntity>, role: Role): Promise<UserEntity> {
+    public async updateUser(id: string, user: Partial<UserEntity>, role: Roles): Promise<UserEntity> {
         const isExist: boolean = await this.findOneUser(id) ? true : false;
 
         if (!isExist) return null;
         if (user.password) {
-            if (role === Role.CUSTOMER) {
+            if (role === Roles.CUSTOMER) {
                 const originalUser: UserEntity = await this.findOneUser(id);
                 const match: boolean = await bcrypt.compare(user.password, originalUser.password);
 
