@@ -7,7 +7,7 @@ import { UserModule } from './users/user.module';
 import { CorrelationIdMiddleware } from './common/application/middlewares/correlation-id/correlation-id.middleware';
 import { loggerFactory } from './common/application/config/logger.factory';
 import { AuthModule } from './auth/auth.module';
-import { InventoryModule } from './inventory/inventory.module';
+import { InventoryModule } from './inventories/inventory.module';
 import { ProductModule } from './products/product.module';
 
 @Module({

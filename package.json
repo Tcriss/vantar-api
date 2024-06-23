@@ -78,7 +78,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src/products",
+    "rootDir": "src/inventories",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "@swc/jest"
