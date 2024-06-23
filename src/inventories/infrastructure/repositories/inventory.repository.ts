@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaProvider } from '../../../prisma/infrastructure/providers/prisma.provider';
 import { Pagination } from '../../../common/domain/types';
-import { InventoryEntity } from '../../domain/entities/inventory.entity';
 import { SelectedFields } from '../../domain/types';
+import { PrismaProvider } from '../../../prisma/infrastructure/providers/prisma.provider';
+import { InventoryEntity } from '../../domain/entities/inventory.entity';
 import { InventoryRepositoryI } from '../../domain/interfaces/inventory-repository.interface';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class InventoryRepository implements InventoryRepositoryI {
 
     constructor(private prisma: PrismaProvider) { }
 
-    public async findAllInventories(customerId: string, page: Pagination, fields?: SelectedFields, query?: string): Promise<Partial<InventoryEntity>[]> {
+    public async findAllInventories(customerId: string, page: Pagination, fields?: SelectedFields): Promise<Partial<InventoryEntity>[]> {
         return this.prisma.inventory.findMany({
             orderBy: { created_at: 'asc' },
             where: { user_id: customerId },

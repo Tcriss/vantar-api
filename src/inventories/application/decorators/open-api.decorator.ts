@@ -1,6 +1,7 @@
 import { applyDecorators } from "@nestjs/common";
 import { ApiOperation, ApiQuery, ApiResponse } from "@nestjs/swagger";
-import { InventoryEntity } from "src/inventory/domain/entities/inventory.entity";
+
+import { InventoryEntity } from "../../domain/entities/inventory.entity";
 
 export const ApiGetInventories = () => applyDecorators(
     ApiOperation({ summary: "Get all customer's inventories" }),

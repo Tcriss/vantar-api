@@ -31,15 +31,18 @@ export const mockPartialInventory1: Partial<InventoryEntity> = {
     id: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
     cost: 3,
     total: 400,
+    user_id: 'be702a7b-13a3-4e03-93f6-65b2a82e1905',
 };
 
 export const mockPartialInventory2: Partial<InventoryEntity> = {
     id: 'a8a7b9ec-7844-4c3b-932e-3db6be6e5e49',
     cost: 3,
     total: 500,
+    user_id: 'be702a7b-13a3-4e03-93f6-65b2a82e1905',
 };
 
 export const mockPartialInventory3: Partial<InventoryEntity> = {
     id: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
     total: 600,
+    user_id: 'be702a7b-13a3-4e03-93f6-65b2a82e1905',
 };

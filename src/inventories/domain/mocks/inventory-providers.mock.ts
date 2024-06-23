@@ -9,11 +9,11 @@ export const prismaMock = {
 };
 
 export const mockInventoryRepository = {
-    findAll: jest.fn(),
-    findOne: jest.fn(),
-    create: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
+    findAllInventories: jest.fn(),
+    findOneInventory: jest.fn(),
+    createInventory: jest.fn(),
+    updateInventory: jest.fn(),
+    deleteInventory: jest.fn(),
 };
 
 export const mockInventoryService = {
