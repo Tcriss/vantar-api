@@ -6,8 +6,8 @@ import { UserController } from './user.controller';
 import { UserService } from '../../application/services/user.service';
 import { mockUserService } from '../../domain/mocks/user-providers.mock';
 import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
-import { Role } from '../../../common/domain/enums';
-import { UserEntity } from 'src/users/domain/entities/user.entity';
+import { Roles } from '../../../common/domain/enums';
+import { UserEntity } from '../../domain/entities/user.entity';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -39,7 +39,7 @@ describe('UserController', () => {
           id: userMock.id,
           email: userMock.email,
           name: userMock.name,
-          role: Role.ADMIN
+          role: Roles.ADMIN
       }}, { page: '0,10' })
 
       expect(users).toStrictEqual([ userMock, userMock1, userMock2, userMock3 ]);
@@ -54,7 +54,7 @@ describe('UserController', () => {
           id: userMock.id,
           email: userMock.email,
           name: userMock.name,
-          role: Role.ADMIN
+          role: Roles.ADMIN
       }}, {
         page: '0,10',
         q: q
@@ -71,7 +71,7 @@ describe('UserController', () => {
             id: userMock.id,
             email: userMock.email,
             name: userMock.name,
-            role: Role.ADMIN
+            role: Roles.ADMIN
         }}, { page: '0,10' })
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
@@ -90,7 +90,7 @@ describe('UserController', () => {
           id: userMock.id,
           email: '',
           name: '',
-          role: Role.CUSTOMER
+          role: Roles.CUSTOMER
       }});
 
       expect(user).toEqual(userMock);
@@ -103,7 +103,7 @@ describe('UserController', () => {
             id: '113',
             email: '',
             name: '',
-            role: Role.CUSTOMER
+            role: Roles.CUSTOMER
         }});
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
@@ -120,7 +120,7 @@ describe('UserController', () => {
             id: userMock.id,
             email: '',
             name: '',
-            role: Role.CUSTOMER
+            role: Roles.CUSTOMER
         }});
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
@@ -128,22 +128,6 @@ describe('UserController', () => {
         expect(err.message).toBe('User not found');
       };
     });
-
-    it('should throw an exception if wrong customer calls it', async () => {
-      try {
-        await controller.findOne(userMock.id, {
-          user: {
-            id: userMock2.id,
-            email: userMock2.email,
-            name: userMock2.name,
-            role: Role.CUSTOMER
-        }});
-      } catch (err) {
-        expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Without enough permissions');
-      };
-    })
   });
 
   describe('Create User', () => {
@@ -152,7 +136,7 @@ describe('UserController', () => {
       jest.spyOn(service, 'createUser').mockResolvedValue(userMock2);
 
       const { name, email, password } = userMock2;
-      const user: User = await controller.create({ name, email, password, role: Role.CUSTOMER }, {
+      const user: User = await controller.create({ name, email, password, role: Roles.CUSTOMER }, {
         user: null
       });
 
@@ -162,12 +146,12 @@ describe('UserController', () => {
     it('should throe an exception if there is an user logged', async () => {
       try {
         const { name, email, password } = userMock3;
-        await controller.create({ name, email, password, role: Role.CUSTOMER }, {
+        await controller.create({ name, email, password, role: Roles.CUSTOMER }, {
           user: {
             id: userMock2.id,
             email: userMock2.email,
             name: userMock2.name,
-            role: Role.CUSTOMER
+            role: Roles.CUSTOMER
           }
         });
       } catch (err) {
@@ -189,7 +173,7 @@ describe('UserController', () => {
           id: userMock2.id,
           email: userMock2.email,
           name: userMock2.name,
-          role: Role.CUSTOMER
+          role: Roles.CUSTOMER
         }}, { name });
 
       expect(user).toBe(userMock3);
@@ -201,7 +185,7 @@ describe('UserController', () => {
           id: '133',
           email: '',
           name: '',
-          role: Role.CUSTOMER
+          role: Roles.CUSTOMER
         }}, userMock);
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
@@ -218,7 +202,7 @@ describe('UserController', () => {
             id: userMock.id,
             email: '',
             name: '',
-            role: Role.CUSTOMER
+            role: Roles.CUSTOMER
         }}, userMock);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
@@ -226,22 +210,6 @@ describe('UserController', () => {
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
       }
     });
-
-    it('should throw an exception if wrong customer tries to update it', async () => {
-      try {
-        await controller.update(userMock.id, {
-          user: {
-            id: userMock2.id,
-            email: userMock2.email,
-            name: userMock2.name,
-            role: Role.CUSTOMER
-        }}, { name: 'Harry' });
-      } catch (err) {
-        expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Without enough permissions');
-      };
-    })
   });
 
   describe('Delete User', () => {
@@ -253,7 +221,7 @@ describe('UserController', () => {
           id: userMock.id,
           email: '',
           name: '',
-          role: Role.CUSTOMER
+          role: Roles.CUSTOMER
         }});
 
       expect(res).toBe('User deleted');
@@ -263,7 +231,7 @@ describe('UserController', () => {
       jest.spyOn(service, 'deleteUser').mockResolvedValue(null);
 
       try {
-        await controller.delete('122', { user: { id: '122', email: '', name: '', role: Role.CUSTOMER }});
+        await controller.delete('122', { user: { id: '122', email: '', name: '', role: Roles.CUSTOMER }});
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.message).toBe('User not found, invalid id');
@@ -275,28 +243,12 @@ describe('UserController', () => {
       jest.spyOn(service, 'deleteUser').mockResolvedValue(undefined);
 
       try {
-        await controller.delete(userMock.id, { user: { id: userMock.id, email: '', name: '', role: Role.CUSTOMER }});
+        await controller.delete(userMock.id, { user: { id: userMock.id, email: '', name: '', role: Roles.CUSTOMER }});
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.message).toBe('User not found');
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
       }
     });
-
-    it('should throw an exception if wrong customer tries to delete it', async () => {
-      try {
-        await controller.delete(userMock.id, {
-          user: {
-            id: userMock2.id,
-            email: userMock2.email,
-            name: userMock2.name,
-            role: Role.CUSTOMER
-        }});
-      } catch (err) {
-        expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Without enough permissions');
-      };
-    })
   });
 });

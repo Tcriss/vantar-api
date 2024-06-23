@@ -8,6 +8,7 @@ import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/us
 import { PrismaModule } from '../../../prisma/prisma.module';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { UserRepositoryI, UserRepositoryToken } from 'src/users/domain/interfaces';
+import { Roles } from 'src/common/domain/enums';
 
 describe('UserService', () => {
   let service: UserService;
@@ -42,17 +43,11 @@ describe('UserService', () => {
       expect(res).toEqual([ userMock, userMock1, userMock2, userMock3 ]);
     });
 
-    it('should return null if user is not admin', async () => {
-      const res: Partial<UserEntity>[] = await service.findAllUsers(userMock2.role, '0,10');
-
-      expect(res).toBeNull();
-    });
-
     it('should return users that match query search', async () => {
       jest.spyOn(repository, 'findAllUsers').mockResolvedValue([ userMock, userMock1 ]);
 
       const q: string = 'A'
-      const res: Partial<UserEntity>[] = await service.findAllUsers(userMock1.role, '0,10', q);
+      const res: Partial<UserEntity>[] = await service.findAllUsers('0,10', q);
 
       expect(res).toEqual([ userMock, userMock1 ]);
       expect(res[0].name.includes(q) && res[1].name.includes(q)).toBeTruthy();
@@ -78,7 +73,7 @@ describe('UserService', () => {
       expect(res.email).toBe(email);
     });
 
-    it('should return undefined if user was not find', async () => {
+    it('should return undefined if user was not found', async () => {
       jest.spyOn(repository, 'findOneUser').mockResolvedValue(undefined);
 
       const res: UserEntity = await service.findOneUser(randomUUID());
@@ -113,7 +108,7 @@ describe('UserService', () => {
       jest.spyOn(repository, 'updateUser').mockResolvedValue(userMock3);
 
       const { name } = userMock2;
-      const res: UserEntity = await service.updateUser(userMock2.id, { name }, userMock2.role);
+      const res: UserEntity = await service.updateUser(userMock2.id, { name }, Roles.CUSTOMER);
 
       expect(res).toEqual(userMock3);
     });
@@ -122,7 +117,7 @@ describe('UserService', () => {
       jest.spyOn(repository, 'updateUser').mockResolvedValue(undefined);
 
       const { name, password } = userMock2;
-      const res: UserEntity = await service.updateUser(randomUUID(), { name, password}, userMock2.role);
+      const res: UserEntity = await service.updateUser(randomUUID(), { name, password}, Roles.CUSTOMER);
 
       expect(res).toBeUndefined;
     });
@@ -131,7 +126,7 @@ describe('UserService', () => {
       jest.spyOn(repository, 'updateUser').mockResolvedValue(undefined);
 
       const { name, password } = userMock2;
-      const res: UserEntity = await service.updateUser(randomUUID(), { name, password}, userMock2.role);
+      const res: UserEntity = await service.updateUser(randomUUID(), { name, password}, Roles.CUSTOMER);
 
       expect(res).toBeNull();
     });
