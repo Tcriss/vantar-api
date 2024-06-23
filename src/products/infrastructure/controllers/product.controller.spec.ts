@@ -7,7 +7,7 @@ import { mockProductService } from '../../domain/mocks/product-providers.mock';
 import { partialProductMock1, partialProductMock2, productMock1, productMock2, productMock6 } from '../../domain/mocks/product.mock';
 import { ProductEntity } from '../../domain/entities/product.entity';
 import { ProductResponse } from '../../domain/types';
-import { Role } from '../../../common/domain/enums';
+import { Roles } from '../../../common/domain/enums';
 
 describe('ProductController', () => {
   let controller: ProductController;
@@ -37,7 +37,7 @@ describe('ProductController', () => {
           id: productMock1.user_id,
           name: '',
           email: '',
-          role: Role.CUSTOMER
+          role: Roles.CUSTOMER
         }
       }, { page: '0,10' });
 
@@ -53,7 +53,7 @@ describe('ProductController', () => {
           id: productMock1.user_id,
           name: '',
           email: '',
-          role: Role.CUSTOMER
+          role: Roles.CUSTOMER
         }
       }, { page: '1,1' });
 
@@ -69,7 +69,7 @@ describe('ProductController', () => {
           id: productMock1.user_id,
           name: '',
           email: '',
-          role: Role.CUSTOMER
+          role: Roles.CUSTOMER
         }
       }, { page: '0,10', selected: 'name, user_id' });
 
@@ -86,7 +86,7 @@ describe('ProductController', () => {
             id: productMock1.user_id,
             name: '',
             email: '',
-            role: Role.CUSTOMER
+            role: Roles.CUSTOMER
           }
         }, { page: null });
       } catch (err) {
@@ -106,7 +106,7 @@ describe('ProductController', () => {
           id: productMock1.user_id,
           email: '',
           name: '',
-          role: Role.CUSTOMER
+          role: Roles.CUSTOMER
         }
       });
 
@@ -121,7 +121,7 @@ describe('ProductController', () => {
           id: productMock1.user_id,
           email: '',
           name: '',
-          role: Role.CUSTOMER
+          role: Roles.CUSTOMER
         }
       }, 'name, user_id');
 
@@ -137,7 +137,7 @@ describe('ProductController', () => {
             id: productMock1.user_id,
             email: '',
             name: '',
-            role: Role.CUSTOMER
+            role: Roles.CUSTOMER
           }
         }, 'name, user_id');
       } catch (err) {
@@ -156,7 +156,7 @@ describe('ProductController', () => {
             id: productMock1.user_id,
             email: '',
             name: '',
-            role: Role.CUSTOMER
+            role: Roles.CUSTOMER
           }
         });
       } catch (err) {
@@ -176,7 +176,7 @@ describe('ProductController', () => {
           id: productMock1.user_id,
           name: '',
           email: '',
-          role: Role.CUSTOMER
+          role: Roles.CUSTOMER
         }
       }, [
         {
@@ -204,7 +204,7 @@ describe('ProductController', () => {
           id: productMock1.user_id,
           name: '',
           email: '',
-          role: Role.CUSTOMER
+          role: Roles.CUSTOMER
         }
       }, { name, price });
 
@@ -224,7 +224,7 @@ describe('ProductController', () => {
           id: productMock1.user_id,
           email: '',
           name: '',
-          role: Role.CUSTOMER
+          role: Roles.CUSTOMER
         }
       });
 
@@ -243,7 +243,7 @@ describe('ProductController', () => {
             id: productMock1.user_id,
             email: '',
             name: '',
-            role: Role.CUSTOMER
+            role: Roles.CUSTOMER
           }
         });
       } catch (err) {
@@ -279,7 +279,7 @@ describe('ProductController', () => {
             id: productMock1.user_id,
             email: '',
             name: '',
-            role: Role.CUSTOMER
+            role: Roles.CUSTOMER
           }
         });
       } catch (err) {
@@ -300,7 +300,7 @@ describe('ProductController', () => {
           id: productMock1.user_id,
           email: '',
           name: '',
-          role: Role.CUSTOMER
+          role: Roles.CUSTOMER
         }
       });
 
@@ -316,7 +316,7 @@ describe('ProductController', () => {
             id: productMock1.user_id,
             email: '',
             name: '',
-            role: Role.CUSTOMER
+            role: Roles.CUSTOMER
           }
         });
       } catch (err) {
@@ -350,7 +350,7 @@ describe('ProductController', () => {
             id: productMock1.user_id,
             email: '',
             name: '',
-            role: Role.CUSTOMER
+            role: Roles.CUSTOMER
           }
         });
       } catch (err) {
