@@ -10,7 +10,7 @@ import { PublicAccess, Role } from '../../../common/application/decorators';
 import { ApiCreateUser, ApiDeleteUser, ApiGetUser, ApiGetUsers, ApiUpdateUser } from '../../application/decorators/open-api.decorator';
 import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
 import { Roles } from '../../../common/domain/enums';
-import { OwnerGuard } from '../../../auth/application/guards/owner/owner.guard';
+import { UserGuard } from '../../application/guards/user.guard';
 
 @ApiTags('Users')
 @Controller('users')
@@ -30,7 +30,7 @@ export class UserController {
 
     @ApiGetUser()
     @Role(Roles.ADMIN, Roles.CUSTOMER)
-    @UseGuards(RoleGuard, OwnerGuard)
+    @UseGuards(RoleGuard, UserGuard)
     @Get(':id')
     public async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser): Promise<UserEntity> {
         const user: UserEntity = await this.service.findOneUser(id);
@@ -58,7 +58,7 @@ export class UserController {
 
     @ApiUpdateUser()
     @Role(Roles.ADMIN, Roles.CUSTOMER)
-    @UseGuards(RoleGuard, OwnerGuard)
+    @UseGuards(RoleGuard, UserGuard)
     @Patch(':id')
     public async update(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser, @Body() body: UpdateUserDto): Promise<UserEntity> {
         const user: UserEntity = await this.service.updateUser(id, body, req.user.role);
@@ -72,7 +72,7 @@ export class UserController {
 
     @ApiDeleteUser()
     @Role(Roles.ADMIN, Roles.CUSTOMER)
-    @UseGuards(RoleGuard, OwnerGuard)
+    @UseGuards(RoleGuard, UserGuard)
     @Delete(':id')
     public async delete(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser): Promise<string> {
         const res: string = await this.service.deleteUser(id);

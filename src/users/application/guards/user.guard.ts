@@ -2,20 +2,20 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 
-import { ROLE_KEY } from '../../../../common/application/decorators';
-import { Roles } from '../../../../common/domain/enums';
+import { ROLE_KEY } from '../../../common/application/decorators';
+import { Roles } from '../../../common/domain/enums';
 
 @Injectable()
-export class OwnerGuard implements CanActivate {
+export class UserGuard implements CanActivate {
 
   constructor(private reflector: Reflector) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
+    const req: Request = context.switchToHttp().getRequest();
     const role: Roles = this.reflector.getAllAndOverride<Roles>(ROLE_KEY, [
       context.getHandler(),
       context.getClass()
     ]);
-    const req: Request = context.switchToHttp().getRequest();
 
     return this.isOwner(req, role);
   }
