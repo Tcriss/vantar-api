@@ -14,7 +14,7 @@ export class RefreshTokenGuard implements CanActivate {
         
         const token: string = await this.extractTokenFromHeader(req.headers);
         
-        if (!token) throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+        if (!token) throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED, { cause: 'Token not found in headers' });
 
         req['refresh'] = token;
         
@@ -22,9 +22,8 @@ export class RefreshTokenGuard implements CanActivate {
     }
 
     private async extractTokenFromHeader(headers: Headers): Promise<string> {
-        const [type, token]: string[] = headers['Authorization']?.split(' ') ?? [];
+        const [type, token]: string[] = headers['authorization']?.split(' ') ?? [];
     
-        console.log(token)
         return type === 'Bearer' ? token : undefined;
     }
 }

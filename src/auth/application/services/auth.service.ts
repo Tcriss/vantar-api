@@ -3,24 +3,23 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import { PrismaProvider } from '../../../prisma/infrastructure/providers/prisma.provider';
-import { UserEntity } from '../../../users/domain/entities/user.entity';
-import { UserService } from '../../../users/application/services/user.service';
 import { Token } from '../../domain/types';
+import { UserEntity } from '../../../users/domain/entities/user.entity';
+import { Repository } from '../../../users/application/decorators/repository.decorator';
+import { UserRepositoryI } from '../../../users/domain/interfaces';
 
 @Injectable()
 export class AuthService {
 
     constructor(
+        @Repository() private userRepository: UserRepositoryI,
         private config: ConfigService,
-        private prisma: PrismaProvider,
-        private userService: UserService,
         private jwt: JwtService
     ) {}
 
     public async logIn(credentials: Partial<UserEntity>): Promise<Token> {
         const { email, password } = credentials;
-        const user: UserEntity = await this.userService.findOneUser(null, email);
+        const user: UserEntity = await this.userRepository.findOneUser({ email: email });
 
         if (!user) return undefined;
 
@@ -35,7 +34,7 @@ export class AuthService {
     }
 
     public async refreshTokens(userId: string, refreshToken: string) {
-        const user = await this.userService.findOneUser(userId);
+        const user: UserEntity = await this.userRepository.findOneUser({ id: userId });
 
         if (user.refresh_token === null) return null;
 
@@ -50,11 +49,13 @@ export class AuthService {
     }      
 
     public async logOut(userId: string): Promise<string> {
-        const user: UserEntity = await this.userService.findOneUser(userId);
+        const user: UserEntity = await this.userRepository.findOneUser({ id: userId });
 
-        if (user) return null;
+        if (!user) return null;
 
-        return 'User logout successfully';
+        const res = await this.userRepository.updateUser(userId, { refresh_token: null })
+
+        return res ? 'User logout successfully' : undefined;
     }
 
     private async getTokens(user: Partial<UserEntity>): Promise<Token> {
@@ -62,11 +63,11 @@ export class AuthService {
         const [ accessToken, refreshToken ] = await Promise.all([
             this.jwt.signAsync({ id, name, email, role }, {
                 secret: this.config.get<string>('SECRET'), 
-                expiresIn: '15m'
+                expiresIn: this.config.get<string>('AT_TIME')
             }),
             this.jwt.signAsync({ id }, {
                 secret: this.config.get<string>('SECRET'), 
-                expiresIn: '7d'
+                expiresIn: this.config.get<string>('RT_TIME')
             })
         ]);
 
@@ -76,11 +77,12 @@ export class AuthService {
         };
     }
 
-    private async updateRefreshToken(userId: string, token: string): Promise<void> {
+    private async updateRefreshToken(userId: string, token: string): Promise<string> {
         const hashedToken = await bcrypt.hash(token, this.config.get<string>('HASH'));
-        const res = await this.prisma.user.update({
-            where: { id: userId },
-            data: { refresh_token: hashedToken }
+        const res = await this.userRepository.updateUser(userId, {
+            refresh_token: hashedToken
         });
+
+        return 'Token refreshed';
     }
 }

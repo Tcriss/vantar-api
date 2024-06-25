@@ -52,7 +52,8 @@ export class AuthController {
     public async logOut(@Req() req: Request): Promise<string> {
         const res: string = await this.service.logOut(req['user']['id']);
 
-        if (!res) throw new HttpException('User nor found', HttpStatus.NOT_FOUND);
+        if (res === null) throw new HttpException('User nor found', HttpStatus.NOT_FOUND);
+        if (res === undefined) throw new HttpException('User could not logout', HttpStatus.INTERNAL_SERVER_ERROR);
 
         return res;
     }

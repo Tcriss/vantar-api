@@ -13,7 +13,6 @@ import { UserRepositoryToken } from './domain/interfaces';
         },
         UserService
     ],
-    controllers: [UserController],
-    exports: [UserService]
+    controllers: [UserController]
 })
 export class UserModule { }
