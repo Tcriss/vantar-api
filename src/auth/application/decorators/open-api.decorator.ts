@@ -1,6 +1,7 @@
 import { HttpStatus, applyDecorators } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { AuthEntity } from "src/auth/domain/entities/auth.entity";
+
+import { AuthEntity } from "../../domain/entities/auth.entity";
 
 export const ApiLogin = () => applyDecorators(
     ApiOperation({ summary: 'Sing in a user' }),
@@ -11,10 +12,10 @@ export const ApiLogin = () => applyDecorators(
 
 export const ApiRefresh = () => applyDecorators(
     ApiBearerAuth(),
-    ApiOperation({ summary: 'Refresh user token' }),
-    ApiResponse({ status: 200, type: AuthEntity }),
-    ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Wrong credentials' }),
-    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
+    ApiOperation({ summary: 'Refresh user tokens to not relogin' }),
+    ApiResponse({ status: HttpStatus.OK, type: AuthEntity }),
+    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Session not found' }),
+    ApiResponse({ status: HttpStatus.NOT_ACCEPTABLE, description: 'Invalid token' })
 );
 
 export const ApiLogout = () => applyDecorators(
@@ -22,5 +23,6 @@ export const ApiLogout = () => applyDecorators(
     ApiOperation({ summary: 'Log out a user' }),
     ApiResponse({ status: HttpStatus.OK, description: 'User logOut successfully' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' }),
-    ApiResponse({ status: HttpStatus.NOT_ACCEPTABLE, description: 'Wrong credentials' })
+    ApiResponse({ status: HttpStatus.NOT_ACCEPTABLE, description: 'Wrong credentials' }),
+    ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'User could not logout' })
 );

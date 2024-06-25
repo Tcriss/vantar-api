@@ -37,11 +37,11 @@ export class AuthController {
     @HttpCode(200)
     @UseGuards(RefreshTokenGuard)
     @Post('/refresh')
-    public async refresh(@Req() req: ReqUser): Promise<any> {
-        const res = await this.service.refreshTokens(req.user.id, req['refresh']);
+    public async refresh(@Req() req: ReqUser): Promise<Token> {
+        const res: Token = await this.service.refreshTokens(req.user.id, req['refresh']);
 
-        if (res === null) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-        if (res === undefined) throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+        if (res === null) throw new HttpException('Session not found', HttpStatus.NOT_FOUND);
+        if (res === undefined) throw new HttpException('Invalid token', HttpStatus.NOT_ACCEPTABLE);
 
         return res;
     }
@@ -52,7 +52,7 @@ export class AuthController {
     public async logOut(@Req() req: Request): Promise<string> {
         const res: string = await this.service.logOut(req['user']['id']);
 
-        if (res === null) throw new HttpException('User nor found', HttpStatus.NOT_FOUND);
+        if (res === null) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         if (res === undefined) throw new HttpException('User could not logout', HttpStatus.INTERNAL_SERVER_ERROR);
 
         return res;
