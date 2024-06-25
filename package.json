@@ -1,8 +1,8 @@
 {
   "name": "vantar",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "API to manage your inventory & invoices, powered by nestjs",
+  "author": "Tcriss",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

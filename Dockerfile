@@ -22,7 +22,7 @@ RUN pnpm install
 COPY . .
 
 # Expose the port on which the app will run
-EXPOSE 2000
+EXPOSE 2020
 
 # Start the server using the production build
 CMD ["pnpm", "migrate:dev"]
