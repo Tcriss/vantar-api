@@ -21,9 +21,8 @@ export class UserService {
             skip: +page.split(',')[0],
             take: +page.split(',')[1]
         };
-        const users: UserEntity[] = await this.repository.findAllUsers(pagination, query);
-
-        return users.map(user => (new UserEntity(user)));
+        
+        return this.repository.findAllUsers(pagination, query);
     }
 
     public async findOneUser(id?: string, email?: string): Promise<UserEntity> {
@@ -33,15 +32,13 @@ export class UserService {
 
         if (!user) return undefined;
 
-        return new UserEntity(user);
+        return user;
     }
 
     public async createUser(user: Partial<UserEntity>): Promise<UserEntity> {
         user.password = await bcrypt.hash(user.password, this.config.get<string>('HASH'));
 
-        const res = await this.repository.createUser(user);
-
-        return new UserEntity(res);
+        return this.repository.createUser(user);;
     }
 
     public async updateUser(id: string, user: Partial<UserEntity>, role: Roles): Promise<UserEntity> {
@@ -61,12 +58,12 @@ export class UserService {
 
         const res: UserEntity = await this.repository.updateUser(id, user);
 
-        return res ? new UserEntity(res) : undefined;
+        return res ?? undefined;
     }
 
     public async deleteUser(id: string): Promise<string> {
         const res: UserEntity = await this.repository.deleteUser(id);
 
-        return new UserEntity(res) ? 'User deleted' : undefined;
+        return res ? 'User deleted' : undefined;
     }
 }

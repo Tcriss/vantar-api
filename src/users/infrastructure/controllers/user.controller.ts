@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { CreateUserDto, UpdateUserDto } from '../dtos';
@@ -11,8 +11,10 @@ import { ApiCreateUser, ApiDeleteUser, ApiGetUser, ApiGetUsers, ApiUpdateUser } 
 import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
 import { Roles } from '../../../common/domain/enums';
 import { UserGuard } from '../../application/guards/user.guard';
+import { UserFieldsInterceptor } from '../../application/interceptors/user-fields.interceptor';
 
 @ApiTags('Users')
+@UseInterceptors(UserFieldsInterceptor)
 @Controller('users')
 export class UserController {
 
