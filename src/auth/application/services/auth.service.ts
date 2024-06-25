@@ -43,10 +43,10 @@ export class AuthService {
         if (!match) return undefined;
 
         const tokens: Token = await this.getTokens(user);
+        const updatedTokens: string = await this.updateRefreshToken(user.id, tokens.refresh_token);
 
-        await this.updateRefreshToken(user.id, tokens.refresh_token);
-        return tokens;
-    }      
+        return updatedTokens ? tokens : undefined;
+    }
 
     public async logOut(userId: string): Promise<string> {
         const user: UserEntity = await this.userRepository.findOneUser({ id: userId });
@@ -57,6 +57,8 @@ export class AuthService {
 
         return res ? 'User logout successfully' : undefined;
     }
+
+    public async resetPassword() {}
 
     private async getTokens(user: Partial<UserEntity>): Promise<Token> {
         const { id, name, email, role } = user;
@@ -83,6 +85,6 @@ export class AuthService {
             refresh_token: hashedToken
         });
 
-        return 'Token refreshed';
+        return res ? 'Token refreshed' : undefined;
     }
 }
