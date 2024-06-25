@@ -27,7 +27,7 @@ export const userMock2: UserEntity = {
   name: 'Bob Johnson',
   email: 'bob.johnson@example.com',
   active: true,
-  refresh_token: '',
+  refresh_token: '$2b$12$abcdEFGHIJKLMNOPQRSTUOGU.BQh2xswdoTDLHfzAYpgAO1DRgrzq',
   role: 'CUSTOMER',
   password: '$2b$12$QmS1K/X7I5H7/CB5V7P9u.eRtPfX6s6JFF9CJYy3FZ5QABw0cN3mK',
   created_at: new Date('2024-06-05T10:00:00Z'),

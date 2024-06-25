@@ -17,7 +17,7 @@ export class AuthService {
         private jwt: JwtService
     ) {}
 
-    public async logIn(credentials: Partial<UserEntity>): Promise<Token> {
+    public async login(credentials: Partial<UserEntity>): Promise<Token> {
         const { email, password } = credentials;
         const user: UserEntity = await this.userRepository.findOneUser({ email: email });
 
@@ -28,15 +28,15 @@ export class AuthService {
         if (!isValid) return null;
 
         const tokens: Token = await this.getTokens(user);
+        const updatedTokens = await this.updateRefreshToken(user.id, tokens.refresh_token);
 
-        await this.updateRefreshToken(user.id, tokens.refresh_token);
-        return tokens;
+        return updatedTokens ? tokens : undefined;
     }
 
-    public async refreshTokens(userId: string, refreshToken: string) {
+    public async refreshTokens(userId: string, refreshToken: string): Promise<Token> {
         const user: UserEntity = await this.userRepository.findOneUser({ id: userId });
 
-        if (user.refresh_token === null) return null;
+        if (!user || user.refresh_token === null) return null;
 
         const match: boolean = await bcrypt.compare(refreshToken, user.refresh_token);
 
@@ -57,8 +57,6 @@ export class AuthService {
 
         return res ? 'User logout successfully' : undefined;
     }
-
-    public async resetPassword() {}
 
     private async getTokens(user: Partial<UserEntity>): Promise<Token> {
         const { id, name, email, role } = user;

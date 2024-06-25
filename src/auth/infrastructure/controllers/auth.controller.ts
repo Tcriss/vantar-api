@@ -21,7 +21,7 @@ export class AuthController {
     @HttpCode(200)
     @Post('/login')
     public async login(@Body() credentials: LoginUserDto): Promise<AuthResponseI> {
-        const res: Token = await this.service.logIn(credentials);
+        const res: Token = await this.service.login(credentials);
 
         if (res === undefined) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         if (res === null) throw new HttpException('Wrong credentials', HttpStatus.NOT_ACCEPTABLE);
