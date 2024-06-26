@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { ProductEntity } from "../entities/product.entity";
 
 export interface ProductServiceI {

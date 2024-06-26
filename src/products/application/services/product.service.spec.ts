@@ -61,42 +61,40 @@ describe('ProductService', () => {
   });
 
   describe('Find One Product', () => {
-    const { id, user_id } = productMock1;
-
     it('should find one product', async () => {
-      jest.spyOn(repository, 'findOneProduct').mockResolvedValue(productMock1);
+      jest.spyOn(repository, 'findOneProduct').mockResolvedValue(productMock2);
 
-      const res: Partial<ProductEntity> = await service.findOneProduct(id, user_id);
+      const res: Partial<ProductEntity> = await service.findOneProduct(productMock2.id, productMock2.user_id);
 
-      expect(res).toBe(productMock1)
+      expect(res).toBe(productMock2);
     });
 
     it('should find one product with some fields', async () => {
       jest.spyOn(repository, 'findOneProduct').mockResolvedValue(partialProductMock1);
 
-      const res: Partial<ProductEntity> = await service.findOneProduct(id, user_id, 'name, inventory_id');
+      const res: Partial<ProductEntity> = await service.findOneProduct(productMock1.id, productMock1.user_id, 'name, inventory_id');
 
       expect(res).toBe(partialProductMock1);
     });
 
     it('should return undefined if not the owner', async () => {
-      jest.spyOn(repository, 'findOneProduct').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneProduct').mockResolvedValue(productMock1);
 
-      const res: Partial<ProductEntity> = await service.findOneProduct(id, user_id, 'name, inventory_id');
+      const res: Partial<ProductEntity> = await service.findOneProduct(productMock2.id, productMock2.user_id, 'name, inventory_id');
 
-      expect(res).toBe(undefined);
+      expect(res).toBeUndefined();
     });
 
     it('should return null if product was not found', async () => {
       jest.spyOn(repository, 'findOneProduct').mockResolvedValue(null);
 
-      const res: Partial<ProductEntity> = await service.findOneProduct(id, user_id, 'name, inventory_id');
+      const res: Partial<ProductEntity> = await service.findOneProduct(productMock2.id, productMock2.user_id, 'name, inventory_id');
 
-      expect(res).toBe(null);
+      expect(res).toBeNull();
     });
   });
 
-  describe('Cteate Many Products', () => {
+  describe('Create Many Products', () => {
     it('should create many products', async () => {
       jest.spyOn(repository, 'createManyProducts').mockResolvedValue({ count: 2 });
 
@@ -117,7 +115,7 @@ describe('ProductService', () => {
     });
   });
 
-  describe('Cteate One Product', () => {
+  describe('Create One Product', () => {
     it('should create a product', async () => {
       jest.spyOn(repository, 'createOneProduct').mockResolvedValue(productMock2);
 
@@ -132,7 +130,7 @@ describe('ProductService', () => {
     const { id, user_id } = productMock1;
 
     it('should update product', async () => {
-      jest.spyOn(repository, 'findOneProduct').mockResolvedValue(productMock6);
+      jest.spyOn(repository, 'findOneProduct').mockResolvedValue(productMock1);
       jest.spyOn(repository,'updateProduct').mockResolvedValue(productMock6);
 
       const { name, price } = productMock2;
@@ -142,22 +140,22 @@ describe('ProductService', () => {
     });
 
     it('should return undefined if not the owner', async () => {
-      jest.spyOn(repository, 'findOneProduct').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'updateProduct').mockResolvedValue(undefined);
 
       const { name, price } = productMock2;
       const res: Partial<ProductEntity> = await service.updateProduct(id, { name, price }, user_id);
 
-      expect(res).toBe(undefined);
+      expect(res).toBeUndefined();
     });
 
     it('should return null if product was not found', async () => {
       jest.spyOn(repository, 'findOneProduct').mockResolvedValue(null);
-      jest.spyOn(repository, 'updateProduct').mockResolvedValue(null);
+      //jest.spyOn(repository, 'updateProduct').mockResolvedValue(null);
 
       const { name, price } = productMock2;
       const res: ProductEntity = await service.updateProduct(id, { name, price }, user_id);
 
-      expect(res).toBe(null)
+      expect(res).toBeNull()
     });
   });
 
@@ -174,17 +172,21 @@ describe('ProductService', () => {
     });
 
     it('should return undefined if not the owner', async () => {
+      jest.spyOn(repository, 'deleteProduct').mockResolvedValue(undefined);
+      //jest.spyOn(repository, 'deleteProduct').mockResolvedValue(undefined);
+
       const res: Partial<ProductEntity> = await service.deleteProduct(id, user_id);
 
-      expect(res).toBe(undefined);
+      expect(res).toBeUndefined();
     });
 
     it('should return null if product was not found', async () => {
-      jest.spyOn(repository, 'deleteProduct').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneProduct').mockResolvedValue(null);
+      //jest.spyOn(repository, 'deleteProduct').mockResolvedValue(null);
 
       const res: ProductEntity = await service.deleteProduct(id, user_id);
 
-      expect(res).toBe(null)
+      expect(res).toBeNull();
     });
   });
-});
+});;

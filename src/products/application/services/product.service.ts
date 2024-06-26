@@ -35,12 +35,10 @@ export class ProductService implements ProductServiceI {
             name: selected.includes('name') ? true : false,
             price: selected.includes('price') ? true : false
         } : null;
-
         const product: Partial<ProductEntity> = await this.repository.findOneProduct(id, fields);
-        const isOwner: boolean = product.user_id === userId;
 
-        if (!isOwner) return undefined;
         if (!product) return null;
+        if (!(product.user_id === userId)) return undefined;
 
         return product;
     }
@@ -59,22 +57,18 @@ export class ProductService implements ProductServiceI {
 
     public async updateProduct(id: string, product: Partial<ProductEntity>, userId: string): Promise<ProductEntity> {
         const originalProduct: Partial<ProductEntity> = await this.findOneProduct(id, userId);
-        const isOwner: boolean = originalProduct.user_id === userId;
-        const isExist: boolean = originalProduct  ? true : false;
-
-        if (!isOwner) return undefined;
-        if (!isExist) return null;
+        
+        if (!originalProduct) return null;
+        if (!(originalProduct.user_id === userId)) return undefined;
         
         return this.repository.updateProduct(id, product);
     }
 
     public async deleteProduct(id: string, userId: string): Promise<ProductEntity> {
         const product: Partial<ProductEntity> = await this.findOneProduct(id, userId);
-        const isOwner: boolean = product.user_id === userId;
-        const isExist: boolean = product  ? true : false;
-
-        if (!isOwner) return undefined;
-        if (!isExist) return null;
+        
+        if (!product) return null;
+        if ((product.user_id === userId) === false) return undefined;
         
         return this.repository.deleteProduct(id);
     }
