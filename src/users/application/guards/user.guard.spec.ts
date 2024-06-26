@@ -70,7 +70,7 @@ describe('UserGuard', () => {
   });
 
   it('should deny access if user is neither ADMIN nor the owner', async () => {
-    mockReflector.getAllAndOverride.mockReturnValue(Roles.CUSTOMER);
+    mockReflector.getAllAndOverride.mockReturnValue(null);
     mockRequest.user.id = '33';
 
     const result: boolean = await guard.canActivate(mockExecutionContext as ExecutionContext);
