@@ -36,7 +36,7 @@ export class UserService {
     }
 
     public async createUser(user: Partial<UserEntity>): Promise<UserEntity> {
-        user.password = await bcrypt.hash(user.password, this.config.get<string>('HASH'));
+        user.password = await bcrypt.hash(user.password, this.config.get<number>('HASH'));
 
         return this.repository.createUser(user);;
     }
@@ -53,7 +53,7 @@ export class UserService {
                 if (!match) return null;
             };
 
-            user.password = await bcrypt.hash(user.password, this.config.get<string>('HASH'));
+            user.password = await bcrypt.hash(user.password, this.config.get<number>('HASH'));
         };
 
         const res: UserEntity = await this.repository.updateUser(id, user);

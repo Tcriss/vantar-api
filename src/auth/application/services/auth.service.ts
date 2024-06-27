@@ -78,7 +78,8 @@ export class AuthService {
     }
 
     private async updateRefreshToken(userId: string, token: string): Promise<string> {
-        const hashedToken = await bcrypt.hash(token, this.config.get<string>('HASH'));
+        const hashedToken = await bcrypt.hash(token, this.config.get<number>('HASH'));
+
         const res = await this.userRepository.updateUser(userId, {
             refresh_token: hashedToken
         });
