@@ -3,19 +3,23 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
+import { Token } from '../../domain/types';
 import { UserEntity } from '../../../users/domain/entities/user.entity';
-import { UserService } from '../../../users/application/services/user.service';
-import { Payload, Token } from '../../domain/types';
-import { LoginUserDto } from '../../infrastructure/dto';
+import { Repository } from '../../../users/application/decorators/repository.decorator';
+import { UserRepositoryI } from '../../../users/domain/interfaces';
 
 @Injectable()
 export class AuthService {
 
-    constructor(private config: ConfigService, private userService: UserService, private jwt: JwtService) {}
+    constructor(
+        @Repository() private userRepository: UserRepositoryI,
+        private config: ConfigService,
+        private jwt: JwtService
+    ) {}
 
-    public async logIn(credentials: LoginUserDto): Promise<Token> {
+    public async login(credentials: Partial<UserEntity>): Promise<Token> {
         const { email, password } = credentials;
-        const user: UserEntity = await this.userService.findUser(null, email);
+        const user: UserEntity = await this.userRepository.findOneUser({ email: email });
 
         if (!user) return undefined;
 
@@ -23,21 +27,62 @@ export class AuthService {
 
         if (!isValid) return null;
 
-        return this.getToken(user);
+        const tokens: Token = await this.getTokens(user);
+        const updatedTokens = await this.updateRefreshToken(user.id, tokens.refresh_token);
+
+        return updatedTokens ? tokens : undefined;
     }
 
-    public async getToken(user: UserEntity): Promise<Token> {
-        const payload: Payload = {
-            id: user.id,
-            name: user.name,
-            email: user.email
+    public async refreshTokens(userId: string, refreshToken: string): Promise<Token> {
+        const user: UserEntity = await this.userRepository.findOneUser({ id: userId });
+
+        if (!user || user.refresh_token === null) return null;
+
+        const match: boolean = await bcrypt.compare(refreshToken, user.refresh_token);
+
+        if (!match) return undefined;
+
+        const tokens: Token = await this.getTokens(user);
+        const updatedTokens: string = await this.updateRefreshToken(user.id, tokens.refresh_token);
+
+        return updatedTokens ? tokens : undefined;
+    }
+
+    public async logOut(userId: string): Promise<string> {
+        const user: UserEntity = await this.userRepository.findOneUser({ id: userId });
+
+        if (!user) return null;
+
+        const res = await this.userRepository.updateUser(userId, { refresh_token: null })
+
+        return res ? 'User logout successfully' : undefined;
+    }
+
+    private async getTokens(user: Partial<UserEntity>): Promise<Token> {
+        const { id, name, email, role } = user;
+        const [ accessToken, refreshToken ] = await Promise.all([
+            this.jwt.signAsync({ id, name, email, role }, {
+                secret: this.config.get<string>('SECRET'), 
+                expiresIn: this.config.get<string>('AT_TIME')
+            }),
+            this.jwt.signAsync({ id }, {
+                secret: this.config.get<string>('SECRET'), 
+                expiresIn: this.config.get<string>('RT_TIME')
+            })
+        ]);
+
+        return {
+            access_token: accessToken,
+            refresh_token: refreshToken
         };
+    }
 
-        const token: string =  await this.jwt.signAsync(payload, {
-            secret: this.config.get<string>('SECRET'), 
-            expiresIn: '6h'
-        })
+    private async updateRefreshToken(userId: string, token: string): Promise<string> {
+        const hashedToken = await bcrypt.hash(token, this.config.get<string>('HASH'));
+        const res = await this.userRepository.updateUser(userId, {
+            refresh_token: hashedToken
+        });
 
-        return { access_token: token };
+        return res ? 'Token refreshed' : undefined;
     }
 }

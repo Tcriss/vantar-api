@@ -37,7 +37,7 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
       case 'P2002':
         response.status(HttpStatus.BAD_REQUEST).json({
           statusCode: HttpStatus.BAD_REQUEST,
-          message: 'Category name already exist, try another one',
+          message: 'This value already exist and is unique, try another one',
         });
 
         break;

@@ -1,72 +1,74 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 
-import { ProductRepository } from '../repositories/product.repository';
 import { SelectedFields } from '../../domain/types';
 import { Pagination } from "../../../common/domain/types/pagination.type";
-import { SearchTerms } from '../../domain/types/search-terms.type';
 import { ProductEntity } from '../../domain/entities/product.entity';
+import { ProductRepositoryI } from '../../domain/interfaces/product-repository.interface';
+import { ProductServiceI } from '../../domain/interfaces';
+import { Repository } from '../decotators';
 
 @Injectable()
-export class ProductService {
+export class ProductService implements ProductServiceI {
 
-    constructor(private repository: ProductRepository) { }
+    constructor(@Repository() private repository: ProductRepositoryI) { }
 
-    public async findAllProducts(page: string, inventoryId?: string, query?: SearchTerms, selected?: string): Promise<Partial<ProductEntity>[]> {
+    public async findAllProducts(page: string, userId: string, query?: string, selected?: string): Promise<Partial<ProductEntity>[]> {
         const pagination: Pagination = {
             skip: +page.split(',')[0],
             take: +page.split(',')[1]
         };
         const fields: SelectedFields = selected ? {
             id: true,
-            inventory_id: selected.includes('inventory_id') ? true : false,
+            user_id: false,
             name: selected.includes('name') ? true : false,
-            stock: selected.includes('stock') ? true : false,
-            price: selected.includes('price') ? true : false,
-            unit_measure: selected.includes('unit_measure') ? true : false,
-            category_name: selected.includes('category_name') ? true : false,
-            created_at: selected.includes('created_at') ? true : false,
-            expiration: selected.includes('expiration') ? true : false,
+            price: selected.includes('price') ? true : false
         } : null;
 
-        return this.repository.findAllProducts(pagination, inventoryId, fields, query);
+        return this.repository.findAllProducts(pagination, userId, fields, query);
     }
 
-    public async findOneProduct(id: string, selected?: string): Promise<Partial<ProductEntity>> {
+    public async findOneProduct(id: string, userId: string, selected?: string): Promise<Partial<ProductEntity>> {
         const fields: SelectedFields = selected ? {
             id: true,
-            inventory_id: selected.includes('inventory_id') ? true : false,
+            user_id: false,
             name: selected.includes('name') ? true : false,
-            stock: selected.includes('stock') ? true : false,
-            price: selected.includes('price') ? true : false,
-            unit_measure: selected.includes('unit_measure') ? true : false,
-            category_name: selected.includes('category_name') ? true : false,
-            created_at: selected.includes('created_at') ? true : false,
-            expiration: selected.includes('expiration') ? true : false,
+            price: selected.includes('price') ? true : false
         } : null;
-
         const product: Partial<ProductEntity> = await this.repository.findOneProduct(id, fields);
 
-        if (!product) return undefined;
+        if (!product) return null;
+        if (!(product.user_id === userId)) return undefined;
 
         return product;
     }
 
-    public async createProduct(product: Partial<ProductEntity>): Promise<ProductEntity> {
-        return this.repository.createProduct(product);
+    public async createManyProducts(userId: string, products: Partial<ProductEntity>[]): Promise<number> {
+        products.map(product => product.user_id = userId);
+        const res: Prisma.BatchPayload = await this.repository.createManyProducts(products);
+
+        return res.count
     }
 
-    public async updateProduct(id: string, product: Partial<ProductEntity>): Promise<ProductEntity> {
-        const isExist: boolean = await this.findOneProduct(id) ? true : false;
+    public async createOneProduct(userId: string, product: Partial<ProductEntity>): Promise<ProductEntity> {
+        product.user_id = userId;
+        return this.repository.createOneProduct(product);
+    }
 
-        if (!isExist) return null;
+    public async updateProduct(id: string, product: Partial<ProductEntity>, userId: string): Promise<ProductEntity> {
+        const originalProduct: Partial<ProductEntity> = await this.findOneProduct(id, userId);
+        
+        if (!originalProduct) return null;
+        if (!(originalProduct.user_id === userId)) return undefined;
         
         return this.repository.updateProduct(id, product);
     }
 
-    public async deleteProduct(id: string): Promise<ProductEntity> {
-        const isExist: boolean = await this.findOneProduct(id) ? true : false;
-
-        if (!isExist) return null;
+    public async deleteProduct(id: string, userId: string): Promise<ProductEntity> {
+        const product: Partial<ProductEntity> = await this.findOneProduct(id, userId);
+        
+        if (!product) return null;
+        if ((product.user_id === userId) === false) return undefined;
         
         return this.repository.deleteProduct(id);
     }

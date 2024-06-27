@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String         @id @default(uuid()) @db.Uuid
+  name              String         @db.VarChar(30)
+  email             String         @unique @db.Char(100)
+  password          String         @db.VarChar(130)
+  role              String         @db.VarChar(8) @default("CUSTOMER")
+  created_at        DateTime       @db.Timestamp() @default(now())
+  active            Boolean        @default(true)
+  refresh_token     String?         
+  products          Product[]
+  Invoices          Invoice[]
+  inventories       Inventory[]
+}
+
+model Invoice {
+  id                String         @id @default(uuid()) @db.Uuid
+  user_id           String         @db.Uuid
+  total             Int            @db.Integer
+  date              DateTime       @db.Time() @default(now())
+  user              User           @relation(fields: [user_id], references: [id])
+}
+
+model Inventory {
+  id                String         @id @default(uuid()) @db.Uuid
+  created_at        DateTime       @db.Timestamp() @default(now())
+  cost              Int            @db.Integer @default(0)
+  subtotal          Int            @db.Integer @default(0)
+  total             Int            @db.Integer @default(0)
+  user_id           String         @db.Uuid
+  user              User           @relation(fields: [user_id], references: [id])
+}
+
+model Product {
+  id                String         @id @default(uuid()) @db.Uuid
+  name              String         @db.VarChar(30)
+  price             Int            @db.Integer
+  user              User           @relation(fields: [user_id], references: [id])
+  user_id           String         @db.Uuid
+}

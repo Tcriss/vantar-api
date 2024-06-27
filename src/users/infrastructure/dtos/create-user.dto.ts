@@ -1,8 +1,9 @@
-import { User } from "@prisma/client";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsString, IsStrongPassword, MinLength } from "class-validator";
+import { IsEmail, IsEnum, IsNotEmpty, IsString, IsStrongPassword, MinLength } from "class-validator";
 
-export class CreateUserDto implements Partial<User> {
+import { Roles } from "../../../common/domain/enums";
+
+export class CreateUserDto {
     @ApiProperty({ example: 'Haroldy Martinez', description: 'User name' })
     @IsString()
     @IsNotEmpty()
@@ -18,4 +19,9 @@ export class CreateUserDto implements Partial<User> {
     @IsNotEmpty()
     @MinLength(6)
     password: string;
+
+    @ApiProperty({ enum: Roles, example: Roles.CUSTOMER, description: 'User role' })
+    @IsEnum(Roles)
+    @IsNotEmpty()
+    role: Roles
 }
