@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
 
-import { UserRepositoryI } from 'src/users/domain/interfaces';
+import { UserRepositoryI } from '../../../users/domain/interfaces';
+import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { Pagination } from '../../../common/domain/types';
 import { Repository } from '../decorators/repository.decorator';
@@ -13,7 +12,7 @@ export class UserService {
 
     constructor(
         @Repository() private repository: UserRepositoryI,
-        private config: ConfigService
+        private bcrypt: BcryptProvider
     ) {}
 
     public async findAllUsers(page: string, query?: string): Promise<UserEntity[]> {
@@ -36,7 +35,7 @@ export class UserService {
     }
 
     public async createUser(user: Partial<UserEntity>): Promise<UserEntity> {
-        user.password = await bcrypt.hash(user.password, this.config.get<string>('HASH'));
+        user.password = await this.bcrypt.hash(user.password);
 
         return this.repository.createUser(user);;
     }
@@ -48,12 +47,12 @@ export class UserService {
         if (user.password) {
             if (role === Roles.CUSTOMER) {
                 const originalUser: UserEntity = await this.findOneUser(id);
-                const match: boolean = await bcrypt.compare(user.password, originalUser.password);
+                const match: boolean = await this.bcrypt.compare(user.password, originalUser.password);
 
                 if (!match) return null;
             };
 
-            user.password = await bcrypt.hash(user.password, this.config.get<string>('HASH'));
+            user.password = await this.bcrypt.hash(user.password);
         };
 
         const res: UserEntity = await this.repository.updateUser(id, user);

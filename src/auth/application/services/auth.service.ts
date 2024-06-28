@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
 
 import { Token } from '../../domain/types';
 import { UserEntity } from '../../../users/domain/entities/user.entity';
 import { Repository } from '../../../users/application/decorators/repository.decorator';
 import { UserRepositoryI } from '../../../users/domain/interfaces';
+import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 
 @Injectable()
 export class AuthService {
 
     constructor(
-        @Repository() private userRepository: UserRepositoryI,
+        @Repository()
+        private userRepository: UserRepositoryI,
         private config: ConfigService,
+        private bcrypt: BcryptProvider,
         private jwt: JwtService
     ) {}
 
@@ -23,7 +25,7 @@ export class AuthService {
 
         if (!user) return undefined;
 
-        const isValid: boolean = await bcrypt.compare(password, user.password);
+        const isValid: boolean = await this.bcrypt.compare(password, user.password);
 
         if (!isValid) return null;
 
@@ -38,7 +40,7 @@ export class AuthService {
 
         if (!user || user.refresh_token === null) return null;
 
-        const match: boolean = await bcrypt.compare(refreshToken, user.refresh_token);
+        const match: boolean = await this.bcrypt.compare(refreshToken, user.refresh_token);
 
         if (!match) return undefined;
 
@@ -78,7 +80,8 @@ export class AuthService {
     }
 
     private async updateRefreshToken(userId: string, token: string): Promise<string> {
-        const hashedToken = await bcrypt.hash(token, this.config.get<string>('HASH'));
+        const hashedToken = await this.bcrypt.hash(token);
+
         const res = await this.userRepository.updateUser(userId, {
             refresh_token: hashedToken
         });

@@ -10,6 +10,7 @@ import { GoogleAuthStrategy } from './application/strategies/google/google.strat
 import { RefreshTokenStrategy } from './application/strategies/refresh-token/refresh-token.strategy';
 import { UserRepositoryToken } from '../users/domain/interfaces';
 import { UserRepository } from '../users/infrastructure/repositories/user.repository';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   providers: [
@@ -28,7 +29,8 @@ import { UserRepository } from '../users/infrastructure/repositories/user.reposi
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: jwtFactory
-    })
+    }),
+    CommonModule
   ]
 })
 export class AuthModule {}

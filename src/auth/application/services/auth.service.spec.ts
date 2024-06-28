@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
 
 import { AuthService } from './auth.service';
 import { jwtFactory } from '../config/jwt.factory';
 import { mockUserRepository } from '../../../users/domain/mocks/user-providers.mock';
-import { UserRepositoryI, UserRepositoryToken } from 'src/users/domain/interfaces';
-import { userMock1, userMock2 } from 'src/users/domain/mocks/user.mocks';
-import { Token } from 'src/auth/domain/types';
+import { UserRepositoryI, UserRepositoryToken } from '../../../users/domain/interfaces';
+import { userMock1, userMock2 } from '../../../users/domain/mocks/user.mocks';
+import { Token } from '../../domain/types';
+import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 
 describe('AuthService', () => {
   let userRepository: UserRepositoryI;
@@ -22,6 +22,7 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
+        BcryptProvider,
         {
           provide: UserRepositoryToken,
           useValue: mockUserRepository

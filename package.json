@@ -18,7 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migrate:prod": "prisma migrate deploy && pnpm build && pnpm start:prod",
+    "migrate:prod": "prisma migrate deploy && pnpm start",
     "migrate:dev": "prisma migrate dev && nest start"
   },
   "dependencies": {
@@ -90,6 +90,6 @@
     "testEnvironment": "node"
   },
   "prisma": {
-    "schema": "src/prisma/domain/schemas/schema.prisma"
+    "schema": "src/prisma/infrastructure/schema.prisma"
   }
 }
