@@ -4,6 +4,9 @@ node_modules
 *.md
 dist
 test
+.eslintrc.js
+.prettierrc
+.gitignore
 
 # compiled output
 /dist

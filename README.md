@@ -48,6 +48,14 @@ DB_NAME = #db name
 
 ## connection
 DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@localhost:5434/${DB_NAME}?schema=public
+
+# Tokens & security
+AT_TIME # Access_token time
+RT_TIME # Refresh_token time
+HASH # Rounds salts for bcrypt
+SECRET # Secret to sign access_tokens
+RT_SECRET # Refresh_token secret to sign them
+
 ```
 
 ```dosini
@@ -62,6 +70,13 @@ DB_NAME = #db name
 
 # replace connection variable where host name is localhost and port
 DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?schema=public
+
+# Tokens & security
+AT_TIME = # Access_token time
+RT_TIME = # Refresh_token time
+HASH = # Rounds salts for bcrypt
+SECRET = # Secret to sign access_tokens
+RT_SECRET = # Refresh_token secret to sign them
 ```
 ### 🔄️ Restore dependencies
 
@@ -86,7 +101,7 @@ Using docker
 ```bash
 docker compose --env-file .env.docker up --build -d
 ```
-> Note: --env-file flag is to tell docker that use .env.docker file in build time, if is not set docker will use default .env instead and it'll use the default configuration where localhost is set, instead of database service set in compose.yml file.
+> Note: --env-file flag is to tell docker that use a diferent .env file in runtime. This example has two environments: local dev & docker dev, if you will only use docker you can remove --env-file flag.
 
 ## Test
 
