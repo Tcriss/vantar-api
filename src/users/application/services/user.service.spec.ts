@@ -5,10 +5,10 @@ import { randomUUID } from 'crypto';
 import { UserService } from './user.service';
 import { mockUserRepository } from '../../domain/mocks/user-providers.mock';
 import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
-import { PrismaModule } from '../../../prisma/prisma.module';
+import { UserRepositoryI, UserRepositoryToken } from '../../domain/interfaces';
 import { UserEntity } from '../../domain/entities/user.entity';
-import { UserRepositoryI, UserRepositoryToken } from 'src/users/domain/interfaces';
-import { Roles } from 'src/common/domain/enums';
+import { Roles } from '../../../common/domain/enums';
+import { BcryptProvider } from 'src/common/application/providers/bcrypt.provider';
 
 describe('UserService', () => {
   let service: UserService;
@@ -21,9 +21,10 @@ describe('UserService', () => {
         {
           provide: UserRepositoryToken,
           useValue: mockUserRepository 
-        }
+        },
+        BcryptProvider
       ],
-      imports: [ConfigModule, PrismaModule]
+      imports: [ConfigModule]
     }).compile();
 
     service = module.get<UserService>(UserService);

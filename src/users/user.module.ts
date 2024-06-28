@@ -4,6 +4,7 @@ import { UserRepository } from './infrastructure/repositories/user.repository';
 import { UserService } from './application/services/user.service';
 import { UserController } from './infrastructure/controllers/user.controller';
 import { UserRepositoryToken } from './domain/interfaces';
+import { CommonModule } from '../common/common.module';
 
 @Module({
     providers: [
@@ -13,6 +14,7 @@ import { UserRepositoryToken } from './domain/interfaces';
         },
         UserService
     ],
-    controllers: [UserController]
+    controllers: [UserController],
+    imports: [CommonModule]
 })
 export class UserModule { }
