@@ -50,11 +50,11 @@ DB_NAME = #db name
 DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@localhost:5434/${DB_NAME}?schema=public
 
 # Tokens & security
-AT_TIME # Access_token time
-RT_TIME # Refresh_token time
-HASH # Rounds salts for bcrypt
-SECRET # Secret to sign access_tokens
-RT_SECRET # Refresh_token secret to sign them
+AT_TIME = # Access_token time
+RT_TIME = # Refresh_token time
+HASH = # Rounds salts for bcrypt
+SECRET = # Secret to sign access_tokens
+RT_SECRET = # Refresh_token secret to sign them
 
 ```
 
