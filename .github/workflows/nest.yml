@@ -35,6 +35,9 @@ jobs:
     - name: 'Install dependencies 📦'
       run: pnpm install
 
+    - name: 'Prisma client'
+      run: pnpm dlx prisma generate
+
     - name: 'build'
       run: pnpm run build
 
