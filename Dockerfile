@@ -1,39 +1,29 @@
-FROM node:20.11-alpine AS base
+# Base stage
+FROM node:20.11-alpine
 
 ARG DATABASE_URL
 ARG DB_USER
 ARG DB_PASSWORD
 ARG DB_NAME
-
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-COPY . /app
+# Set working directory
 WORKDIR /app
 
-# copy important files
+# Copy package.json and package-lock.json
 COPY package.json pnpm-lock.yaml ./
+COPY /src/prisma ./src/prisma
 RUN corepack enable pnpm && corepack use pnpm@latest && pnpm install
 
-# Bundle app source
-COPY ./src/prisma/domain/schemas/schema.prisma ./app/dist/prisma/domina/schemas
-
-FROM base AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+# Generate Prisma Client code
 RUN pnpm dlx prisma generate
 
-FROM base AS build
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run build
+# Copy the rest of the application code
+COPY . .
 
-# Start a new stage from a minimal base image
-FROM base
-# Copy necessary files from the previous stages
-COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-
-# Expose the port on which the app will run
+# Expose the port the app runs on, here, I was using port 3333
 EXPOSE 2020
 
-# Start the server using the production build
-CMD ["pnpm", "start:prod"]
+# Command to run the app
+CMD [ "pnpm", "migrate:prod" ]
