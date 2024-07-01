@@ -3,9 +3,9 @@ import { Pagination } from "../../../common/domain/types";
 import { SelectedFields } from "../types";
 
 export interface InvoiceRepositoryI {
-    findAll: (userId: string, pagination: Pagination, fields?: SelectedFields, query?: string) => Partial<InvoiceEntity>[],
-    findOneInvoice: (id: string, fields?: SelectedFields,) => Partial<InvoiceEntity>,
-    createInvoice: (invoice: Partial<InvoiceEntity>) => InvoiceEntity,
-    updateInvoice: (invoice: Partial<InvoiceEntity>) => InvoiceEntity,
-    deleteInvoice: (id: string) => InvoiceEntity,
+    findAllInvoices: (userId: string, pagination: Pagination, fields?: SelectedFields, query?: string) => Promise<Partial<InvoiceEntity>[]>,
+    findOneInvoice: (id: string, fields?: SelectedFields,) => Promise<Partial<InvoiceEntity>>,
+    createInvoice: (invoice: Partial<InvoiceEntity>) => Promise<InvoiceEntity>,
+    updateInvoice: (id: string, invoice: Partial<InvoiceEntity>) => Promise<InvoiceEntity>,
+    deleteInvoice: (id: string) => Promise<InvoiceEntity>,
 }
