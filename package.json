@@ -78,7 +78,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src/invoices",
+    "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "@swc/jest"

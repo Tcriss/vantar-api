@@ -6,15 +6,20 @@ import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
 import { InvoiceEntity } from '../../domain/entities/invoice.entity';
 import { ReqUser } from '../../../common/domain/types';
 import { CreateInvoiceDto, UpdateInvoiceDto } from '../dtos';
+import { ApiCreateInvoice, ApiDeleteInvoice, ApiGetInvoice, ApiGetInvoices, ApiUpdateInvoice } from '../../application/decorators/open-api.decorators';
+import { Roles } from '../../../common/domain/enums';
+import { Role } from '../../../common/application/decorators';
 
 @ApiBearerAuth()
 @ApiTags('Invoices')
+@Role(Roles.CUSTOMER)
 @UseGuards(RoleGuard)
 @Controller('invoices')
 export class InvoiceController {
 
     constructor(private service: InvoiceService) {}
 
+    @ApiGetInvoices()
     @Get()
     public async findAll(@Req() req: ReqUser, @Query() queries: {page: string, fields?: string}): Promise<Partial<InvoiceEntity>[]> {
         if (!queries.page) throw new HttpException('page query param is missing', HttpStatus.BAD_REQUEST);
@@ -22,6 +27,7 @@ export class InvoiceController {
         return this.service.findAllInvoices(req.user.id, queries.page, queries.fields);
     }
 
+    @ApiGetInvoice()
     @Get(':id')
     public async findOne(
         @Req() req: ReqUser,
@@ -36,6 +42,7 @@ export class InvoiceController {
         return res;
     }
 
+    @ApiCreateInvoice()
     @Post()
     public async create(@Req() req: ReqUser, @Body() invoice: CreateInvoiceDto): Promise<unknown> {
         const res = await this.service.createInvoice(req['user']['id'], invoice);
@@ -46,6 +53,7 @@ export class InvoiceController {
         };
     }
 
+    @ApiUpdateInvoice()
     @Patch(':id')
     public async update(
         @Req() req: ReqUser,
@@ -63,6 +71,7 @@ export class InvoiceController {
         };
     }
 
+    @ApiDeleteInvoice()
     @Delete(':id')
     public async delete(@Req() req: ReqUser, @Param('id', new ParseUUIDPipe()) id: string): Promise<unknown> {
         const res = await this.service.deleteInvoice(id, req['user']['id']);

@@ -13,7 +13,7 @@ export class InvoiceRepository implements InvoiceRepositoryI {
 
     public async findAllInvoices(userId: string, page: Pagination, fields?: SelectedFields, q?: string): Promise<Partial<InvoiceEntity>[]> {
         return this.prisma.invoice.findMany({
-            where: { id: userId },
+            where: { user_id: userId },
             select: fields,
             take: page.take,
             skip: page.skip

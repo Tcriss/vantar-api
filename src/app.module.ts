@@ -9,6 +9,7 @@ import { loggerFactory } from './common/application/config/logger.factory';
 import { AuthModule } from './auth/auth.module';
 import { InventoryModule } from './inventories/inventory.module';
 import { ProductModule } from './products/product.module';
+import { InvoiceModule } from './invoices/invoice.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { ProductModule } from './products/product.module';
     AuthModule,
     UserModule,
     InventoryModule,
-    ProductModule
+    ProductModule,
+    InvoiceModule
   ],
 })
 export class AppModule implements NestModule {
