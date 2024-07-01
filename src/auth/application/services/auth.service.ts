@@ -35,7 +35,7 @@ export class AuthService {
         return updatedTokens ? tokens : undefined;
     }
 
-    public async refreshTokens(userId: string, refreshToken: string): Promise<Token> {
+    public async refreshTokens(userId: string, refreshToken: string): Promise<string> {
         const user: UserEntity = await this.userRepository.findOneUser({ id: userId });
 
         if (!user || user.refresh_token === null) return null;
@@ -44,10 +44,9 @@ export class AuthService {
 
         if (!match) return undefined;
 
-        const tokens: Token = await this.getTokens(user);
-        const updatedTokens: string = await this.updateRefreshToken(user.id, tokens.refresh_token);
+        const token: string = await this.getAccessToken(user);
 
-        return updatedTokens ? tokens : undefined;
+        return token || undefined;
     }
 
     public async logOut(userId: string): Promise<string> {
@@ -77,6 +76,15 @@ export class AuthService {
             access_token: accessToken,
             refresh_token: refreshToken
         };
+    }
+
+    private async getAccessToken(user: Partial<UserEntity>): Promise<string> {
+        const { id, name, email, password } = user;
+
+        return this.jwt.signAsync({ id, name, email, password }, {
+            secret: this.config.get<string>('SECRET'), 
+            expiresIn: this.config.get<string>('AT_TIME')
+        });
     }
 
     private async updateRefreshToken(userId: string, token: string): Promise<string> {

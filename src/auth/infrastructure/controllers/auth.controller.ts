@@ -37,8 +37,8 @@ export class AuthController {
     @HttpCode(200)
     @UseGuards(RefreshTokenGuard)
     @Post('/refresh')
-    public async refresh(@Req() req: ReqUser): Promise<Token> {
-        const res: Token = await this.service.refreshTokens(req.user.id, req['refresh']);
+    public async refresh(@Req() req: ReqUser): Promise<string> {
+        const res: string = await this.service.refreshTokens(req.user.id, req['refresh']);
 
         if (res === null) throw new HttpException('Session not found', HttpStatus.NOT_FOUND);
         if (res === undefined) throw new HttpException('Invalid token', HttpStatus.NOT_ACCEPTABLE);
