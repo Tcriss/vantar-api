@@ -1,5 +1,5 @@
 export const prismaMock = {
-    product: {
+    invoice: {
       findMany: jest.fn(),
       findUnique: jest.fn(),
       createMany: jest.fn(),
