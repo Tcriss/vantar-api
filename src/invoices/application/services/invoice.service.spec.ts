@@ -128,8 +128,7 @@ describe('InvoiceService', () => {
     });
 
     it('should return null if product was not found', async () => {
-      jest.spyOn(service, 'findOneInvoice').mockResolvedValue(null);
-      //jest.spyOn(repository, 'updateInvoice').mockResolvedValue(null);
+      jest.spyOn(service, 'updateInvoice').mockResolvedValue(null);
 
       const { total } = invoiceMock;
       const res: InvoiceEntity = await service.updateInvoice(invoiceMock1.id, invoiceMock1.user_id, { total });
@@ -151,8 +150,7 @@ describe('InvoiceService', () => {
     });
 
     it('should return undefined if not the owner', async () => {
-      jest.spyOn(service, 'findOneInvoice').mockResolvedValue(invoiceMock);
-      //jest.spyOn(repository, 'deleteInvoice').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'deleteInvoice').mockResolvedValue(undefined);
 
       const res: Partial<InvoiceEntity> = await service.deleteInvoice(invoiceMock.id, user_id);
 
@@ -160,8 +158,7 @@ describe('InvoiceService', () => {
     });
 
     it('should return null if product was not found', async () => {
-      jest.spyOn(service, 'findOneInvoice').mockResolvedValue(null);
-      //jest.spyOn(repository, 'deleteInvoice').mockResolvedValue(null);
+      jest.spyOn(repository, 'deleteInvoice').mockResolvedValue(null);
 
       const res: InvoiceEntity = await service.deleteInvoice(id, user_id);
 
