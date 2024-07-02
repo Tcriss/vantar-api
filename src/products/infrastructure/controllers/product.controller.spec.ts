@@ -30,7 +30,7 @@ describe('ProductController', () => {
 
   describe('Find All Products', () => {
     it('should find all products', async () => {
-      jest.spyOn(service, 'findAllProducts').mockResolvedValue([productMock1, productMock6]);
+      jest.spyOn(service, 'findAll').mockResolvedValue([productMock1, productMock6]);
 
       const res: Partial<ProductEntity>[] = await controller.findAll({
         user: {
@@ -46,7 +46,7 @@ describe('ProductController', () => {
     });
 
     it('should find all products from pagination', async () => {
-      jest.spyOn(service, 'findAllProducts').mockResolvedValue([productMock2]);
+      jest.spyOn(service, 'findAll').mockResolvedValue([productMock2]);
 
       const res: Partial<ProductEntity>[] = await controller.findAll({
         user: {
@@ -62,7 +62,7 @@ describe('ProductController', () => {
     });
 
     it('should find all products with some fields', async () => {
-      jest.spyOn(service, 'findAllProducts').mockResolvedValue([partialProductMock1, partialProductMock2]);
+      jest.spyOn(service, 'findAll').mockResolvedValue([partialProductMock1, partialProductMock2]);
 
       const res: Partial<ProductEntity>[] = await controller.findAll({
         user: {
@@ -78,7 +78,7 @@ describe('ProductController', () => {
     });
 
     it('should throw an exception if page param was not provided', async () => {
-      jest.spyOn(service, 'findAllProducts').mockResolvedValue([partialProductMock1, partialProductMock2]);
+      jest.spyOn(service, 'findAll').mockResolvedValue([partialProductMock1, partialProductMock2]);
 
       try {
         await controller.findAll({
@@ -99,7 +99,7 @@ describe('ProductController', () => {
 
   describe('Find One Product', () => {
     it('should find one product', async () => {
-      jest.spyOn(service, 'findOneProduct').mockResolvedValue(productMock1);
+      jest.spyOn(service, 'findOne').mockResolvedValue(productMock1);
 
       const res: Partial<ProductEntity> = await controller.findOne(productMock1.id, {
         user: {
@@ -114,7 +114,7 @@ describe('ProductController', () => {
     });
 
     it('should find one product with some fields', async () => {
-      jest.spyOn(service, 'findOneProduct').mockResolvedValue(partialProductMock1);
+      jest.spyOn(service, 'findOne').mockResolvedValue(partialProductMock1);
 
       const res: Partial<ProductEntity> = await controller.findOne(productMock1.id, {
         user: {
@@ -129,7 +129,7 @@ describe('ProductController', () => {
     });
 
     it('should throw an exception if product was not found', async () => {
-      jest.spyOn(service, 'findOneProduct').mockResolvedValue(null);
+      jest.spyOn(service, 'findOne').mockResolvedValue(null);
 
       try {
         await controller.findOne(productMock1.id, {
@@ -148,7 +148,7 @@ describe('ProductController', () => {
     });
 
     it('should throw an exception if user is not owner', async () => {
-      jest.spyOn(service, 'findOneProduct').mockResolvedValue(undefined);
+      jest.spyOn(service, 'findOne').mockResolvedValue(undefined);
 
       try {
         await controller.findOne(productMock2.id, {
@@ -169,9 +169,9 @@ describe('ProductController', () => {
 
   describe('Create Many Products', () => {
     it('should create many products', async () => {
-      jest.spyOn(service, 'createManyProducts').mockResolvedValue(2);
+      jest.spyOn(service, 'createMany').mockResolvedValue(2);
 
-      const res: ProductResponse = await controller.createMany({
+      const res = await controller.createMany({
         user: {
           id: productMock1.user_id,
           name: '',
@@ -196,10 +196,10 @@ describe('ProductController', () => {
 
   describe('Create One Product', () => {
     it('should create a product', async () => {
-      jest.spyOn(service, 'createOneProduct').mockResolvedValue(productMock2);
+      jest.spyOn(service, 'create').mockResolvedValue(productMock2);
 
       const { name, price } = productMock2;
-      const res: ProductResponse = await controller.createOne({
+      const res = await controller.create({
         user: {
           id: productMock1.user_id,
           name: '',
@@ -208,44 +208,44 @@ describe('ProductController', () => {
         }
       }, { name, price });
 
-      expect(res.message).toBe('Product created successfully');
-      expect(res.product).toBe(productMock2);
+      expect(res['message']).toBe('Product created successfully');
+      expect(res['product']).toBe(productMock2);
     });
   });
 
   describe('Update Product', () => {
     it('should update product', async () => {
-      jest.spyOn(service, 'findOneProduct').mockResolvedValue(productMock1);
-      jest.spyOn(service,'updateProduct').mockResolvedValue(productMock6);
+      jest.spyOn(service, 'findOne').mockResolvedValue(productMock1);
+      jest.spyOn(service,'update').mockResolvedValue(productMock6);
 
       const { name, price } = productMock2;
-      const res: ProductResponse = await controller.update(productMock1.id, { name, price }, {
+      const res = await controller.update(productMock1.id, {
         user: {
           id: productMock1.user_id,
           email: '',
           name: '',
           role: Roles.CUSTOMER
         }
-      });
+      }, { name, price });
 
-      expect(res.message).toBe('Product updated successfully');
-      expect(res.product).toBe(productMock6);
+      expect(res['message']).toBe('Product updated successfully');
+      expect(res['product']).toBe(productMock6);
     });
 
     it('should return null if product was not found', async () => {
-      jest.spyOn(service, 'updateProduct').mockResolvedValue(null);
+      jest.spyOn(service, 'update').mockResolvedValue(null);
 
       const { name, price } = productMock2;
 
       try {
-        await controller.update(productMock1.id, { name, price }, {
+        await controller.update(productMock1.id, {
           user: {
             id: productMock1.user_id,
             email: '',
             name: '',
             role: Roles.CUSTOMER
           }
-        });
+        }, { name, price });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -270,18 +270,18 @@ describe('ProductController', () => {
     // });
 
     it('should throw an exception if user is not owner', async () => {
-      jest.spyOn(service, 'updateProduct').mockResolvedValue(undefined);
+      jest.spyOn(service, 'update').mockResolvedValue(undefined);
 
       try {
         const { name, price } = productMock2;
-        await controller.update(productMock2.id, { name, price }, {
+        await controller.update(productMock2.id, {
           user: {
             id: productMock1.user_id,
             email: '',
             name: '',
             role: Roles.CUSTOMER
           }
-        });
+        }, { name, price });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);
@@ -292,10 +292,10 @@ describe('ProductController', () => {
 
   describe('Delete Product', () => {
     it('should delete product', async () => {
-      jest.spyOn(service, 'findOneProduct').mockResolvedValue(productMock1);
-      jest.spyOn(service,'deleteProduct').mockResolvedValue(productMock1);
+      jest.spyOn(service, 'findOne').mockResolvedValue(productMock1);
+      jest.spyOn(service,'delete').mockResolvedValue(productMock1);
 
-      const res: ProductResponse = await controller.delete(productMock1.id, {
+      const res = await controller.delete(productMock1.id, {
         user: {
           id: productMock1.user_id,
           email: '',
@@ -304,11 +304,11 @@ describe('ProductController', () => {
         }
       });
 
-      expect(res.message).toBe('Product deleted');
+      expect(res['message']).toBe('Product deleted');
     });
 
     it('should throw an exception if product was not found', async () => {
-      jest.spyOn(service, 'deleteProduct').mockResolvedValue(null);
+      jest.spyOn(service, 'delete').mockResolvedValue(null);
 
       try {
         await controller.delete(productMock1.id, {
@@ -342,7 +342,7 @@ describe('ProductController', () => {
     // });
 
     it('should throw an exception if user is not owner', async () => {
-      jest.spyOn(service, 'deleteProduct').mockResolvedValue(undefined);
+      jest.spyOn(service, 'delete').mockResolvedValue(undefined);
 
       try {
         await controller.delete(productMock2.id, {

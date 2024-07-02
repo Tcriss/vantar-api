@@ -1,2 +1,2 @@
-export * from './product-response.type';
+export * from './product-queries.type';
 export * from './selected-fields.type';
