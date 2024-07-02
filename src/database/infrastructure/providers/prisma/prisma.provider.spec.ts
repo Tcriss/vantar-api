@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { PrismaProvider } from './prisma.provider';
+import { PrismaProvider } from '../prisma.provider';
 
 describe('PrismaProvider', () => {
   let prismaProvider: PrismaProvider;

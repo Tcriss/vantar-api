@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 
-import { PrismaProvider } from "../../../prisma/infrastructure/providers/prisma.provider";
+import { PrismaProvider } from "../../../database/infrastructure/providers/prisma/prisma.provider";
 import { UserEntity } from "../../domain/entities/user.entity";
 import { Pagination } from "../../../common/domain/types";
 import { UserRepositoryI } from "../../domain/interfaces";

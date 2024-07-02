@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 
-import { PrismaProvider } from "../../../prisma/infrastructure/providers/prisma.provider";
+import { PrismaProvider } from "../../../database/infrastructure/providers/prisma/prisma.provider";
 import { SelectedFields } from "../../domain/types";
 import { ProductEntity } from "../../domain/entities/product.entity";
 import { Pagination } from "../../../common/domain/types";

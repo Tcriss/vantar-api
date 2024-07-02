@@ -7,7 +7,7 @@ import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
 import { appConfig, swaggerOptions, validationOptions } from './common/application/config';
-import { PrismaClientExceptionFilter } from './prisma/application/filters/prisma-client-exception/prisma-client-exception.filter';
+import { PrismaClientExceptionFilter } from './database/application/filters/prisma-client-exception/prisma-client-exception.filter';
 import { AccessTokenGuard } from './auth/application/guards/access-token/access-token.guard';
 
 async function bootstrap() {
