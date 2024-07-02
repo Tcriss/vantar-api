@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 
 import { PrismaModule } from './prisma/prisma.module';
+import { MongoDbModule } from './mongo/mongo-db.module';
 import { UserModule } from './users/user.module';
 import { CorrelationIdMiddleware } from './common/application/middlewares/correlation-id/correlation-id.middleware';
 import { loggerFactory } from './common/application/config/logger.factory';
@@ -20,11 +21,12 @@ import { InvoiceModule } from './invoices/invoice.module';
       useFactory: loggerFactory
     }),
     PrismaModule,
+    MongoDbModule,
     AuthModule,
     UserModule,
     InventoryModule,
     ProductModule,
-    InvoiceModule
+    InvoiceModule,
   ],
 })
 export class AppModule implements NestModule {
