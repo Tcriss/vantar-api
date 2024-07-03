@@ -1,4 +1,4 @@
-import { DeleteResult, InsertManyResult, InsertOneResult } from "mongodb";
+import { DeleteResult, InsertManyResult, InsertOneResult, UpdateResult } from "mongodb";
 
 import { Pagination } from "../types";
 
@@ -10,6 +10,7 @@ export abstract class Repository<T> {
     abstract insertMany(docs: T[]): Promise<InsertManyResult<T>>;
     abstract insert(doc: T): Promise<InsertOneResult<T>>;
     abstract update(id: string, entity: Partial<T>): Promise<T>;
+    abstract updateDoc(id: string, doc: T): Promise<UpdateResult<T>>;
     abstract delete(id: string): Promise<T>;
     abstract deleteDoc(id: string): Promise<DeleteResult>;
 };

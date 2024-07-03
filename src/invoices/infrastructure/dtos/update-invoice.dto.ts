@@ -1,15 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsOptional } from "class-validator";
+import { IsArray, IsNotEmpty, ValidateNested } from "class-validator";
 
-import { ProductList } from "../../../products/domain/entities/product-list.entity";
+import { UpdateProductListDto } from "./update-product-list.dto";
+import { Type } from "class-transformer";
 
 export class UpdateInvoiceDto {
-    @ApiProperty({ example: '2240.00' })
-    @IsOptional()
-    @IsNumber()
-    total?: number;
-
-    @ApiProperty({ required: false, isArray: true })
-    @IsOptional()
-    products?: ProductList[];
+    @ApiProperty({ type: UpdateProductListDto, isArray: true })
+    @IsNotEmpty()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => UpdateProductListDto)
+    products: UpdateProductListDto[];
 }
