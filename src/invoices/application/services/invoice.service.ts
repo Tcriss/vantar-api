@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { InvoiceRepositoryI } from '../../domain/interfaces';
 import { InvoiceEntity } from '../../domain/entities/invoice.entity';
@@ -27,30 +27,20 @@ export class InvoiceService {
             user_id: true,
             date: selected.includes('date'),
             total: selected.includes('total'),
-            products: selected.includes('products')
         } : null;
 
         return this.invoiceRepository.findAll(userId, pagination, selectedFields);
     }
 
-    public async findOneInvoice(id: string, userId: string, selected?: string): Promise<Partial<InvoiceEntity>> {
-        const fields: SelectedFields = selected ? {
-            id: true,
-            user_id: true,
-            date: selected.includes('date'),
-            total: selected.includes('total'),
-            products: selected.includes('products')
-        } : null;
-        const invoice: Partial<InvoiceEntity> = await this.invoiceRepository.findOne(id, fields);
+    public async findOneInvoice(id: string, userId: string): Promise<Partial<InvoiceEntity>> {
+        const invoice: Partial<InvoiceEntity> = await this.invoiceRepository.findOne(id);
 
         if (!invoice) return null;
         if (!(invoice.user_id === userId)) return undefined;
 
-        const productList: Partial<ProductList>[] = await this.listRepository.findAll(userId);
-
-        // productList.forEach(product => {
-        //     invoice.products.push(new ProductList(product));
-        // });
+        const list: Partial<InvoiceProductList> = await this.listRepository.findOne(invoice.id);
+        
+        invoice.products = list ? list.products : [];
         return invoice;
     }
     
@@ -66,7 +56,7 @@ export class InvoiceService {
             invoiceTotal += newProduct.total;
             return newProduct;
         });
-        
+
         invoice.total = invoiceTotal;
         invoice.user_id = userId;
 

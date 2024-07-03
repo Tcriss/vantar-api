@@ -14,9 +14,9 @@ export class ProductListRepository implements Partial<Repository<InvoiceProductL
         this.collection = this.mongo.getProductList('product-history');
     }
 
-    // public async findOne(): Promise<WithId<ProductList>> {
-    //     return this.collection.findOne();
-    // }
+    public async findOne(id: string): Promise<InvoiceProductList | null> {
+        return this.collection.findOne<InvoiceProductList>({ id: id });
+    }
 
     public async insert(doc: InvoiceProductList): Promise<InsertOneResult<InvoiceProductList>> {
         return this.collection.insertOne(doc);

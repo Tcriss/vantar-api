@@ -3,5 +3,4 @@ export type SelectedFields = {
     user_id: boolean,
     total: boolean,
     date: boolean,
-    products: boolean
 }

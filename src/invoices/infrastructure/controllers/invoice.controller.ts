@@ -34,7 +34,7 @@ export class InvoiceController {
         @Param('id', new ParseUUIDPipe()) id: string,
         @Query('fields') fields?: string
     ): Promise<Partial<InvoiceEntity>> {
-        const res = await this.service.findOneInvoice(id, req.user.id, fields);
+        const res = await this.service.findOneInvoice(id, req.user.id);
 
         if (res === undefined) throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
         if (res === null) throw new HttpException('Invoice not found', HttpStatus.NOT_FOUND);
