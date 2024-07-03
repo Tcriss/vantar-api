@@ -45,7 +45,7 @@ export class InvoiceController {
     @ApiCreateInvoice()
     @Post()
     public async create(@Req() req: ReqUser, @Body() invoice: CreateInvoiceDto): Promise<unknown> {
-        const res = await this.service.createInvoice(req['user']['id'], invoice);
+        const res = await this.service.createInvoice(req.user.id, invoice);
 
         if (res == null) throw new HttpException('Products from invoice not created', HttpStatus.BAD_REQUEST);
 

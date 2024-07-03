@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 import { Pagination } from '../../../../common/domain/types';
 import { InvoiceEntity } from '../../../domain/entities/invoice.entity';
-import { InvoiceRepositoryI } from '../../../domain/interfaces';
 import { SelectedFields } from '../../../domain/types';
 import { PrismaProvider } from '../../../../database/infrastructure/providers/prisma/prisma.provider';
+import { Repository } from 'src/common/domain/entities';
 
 @Injectable()
-export class InvoiceRepository implements InvoiceRepositoryI {
+export class InvoiceRepository implements Partial<Repository<InvoiceEntity>> {
 
     constructor(private prisma: PrismaProvider) {}
 
-    public async findAllInvoices(userId: string, page: Pagination, fields?: SelectedFields, q?: string): Promise<Partial<InvoiceEntity>[]> {
+    public async findAll(userId: string, page: Pagination, fields?: SelectedFields, q?: string): Promise<Partial<InvoiceEntity>[]> {
         return this.prisma.invoice.findMany({
             where: { user_id: userId },
             select: fields,
@@ -20,28 +20,28 @@ export class InvoiceRepository implements InvoiceRepositoryI {
         });
     }
 
-    public async findOneInvoice(id: string, fields?: SelectedFields): Promise<Partial<InvoiceEntity>> {
+    public async findOne(id: string, fields?: SelectedFields): Promise<Partial<InvoiceEntity>> {
         return this.prisma.invoice.findUnique({
             where: { id: id },
             select: fields
         })
     }
 
-    public async createInvoice(invoice: Partial<InvoiceEntity>): Promise<InvoiceEntity> {
+    public async create(invoice: Partial<InvoiceEntity>): Promise<InvoiceEntity> {
         return this.prisma.invoice.create({ data: {
             total: invoice.total,
             user_id: invoice.user_id
         }});
     }
 
-    public async updateInvoice(id: string, invoice: Partial<InvoiceEntity>): Promise<InvoiceEntity> {
+    public async update(id: string, invoice: Partial<InvoiceEntity>): Promise<InvoiceEntity> {
         return this.prisma.invoice.update({
             where: { id: id },
             data: invoice
         });
     }
 
-    public async deleteInvoice(id: string): Promise<InvoiceEntity> {
+    public async delete(id: string): Promise<InvoiceEntity> {
         return this.prisma.invoice.delete({ where: { id: id }});
     }
 }

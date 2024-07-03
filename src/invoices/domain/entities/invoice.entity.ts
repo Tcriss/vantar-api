@@ -16,6 +16,6 @@ export class InvoiceEntity implements Invoice {
     @ApiProperty({ format: 'date' })
     date: Date;
 
-    @ApiProperty({ type: ProductList, isArray: true, required: false })
+    @ApiProperty({ type: ProductList, isArray: true })
     products?: Partial<ProductList>[]
 }
