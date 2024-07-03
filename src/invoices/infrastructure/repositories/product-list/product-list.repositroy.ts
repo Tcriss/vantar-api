@@ -1,4 +1,4 @@
-import { Collection, InsertOneResult } from "mongodb";
+import { Collection, DeleteResult, InsertOneResult } from "mongodb";
 import { Injectable } from "@nestjs/common";
 
 import { Repository } from "../../../../common/domain/entities";
@@ -20,5 +20,9 @@ export class ProductListRepository implements Partial<Repository<InvoiceProductL
 
     public async insert(doc: InvoiceProductList): Promise<InsertOneResult<InvoiceProductList>> {
         return this.collection.insertOne(doc);
+    }
+
+    public async deleteDoc(id: string): Promise<DeleteResult> {
+        return this.collection.deleteOne({ id: id });
     }
 }

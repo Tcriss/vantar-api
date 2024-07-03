@@ -86,6 +86,10 @@ export class InvoiceService {
     }
 
     public async deleteInvoice(id: string, userId: string): Promise<InvoiceEntity> {
+        const res = await this.listRepository.deleteDoc(id);
+
+        if (!res) return null;
+
         const data: Partial<InvoiceEntity> = await this.findOneInvoice(id, userId);
         
         if (data == null) return null;
