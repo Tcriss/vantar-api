@@ -10,11 +10,11 @@ export const prismaMock = {
 };
 
 export const mockInvoiceRepository = {
-    findAllInvoices: jest.fn(),
-    findOneInvoice: jest.fn(),
-    createInvoice: jest.fn(),
-    updateInvoice: jest.fn(),
-    deleteInvoice: jest.fn(),
+    findAll: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
 };
 
 export const mockInvoiceService = {

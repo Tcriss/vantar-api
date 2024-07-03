@@ -22,6 +22,14 @@ export const mockProductRepository = {
   delete: jest.fn(),
 };
 
+export const mockProductListRepository = {
+  setCollection: jest.fn(),
+  findOne: jest.fn(),
+  insert: jest.fn(),
+  updateDoc: jest.fn(),
+  deleteDoc: jest.fn()
+}
+
 export const mockProductService = {
   findAll: jest.fn(),
   findOne: jest.fn(),

@@ -78,6 +78,11 @@ export class InvoiceService {
     }
 
     public async updateInvoice(id: string, userId: string, invoice: Partial<InvoiceEntity>): Promise<InvoiceEntity> {
+        const data: Partial<InvoiceEntity> = await this.findOneInvoice(id, userId);
+        
+        if (!data) return null;
+        if (data.user_id !== userId) return undefined;
+        
         let invoiceTotal: number = 0;
         const list: ProductList[] = invoice.products.map(product => {
             const newProduct = {
@@ -97,11 +102,6 @@ export class InvoiceService {
 
         if (!productListRes) return null;
 
-        const data: Partial<InvoiceEntity> = await this.findOneInvoice(id, userId);
-        
-        if (data == null) return null;
-        if (data == undefined) return undefined;
-
         const updated = await this.invoiceRepository.update(id, { total: invoiceTotal });
 
         updated.products = list;
@@ -110,14 +110,14 @@ export class InvoiceService {
     }
 
     public async deleteInvoice(id: string, userId: string): Promise<InvoiceEntity> {
+        const data: Partial<InvoiceEntity> = await this.findOneInvoice(id, userId);
+        
+        if (!data) return null;
+        if (data.user_id !== userId) return undefined;
+
         const res = await this.productListRepository.deleteDoc(id);
 
         if (!res) return null;
-
-        const data: Partial<InvoiceEntity> = await this.findOneInvoice(id, userId);
-        
-        if (data == null) return null;
-        if (data == undefined) return undefined;
         
         return this.invoiceRepository.delete(id);
     }
