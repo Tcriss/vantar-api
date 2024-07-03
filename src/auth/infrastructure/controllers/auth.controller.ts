@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { LoginUserDto } from '../dto';
+import { LoginUserDto, RefreshTokenDto } from '../dto';
 import { Token } from '../../domain/types';
 import { AuthService } from '../../application/services/auth.service';
 import { PublicAccess } from '../../../common/application/decorators';
@@ -37,8 +37,8 @@ export class AuthController {
     @HttpCode(200)
     @UseGuards(RefreshTokenGuard)
     @Post('/refresh')
-    public async refresh(@Req() req: ReqUser): Promise<string> {
-        const res: string = await this.service.refreshTokens(req.user.id, req['refresh']);
+    public async refresh(@Req() req: ReqUser, @Body() token: RefreshTokenDto): Promise<string> {
+        const res: string = await this.service.refreshTokens(req.user.id, token.refresh_token);
 
         if (res === null) throw new HttpException('Session not found', HttpStatus.NOT_FOUND);
         if (res === undefined) throw new HttpException('Invalid token', HttpStatus.NOT_ACCEPTABLE);

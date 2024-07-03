@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ProductService } from './product.service';
-import { ProductRepositoryI, ProductRepositoryToken } from '../../domain/interfaces';
 import { ProductEntity } from '../../domain/entities/product.entity';
 import { partialProductMock1, partialProductMock2, productMock1, productMock2, productMock3, productMock6 } from '../../domain/mocks/product.mock';
 import { mockProductRepository } from '../../domain/mocks/product-providers.mock';
-import { BaseRepository } from 'src/common/domain/interfaces';
+import { Repository } from 'src/common/domain/entities';
+import { ProductRepositoryToken } from '../decotators';
 
 describe('ProductService', () => {
   let service: ProductService;
-  let repository: BaseRepository<ProductEntity>;
+  let repository: Repository<ProductEntity>;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -23,7 +23,7 @@ describe('ProductService', () => {
     }).compile();
 
     service = module.get<ProductService>(ProductService);
-    repository = module.get<BaseRepository<ProductEntity>>(ProductRepositoryToken);
+    repository = module.get<Repository<ProductEntity>>(ProductRepositoryToken);
   });
 
   it('should be defined', () => {

@@ -1,18 +1,18 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 
-import { PrismaProvider } from "../../../../database/infrastructure/providers/prisma/prisma.provider";
-import { SelectedFields } from "../../../domain/types";
-import { ProductEntity } from "../../../domain/entities/product.entity";
-import { Pagination } from "../../../../common/domain/types";
-import { BaseRepository } from "../../../../common/domain/interfaces";
+import { PrismaProvider } from "../../../database/infrastructure/providers/prisma/prisma.provider";
+import { SelectedFields } from "../../domain/types";
+import { ProductEntity } from "../../domain/entities/product.entity";
+import { Pagination } from "../../../common/domain/types";
+import { Repository } from "../../../common/domain/entities";
 
 @Injectable()
-export class ProductRepository implements BaseRepository<ProductEntity> {
+export class ProductRepository implements   Partial<Repository<ProductEntity>> {
 
     constructor(private prisma: PrismaProvider) { }
 
-    public async findAll(page: Pagination, userId: string, fields?: SelectedFields, query?: string): Promise<Partial<ProductEntity>[]> {
+    public async findAll(userId: string, page: Pagination, fields?: SelectedFields, query?: string): Promise<Partial<ProductEntity>[]> {
         return this.prisma.product.findMany({
             where: {
                 user_id: userId,

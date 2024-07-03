@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 
 import { ProductListRepository } from "./product-list.repositroy";
 import { MongoProvider } from "../../../../database/infrastructure/providers/mongo-db/mongo.provider";
-import { mongoMock } from "../../../domain/mocks/product-providers.mock";
+import { mongoMock } from "../../../../products/domain/mocks/product-providers.mock";
 
 describe('', () => {
     let repository: ProductListRepository;

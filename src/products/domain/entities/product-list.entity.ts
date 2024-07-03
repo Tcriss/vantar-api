@@ -8,7 +8,7 @@ export class ProductList {
     name?: string;
 
     @ApiProperty({ example: 80.00 })
-    unit_price: string;
+    unit_price: number;
 
     @ApiProperty({ example: 3 })
     amount: number
