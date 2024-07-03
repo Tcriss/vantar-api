@@ -2,10 +2,10 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { Prisma } from "@prisma/client";
 
 import { ProductRepository } from "./product.repository";
-import { PrismaProvider } from "../../../database/infrastructure/providers/prisma/prisma.provider";
-import { prismaMock } from "../../domain/mocks/product-providers.mock";
-import { ProductEntity } from "../../domain/entities/product.entity";
-import { productMock1, productMock2, productMock3, productMock4, productMock5, productMock6 } from "../../domain/mocks/product.mock";
+import { PrismaProvider } from "../../../../database/infrastructure/providers/prisma/prisma.provider";
+import { prismaMock } from "../../../domain/mocks/product-providers.mock";
+import { ProductEntity } from "../../../domain/entities/product.entity";
+import { productMock1, productMock2, productMock3, productMock4, productMock5, productMock6 } from "../../../domain/mocks/product.mock";
 
 describe('Customer', () => {
     let repository: ProductRepository;

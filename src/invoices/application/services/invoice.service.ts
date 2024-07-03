@@ -1,21 +1,22 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { InvoiceRepositoryI } from '../../domain/interfaces';
-import { InvoiceEntity } from '../../domain/entities/invoice.entity';
-import { Pagination } from '../../../common/domain/types';
 import { InvoiceProductList, SelectedFields } from '../../domain/types';
 import { ProductListRepository } from '../decorators/product-list-repository.decorator';
+import { InvoiceEntity } from '../../domain/entities/invoice.entity';
 import { ProductList } from '../../../products/domain/entities/product-list.entity';
-import { InvoiceRepository } from '../decorators';
+import { Pagination } from '../../../common/domain/types';
 import { Repository } from '../../../common/domain/entities';
+import { InvoiceRepository } from '../decorators';
 
 @Injectable()
 export class InvoiceService {
 
     constructor(
         @InvoiceRepository() private invoiceRepository: Repository<InvoiceEntity>,
-        @ProductListRepository() private listRepository: Repository<InvoiceProductList>
-    ) {}
+        @ProductListRepository() private productListRepository: Repository<InvoiceProductList>
+    ) {
+        this.productListRepository.setCollection('product-history');
+    }
 
     public async findAllInvoices(userId: string, page: string, selected?: string): Promise<Partial<InvoiceEntity>[]> {
         const pagination: Pagination = {
@@ -38,7 +39,7 @@ export class InvoiceService {
         if (!invoice) return null;
         if (!(invoice.user_id === userId)) return undefined;
 
-        const list: Partial<InvoiceProductList> = await this.listRepository.findOne(invoice.id);
+        const list: Partial<InvoiceProductList> = await this.productListRepository.findOne(invoice.id);
         
         invoice.products = list ? list.products : [];
         return invoice;
@@ -64,7 +65,7 @@ export class InvoiceService {
 
         if (!newInvoice) return null;
 
-        const productsResult = await this.listRepository.insert({
+        const productsResult = await this.productListRepository.insert({
             id: newInvoice.id,
             products: list
         });
@@ -92,7 +93,7 @@ export class InvoiceService {
             products: list,
             id: id,
         };
-        const productListRes = await this.listRepository.updateDoc(id, productList);
+        const productListRes = await this.productListRepository.updateDoc(id, productList);
 
         if (!productListRes) return null;
 
@@ -109,7 +110,7 @@ export class InvoiceService {
     }
 
     public async deleteInvoice(id: string, userId: string): Promise<InvoiceEntity> {
-        const res = await this.listRepository.deleteDoc(id);
+        const res = await this.productListRepository.deleteDoc(id);
 
         if (!res) return null;
 

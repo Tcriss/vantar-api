@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { InvoiceRepository } from './invoice.repository';
-import { PrismaProvider } from '../../../../database/infrastructure/providers/prisma/prisma.provider';
-import { prismaMock } from '../../../domain/mocks/invoice-providers.mock';
+import { PrismaProvider } from '../../../database/infrastructure/providers/prisma/prisma.provider';
+import { prismaMock } from '../../domain/mocks/invoice-providers.mock';
 import { invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock } from 'src/invoices/domain/mocks/invoice..mock';
-import { InvoiceEntity } from '../../../domain/entities/invoice.entity';
+import { InvoiceEntity } from '../../domain/entities/invoice.entity';
 
 describe('Repositories', () => {
   let repository: InvoiceRepository;

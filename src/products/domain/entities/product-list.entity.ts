@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 export class ProductList {
-    @ApiProperty({ format: 'object-id' })
     id?: string;
 
     @ApiProperty({ example: 'Cloro' })

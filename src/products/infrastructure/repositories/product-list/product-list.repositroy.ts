@@ -3,17 +3,19 @@ import { Injectable } from "@nestjs/common";
 
 import { Repository } from "../../../../common/domain/entities";
 import { MongoService } from "../../../../database/infrastructure/services/mongo.service";
-import { InvoiceProductList } from "../../../domain/types";
+import { InvoiceProductList } from "../../../../invoices/domain/types";
 
 @Injectable()
 export class ProductListRepository implements Partial<Repository<InvoiceProductList>> {
 
     collection: Collection<InvoiceProductList>;
 
-    constructor(private mongo: MongoService<InvoiceProductList>) {
-        this.collection = this.mongo.getProductList('product-history');
-    }
+    constructor(private mongo: MongoService<InvoiceProductList>) {}
 
+    public setCollection(collection: string): void {
+        this.collection = this.mongo.getProductList(collection);
+    }
+ 
     public async findOne(id: string): Promise<InvoiceProductList | null> {
         return this.collection.findOne<InvoiceProductList>({ id: id });
     }

@@ -13,4 +13,5 @@ export abstract class Repository<T> {
     abstract updateDoc(id: string, doc: T): Promise<UpdateResult<T>>;
     abstract delete(id: string): Promise<T>;
     abstract deleteDoc(id: string): Promise<DeleteResult>;
+    abstract setCollection(collection: string): void;
 };
