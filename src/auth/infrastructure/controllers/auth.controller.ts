@@ -7,8 +7,8 @@ import { AuthService } from '../../application/services/auth.service';
 import { PublicAccess } from '../../../common/application/decorators';
 import { AuthResponseI } from '../../domain/interfaces/auth-response.interface';
 import { RefreshTokenGuard } from '../../application/guards/refresh-token/refresh-token.guard';
+import { ApiLogin, ApiLogout, ApiRefresh } from '../../application/decorators';
 import { ReqUser } from '../../../common/domain/types';
-import { ApiLogin, ApiLogout, ApiRefresh } from '../../application/decorators/open-api.decorator';
 
 @ApiTags('Authentication')
 @Controller('auth')

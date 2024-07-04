@@ -1,5 +1,5 @@
 import { HttpStatus, applyDecorators } from "@nestjs/common";
-import { ApiOperation, ApiQuery, ApiResponse } from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from "@nestjs/swagger";
 
 import { InventoryEntity } from "../../domain/entities/inventory.entity";
 
@@ -19,6 +19,7 @@ export const ApiGetInventory = () => applyDecorators(
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid id' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Inventory not found' }),
+    ApiParam({ name: 'id', description: 'Inventory id', format: 'uuid', required: true }),
     ApiQuery({ name: 'fields', required: false, description: 'Fields you want to fetch in your response' }),
 );
 
@@ -33,7 +34,8 @@ export const ApiUpdateInventory = () => applyDecorators(
     ApiResponse({ status: HttpStatus.OK, description: 'Inventory updated' }),
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Validations error' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
-    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Inventory not found' })
+    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Inventory not found' }),
+    ApiParam({ name: 'id', description: 'Inventory id', format: 'uuid', required: true })
 );
 
 export const ApiDeleteInventory = () => applyDecorators(
@@ -41,5 +43,6 @@ export const ApiDeleteInventory = () => applyDecorators(
     ApiResponse({ status: HttpStatus.OK, description: 'Inventory deleted' }),
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid id' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
-    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Inventory not found' })
+    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Inventory not found' }),
+    ApiParam({ name: 'id', description: 'Inventory id', format: 'uuid', required: true })
 );

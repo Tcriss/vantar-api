@@ -1,15 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { MongoProvider } from './mongo.provider';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 
 describe('MongoDb', () => {
   let provider: MongoProvider;
+  let configServiceMock = {
+    get: jest.fn().mockReturnValue('mongodb://test_db_name'),
+  } as any;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MongoProvider],
-      imports: [ConfigModule]
+      providers: [
+        {
+          provide: ConfigService,
+          useValue: configServiceMock
+        },
+        MongoProvider
+      ],
     }).compile();
 
     provider = module.get<MongoProvider>(MongoProvider);

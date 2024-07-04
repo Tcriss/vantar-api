@@ -15,11 +15,11 @@ export class MongoProvider extends MongoClient implements OnModuleInit, OnModule
         });
     }
 
-    public async onModuleInit(): Promise<void> {
-        await this.connect();
+    public onModuleInit(): void {
+        this.connect();
     }
 
-    public async onModuleDestroy(): Promise<void> {
-        await this.close();
+    public onModuleDestroy(): void {
+        this.close();
     }
 }

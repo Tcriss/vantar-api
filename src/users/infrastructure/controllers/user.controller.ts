@@ -7,7 +7,7 @@ import { UserQueries } from '../../domain/types';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { UserService } from '../../application/services/user.service';
 import { PublicAccess, Role } from '../../../common/application/decorators';
-import { ApiCreateUser, ApiDeleteUser, ApiGetUser, ApiGetUsers, ApiUpdateUser } from '../../application/decorators/open-api.decorator';
+import { ApiCreateUser, ApiDeleteUser, ApiGetUser, ApiGetUsers, ApiUpdateUser } from '../../application/decorators';
 import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
 import { Roles } from '../../../common/domain/enums';
 import { UserGuard } from '../../application/guards/user.guard';
@@ -24,7 +24,7 @@ export class UserController {
     @Role(Roles.ADMIN)
     @UseGuards(RoleGuard)
     @Get()
-    public async findAll(@Req() req: ReqUser, @Query() queries?: UserQueries): Promise<UserEntity[]> {
+    public async findAll(@Req() req: ReqUser, @Query() queries?: UserQueries): Promise<UserEntity[] | Partial<UserEntity>[]> {
         if (!req.user) throw new HttpException('credentials missing', HttpStatus.BAD_REQUEST);
 
         return this.service.findAllUsers(queries.page, queries.q);

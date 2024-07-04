@@ -1,8 +1,8 @@
 import { HttpStatus, applyDecorators } from "@nestjs/common";
-import { ApiBody, ApiForbiddenResponse, ApiOperation, ApiQuery, ApiResponse } from "@nestjs/swagger";
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse } from "@nestjs/swagger";
 
 import { ProductEntity } from "../../domain/entities/product.entity";
-import { CreateProductDto } from "src/products/infrastructure/dtos";
+import { CreateProductDto } from "../../../products/infrastructure/dtos";
 
 export const ApiGetProducts = () => applyDecorators(
     ApiOperation({ summary: 'Get all products' }),
@@ -19,7 +19,8 @@ export const ApiGetProduct = () => applyDecorators(
     ApiResponse({ status: HttpStatus.OK, type: ProductEntity }),
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid id' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Not enough permissions' }),
-    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' })
+    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' }),
+    ApiParam({ name: 'id', description: 'Product id', format: 'uuid', required: true })
 );
 
 export const ApiCreateProducts = () => applyDecorators(
@@ -34,7 +35,8 @@ export const ApiCreateProduct = () => applyDecorators(
     ApiOperation({ summary: 'Create one product' }),
     ApiResponse({ status: HttpStatus.OK, description: 'Product created succesfully', type: ProductEntity, }),
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Validations error' }),
-    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' })
+    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' }),
+    ApiParam({ name: 'id', description: 'Product id', format: 'uuid', required: true })
 );
 
 export const ApiUpdateProduct = () => applyDecorators(
@@ -42,7 +44,8 @@ export const ApiUpdateProduct = () => applyDecorators(
     ApiResponse({ status: HttpStatus.OK, description: 'Product updated succesfully', type: ProductEntity }),
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Validations error' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Not enough permissions' }),
-    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' })
+    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' }),
+    ApiParam({ name: 'id', description: 'Product id', format: 'uuid', required: true })
 );
 
 export const ApiDeleteProduct = () => applyDecorators(
@@ -50,5 +53,6 @@ export const ApiDeleteProduct = () => applyDecorators(
     ApiResponse({ status: HttpStatus.OK, description: 'Product deleted succesfully' }),
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Id invalid' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Not enough permissions' }),
-    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' })
+    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' }),
+    ApiParam({ name: 'id', description: 'Product id', format: 'uuid', required: true })
 );
