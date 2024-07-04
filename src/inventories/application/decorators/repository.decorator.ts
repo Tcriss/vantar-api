@@ -1,5 +1,4 @@
 import { Inject } from "@nestjs/common";
 
-import { InventoryRepositoryToken } from "../../domain/interfaces/inventory-repository.interface";
-
-export const Repository = () => Inject(InventoryRepositoryToken);
+export const InventoryRepositoryToken = Symbol();
+export const InventoryRepository = () => Inject(InventoryRepositoryToken);
