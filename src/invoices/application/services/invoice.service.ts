@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { InvoiceProductList, SelectedFields } from '../../domain/types';
-import { ProductListRepository } from '../decorators/product-list-repository.decorator';
+import { ProductListRepository } from '../../../products/application/decotators';
 import { InvoiceEntity } from '../../domain/entities/invoice.entity';
 import { ProductList } from '../../../products/domain/entities/product-list.entity';
 import { Pagination } from '../../../common/domain/types';

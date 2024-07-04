@@ -6,7 +6,7 @@ import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
 import { InvoiceEntity } from '../../domain/entities/invoice.entity';
 import { ReqUser } from '../../../common/domain/types';
 import { CreateInvoiceDto, UpdateInvoiceDto } from '../dtos';
-import { ApiCreateInvoice, ApiDeleteInvoice, ApiGetInvoice, ApiGetInvoices, ApiUpdateInvoice } from '../../application/decorators/open-api.decorators';
+import { ApiCreateInvoice, ApiDeleteInvoice, ApiGetInvoice, ApiGetInvoices, ApiUpdateInvoice } from '../../application/decorators';
 import { Roles } from '../../../common/domain/enums';
 import { Role } from '../../../common/application/decorators';
 

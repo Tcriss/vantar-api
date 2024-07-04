@@ -4,7 +4,7 @@ import { InvoiceRepositoryToken } from "./domain/interfaces";
 import { InvoiceRepository } from "./infrastructure/repositories/invoice.repository";
 import { InvoiceService } from './application/services/invoice.service';
 import { InvoiceController } from "./infrastructure/controllers/invoice.controller";
-import { ProductListRepositoryToken } from "./application/decorators/product-list-repository.decorator";
+import { ProductListRepositoryToken } from "../products/application/decotators";
 import { ProductListRepository } from "../products/infrastructure/repositories/product-list/product-list.repositroy";
 
 @Module({

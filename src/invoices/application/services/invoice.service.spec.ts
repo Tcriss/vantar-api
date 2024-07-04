@@ -6,7 +6,7 @@ import { InvoiceRepositoryToken } from '../../domain/interfaces';
 import { invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock, partialInvoiceMock1 } from '../../domain/mocks/invoice..mock';
 import { InvoiceEntity } from '../../domain/entities/invoice.entity';
 import { mockInvoiceRepository } from '../../domain/mocks/invoice-providers.mock';
-import { ProductListRepositoryToken } from '../decorators/product-list-repository.decorator';
+import { ProductListRepositoryToken } from '../../../products/application/decotators/product-list-repository.decorator';
 import { mockProductListRepository } from '../../../products/domain/mocks/product-providers.mock';
 import { Repository } from '../../../common/domain/entities';
 import { ProductList } from '../../../products/domain/entities/product-list.entity';
