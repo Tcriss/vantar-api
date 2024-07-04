@@ -1,5 +1,4 @@
 import { Inject } from "@nestjs/common";
 
-import { UserRepositoryToken } from "../../domain/interfaces";
-
-export const Repository = () => Inject(UserRepositoryToken);
+export const UserRepositoryToken = Symbol();
+export const UserRepository = () => Inject(UserRepositoryToken);

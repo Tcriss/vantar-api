@@ -10,8 +10,17 @@ export const prismaMock = {
 };
 
 export const mongoMock = {
-  db: jest.fn()
+  db: jest.fn(),
 };
+
+export const collectionMock = {
+  collection: {
+    findOne: jest.fn(),
+    insertOne: jest.fn(),
+    updateOne: jest.fn(),
+    deleteOne: jest.fn()
+  }
+}
 
 export const mockProductRepository = {
   findAll: jest.fn(),

@@ -15,9 +15,9 @@ export const mockUserService = {
     deleteUser: jest.fn(),
 };
 export const mockUserRepository = {
-    findAllUsers: jest.fn(),
-    findOneUser: jest.fn(),
-    createUser: jest.fn(),
-    updateUser: jest.fn(),
-    deleteUser: jest.fn(),
+    findAll: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
 };

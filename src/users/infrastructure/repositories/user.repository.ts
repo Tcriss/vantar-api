@@ -3,14 +3,14 @@ import { Injectable } from "@nestjs/common";
 import { PrismaProvider } from "../../../database/infrastructure/providers/prisma/prisma.provider";
 import { UserEntity } from "../../domain/entities/user.entity";
 import { Pagination } from "../../../common/domain/types";
-import { UserRepositoryI } from "../../domain/interfaces";
+import { Repository } from "../../../common/domain/entities";
 
 @Injectable()
-export class UserRepository implements UserRepositoryI {
+export class UserRepository implements Partial<Repository<UserEntity>> {
 
     constructor(private prisma: PrismaProvider) { }
 
-    public async findAllUsers(page: Pagination, query?: string): Promise<UserEntity[]> {
+    public async findAll(page: Pagination, query?: string): Promise<UserEntity[]> {
         return this.prisma.user.findMany({
             where: { name: { contains: query } },
             orderBy: { name: 'asc' },
@@ -19,13 +19,13 @@ export class UserRepository implements UserRepositoryI {
         });
     }
 
-    public async findOneUser(params: { id?: string, email?: string }): Promise<UserEntity> {
+    public async findOne(id: string, email?: string): Promise<UserEntity> {
         return this.prisma.user.findUnique({
-            where: params.id ? { id: params.id } : { email: params.email } 
+            where: id ? { id: id } : { email: email } 
         });
     }
 
-    public async createUser(user: Partial<UserEntity>): Promise<UserEntity> {
+    public async create(user: Partial<UserEntity>): Promise<UserEntity> {
         return this.prisma.user.create({
             data: {
                 name: user.name,
@@ -36,14 +36,14 @@ export class UserRepository implements UserRepositoryI {
         });
     }
 
-    public async updateUser(id: string, user: Partial<UserEntity>): Promise<UserEntity> {
+    public async update(id: string, user: Partial<UserEntity>): Promise<UserEntity> {
         return this.prisma.user.update({
             where: { id: id },
             data: user
         });
     }
 
-    public async deleteUser(id: string): Promise<UserEntity> {
+    public async delete(id: string): Promise<UserEntity> {
         return this.prisma.user.delete({ where: { id: id } });
     }
 }

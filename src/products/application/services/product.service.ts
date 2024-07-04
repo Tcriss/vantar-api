@@ -3,12 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { SelectedFields } from '../../domain/types';
 import { Pagination } from "../../../common/domain/types/pagination.type";
 import { ProductEntity } from '../../domain/entities/product.entity';
-import { BaseService } from '../../../common/domain/interfaces';
 import { ProductRepository } from '../decotators';
 import { Repository } from '../../../common/domain/entities';
 
 @Injectable()
-export class ProductService implements BaseService<ProductEntity> {
+export class ProductService {
 
     constructor(@ProductRepository() private productRepository: Repository<ProductEntity>) { }
 

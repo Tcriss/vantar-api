@@ -3,8 +3,8 @@ import { DeleteResult, InsertManyResult, InsertOneResult, UpdateResult } from "m
 import { Pagination } from "../types";
 
 export abstract class Repository<T> {
-    abstract findAll(userId: string, page?: Pagination, fields?: unknown, q?: string): Promise<Partial<T>[]>;
-    abstract findOne(id: string, fields?: unknown): Promise<Partial<T>>;
+    abstract findAll(...atr): Promise<Partial<T>[]>;
+    abstract findOne(...atr): Promise<Partial<T>>;
     abstract createMany(entities: Partial<T>[]): Promise<unknown>;
     abstract create(entity: Partial<T>): Promise<T>;
     abstract insertMany(docs: T[]): Promise<InsertManyResult<T>>;
