@@ -10,14 +10,13 @@ import { CreateProductDto, UpdateProductDto } from '../dtos';
 import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
 import { Role } from '../../../common/application/decorators';
 import { Roles } from '../../../common/domain/enums';
-import { BaseController } from '../../../common/domain/interfaces/base-controller.interface';
 
 @ApiBearerAuth()
 @ApiTags('Products')
 @Role(Roles.CUSTOMER)
 @UseGuards(RoleGuard)
 @Controller('products')
-export class ProductController implements BaseController<ProductEntity> {
+export class ProductController {
 
     constructor(private productService: ProductService) { }
 

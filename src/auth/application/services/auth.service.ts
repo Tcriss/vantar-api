@@ -4,16 +4,16 @@ import { ConfigService } from '@nestjs/config';
 
 import { Token } from '../../domain/types';
 import { UserEntity } from '../../../users/domain/entities/user.entity';
-import { Repository } from '../../../users/application/decorators/repository.decorator';
-import { UserRepositoryI } from '../../../users/domain/interfaces';
+import { UserRepository } from '../../../users/application/decorators/repository.decorator';
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
+import { Repository } from '../../../common/domain/entities';
 
 @Injectable()
 export class AuthService {
 
     constructor(
-        @Repository()
-        private userRepository: UserRepositoryI,
+        @UserRepository()
+        private userRepository: Repository<UserEntity>,
         private config: ConfigService,
         private bcrypt: BcryptProvider,
         private jwt: JwtService
@@ -21,7 +21,7 @@ export class AuthService {
 
     public async login(credentials: Partial<UserEntity>): Promise<Token> {
         const { email, password } = credentials;
-        const user: UserEntity = await this.userRepository.findOneUser({ email: email });
+        const user: Partial<UserEntity> = await this.userRepository.findOne({ email: email });
 
         if (!user) return undefined;
 
@@ -36,7 +36,7 @@ export class AuthService {
     }
 
     public async refreshTokens(userId: string, refreshToken: string): Promise<string> {
-        const user: UserEntity = await this.userRepository.findOneUser({ id: userId });
+        const user: Partial<UserEntity> = await this.userRepository.findOne({ id: userId });
 
         if (!user || user.refresh_token === null) return null;
 
@@ -50,11 +50,11 @@ export class AuthService {
     }
 
     public async logOut(userId: string): Promise<string> {
-        const user: UserEntity = await this.userRepository.findOneUser({ id: userId });
+        const user: Partial<UserEntity> = await this.userRepository.findOne({ id: userId });
 
         if (!user) return null;
 
-        const res = await this.userRepository.updateUser(userId, { refresh_token: null })
+        const res = await this.userRepository.update(userId, { refresh_token: null })
 
         return res ? 'User logout successfully' : undefined;
     }
@@ -90,7 +90,7 @@ export class AuthService {
     private async updateRefreshToken(userId: string, token: string): Promise<string> {
         const hashedToken = await this.bcrypt.hash(token);
 
-        const res = await this.userRepository.updateUser(userId, {
+        const res = await this.userRepository.update(userId, {
             refresh_token: hashedToken
         });
 

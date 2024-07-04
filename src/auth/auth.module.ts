@@ -8,9 +8,9 @@ import { jwtFactory } from './application/config/jwt.factory';
 import { AccessTokenStrategy } from './application/strategies/access-token/access-token.strategy';
 import { GoogleAuthStrategy } from './application/strategies/google/google.strategy';
 import { RefreshTokenStrategy } from './application/strategies/refresh-token/refresh-token.strategy';
-import { UserRepositoryToken } from '../users/domain/interfaces';
 import { UserRepository } from '../users/infrastructure/repositories/user.repository';
 import { CommonModule } from '../common/common.module';
+import { UserRepositoryToken } from '../users/application/decorators/repository.decorator';
 
 @Module({
   providers: [

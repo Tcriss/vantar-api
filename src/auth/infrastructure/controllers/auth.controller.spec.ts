@@ -91,24 +91,18 @@ describe('AuthController', () => {
 
   describe('Refresh Tokens', () => {
     it('should refresh tokens', async () => {
-      jest.spyOn(service, 'refreshTokens').mockResolvedValue({
-        access_token: '123456',
-        refresh_token: '654321'
-      });
+      jest.spyOn(service, 'refreshTokens').mockResolvedValue('654321');
 
-      const res: Token = await controller.refresh({
+      const res: string = await controller.refresh({
         user: {
           id: userMock2.id,
           email: userMock2.email,
           name: userMock2.name,
           role: userMock2.role as Roles
         }
-      });
+      }, { refresh_token: '12222' });
 
-      expect(res).toEqual({
-        access_token: '123456',
-        refresh_token: '654321'
-      });
+      expect(res).toEqual('654321');
     });
 
     it('should throw an exception if user not found', async () => {
@@ -122,7 +116,7 @@ describe('AuthController', () => {
             name: userMock2.name,
             role: userMock2.role as Roles
           }
-        });
+        }, { refresh_token: '12222' });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -141,7 +135,7 @@ describe('AuthController', () => {
             name: userMock2.name,
             role: userMock2.role as Roles
           }
-        });
+        }, { refresh_token: '12222' });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -160,7 +154,7 @@ describe('AuthController', () => {
             name: userMock2.name,
             role: userMock2.role as Roles
           }
-        });
+        }, { refresh_token: '12222' });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_ACCEPTABLE);

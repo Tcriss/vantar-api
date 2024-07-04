@@ -2,21 +2,19 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 
+import { Token } from '../../domain/types';
 import { AuthService } from './auth.service';
 import { jwtFactory } from '../config/jwt.factory';
 import { mockUserRepository } from '../../../users/domain/mocks/user-providers.mock';
-import { UserRepositoryI, UserRepositoryToken } from '../../../users/domain/interfaces';
 import { userMock1, userMock2 } from '../../../users/domain/mocks/user.mocks';
-import { Token } from '../../domain/types';
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
+import { Repository } from '../../../common/domain/entities';
+import { UserEntity } from '../../../users/domain/entities/user.entity';
+import { UserRepositoryToken } from '../../../users/application/decorators/repository.decorator';
 
 describe('AuthService', () => {
-  let userRepository: UserRepositoryI;
+  let userRepository: Repository<UserEntity>;
   let service: AuthService;
-  const tokenMock: Token = {
-    access_token: 'new_access_token',
-    refresh_token: 'new_refresh_token',
-  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,7 +36,7 @@ describe('AuthService', () => {
       ]
     }).compile();
 
-    userRepository = module.get<UserRepositoryI>(UserRepositoryToken);
+    userRepository = module.get<Repository<UserEntity>>(UserRepositoryToken);
     service = module.get<AuthService>(AuthService);
   });
 
@@ -48,7 +46,7 @@ describe('AuthService', () => {
 
   describe('Login', () => {
     it('should login user', async () => {
-      jest.spyOn(userRepository, 'findOneUser').mockResolvedValue(userMock2);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock2);
 
       const res: Token = await service.login({
         email: userMock2.email,
@@ -59,7 +57,7 @@ describe('AuthService', () => {
     });
 
     it('should return undefined if user does not exist', async () => {
-      jest.spyOn(userRepository, 'findOneUser').mockResolvedValue(null);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       const res: Token = await service.login({
         email: userMock2.email,
@@ -70,7 +68,7 @@ describe('AuthService', () => {
     });
 
     it('should return null if password does not match', async () => {
-      jest.spyOn(userRepository, 'findOneUser').mockResolvedValue(userMock2);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock2);
 
       const res: Token = await service.login({
         email: userMock2.email,
@@ -83,25 +81,25 @@ describe('AuthService', () => {
 
   describe('Refresh Tokens', () => {
     it('should return null if user does not exist', async () => {
-      jest.spyOn(userRepository, 'findOneUser').mockResolvedValue(null);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
-      const res: Token = await service.refreshTokens(userMock2.id, userMock2.refresh_token);
+      const res: string = await service.refreshTokens(userMock2.id, userMock2.refresh_token);
 
       expect(res).toBeNull();
     });
 
     it('should return null if access token does not exist', async () => {
-      jest.spyOn(userRepository, 'findOneUser').mockResolvedValue(userMock1);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock1);
 
-      const res: Token = await service.refreshTokens(userMock2.id, userMock2.refresh_token);
+      const res: string = await service.refreshTokens(userMock2.id, userMock2.refresh_token);
 
       expect(res).toBeUndefined();
     });
 
     it('should return undefined if refresh token does not match', async () => {
-      jest.spyOn(userRepository, 'findOneUser').mockResolvedValue(userMock1);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock1);
 
-      const res: Token = await service.refreshTokens(userMock2.id, userMock2.refresh_token);
+      const res: string = await service.refreshTokens(userMock2.id, userMock2.refresh_token);
 
       expect(res).toBeUndefined();
     });
@@ -109,12 +107,12 @@ describe('AuthService', () => {
 
   describe('Logout', () => {
     it('should logout user', async () => {
-      jest.spyOn(userRepository, 'findOneUser').mockResolvedValue(userMock2);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock2);
 
       let { refresh_token, ...rest } = userMock2;
       refresh_token = null;
 
-      jest.spyOn(userRepository, 'updateUser').mockResolvedValue({ refresh_token, ...rest});
+      jest.spyOn(userRepository, 'update').mockResolvedValue({ refresh_token, ...rest});
 
       const res = await service.logOut(userMock2.id);
 
@@ -123,7 +121,7 @@ describe('AuthService', () => {
     });
 
     it('should return null if user does not exist', async () => {
-      jest.spyOn(userRepository, 'findOneUser').mockResolvedValue(null);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       const res = await service.logOut(userMock2.id);
 
