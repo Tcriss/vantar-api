@@ -21,7 +21,7 @@ export class AuthService {
 
     public async login(credentials: Partial<UserEntity>): Promise<Token> {
         const { email, password } = credentials;
-        const user: Partial<UserEntity> = await this.userRepository.findOne({ email: email });
+        const user: Partial<UserEntity> = await this.userRepository.findOne(null, email);
 
         if (!user) return undefined;
 
@@ -36,7 +36,7 @@ export class AuthService {
     }
 
     public async refreshTokens(userId: string, refreshToken: string): Promise<string> {
-        const user: Partial<UserEntity> = await this.userRepository.findOne({ id: userId });
+        const user: Partial<UserEntity> = await this.userRepository.findOne(userId);
 
         if (!user || user.refresh_token === null) return null;
 
@@ -50,7 +50,7 @@ export class AuthService {
     }
 
     public async logOut(userId: string): Promise<string> {
-        const user: Partial<UserEntity> = await this.userRepository.findOne({ id: userId });
+        const user: Partial<UserEntity> = await this.userRepository.findOne(userId);
 
         if (!user) return null;
 
