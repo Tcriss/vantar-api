@@ -42,7 +42,8 @@ export class InventoryController {
 
     @ApiCreateInventory()
     @Post()
-    public async create(@Body() newInventory: CreateInventoryDto): Promise<InventoyResponse> {
+    public async create(@Req() req: Request, @Body() newInventory: CreateInventoryDto): Promise<InventoyResponse> {
+        newInventory['user_id'] = req['user']['id'];
         const res: InventoryEntity = await this.service.createInventory(newInventory);
 
         if (res === undefined) throw new HttpException('Inventory not found', HttpStatus.NOT_FOUND);

@@ -1,5 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { IsArray, IsNotEmpty, IsNumber, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
+
+import { CreateProductListDto } from "../../../products/domain/dtos";
 
 export class CreateInventoryDto {
     @ApiProperty({ example: 3000.00 })
@@ -7,13 +10,10 @@ export class CreateInventoryDto {
     @IsNumber({ maxDecimalPlaces: 2 })
     cost: number;
 
-    @ApiProperty({ example: 3000.00 })
+    @ApiProperty({ type: CreateProductListDto, isArray: true })
     @IsNotEmpty()
-    @IsNumber({ maxDecimalPlaces: 2 })
-    subtotal: number;
-
-    @ApiProperty({ example: 6000.0 })
-    @IsNotEmpty()
-    @IsNumber({ maxDecimalPlaces: 2 })
-    total: number;
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => CreateProductListDto)
+    products: CreateProductListDto[];
 }
