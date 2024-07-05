@@ -58,7 +58,7 @@ export class InvoiceController {
     @ApiUpdateInvoice()
     @Patch(':id')
     public async update(
-        @Req() req: ReqUser,
+        @Req() req: Request,
         @Body() invoice: UpdateInvoiceDto,
         @Param('id', new ParseUUIDPipe()) id: string
     ): Promise<unknown> {

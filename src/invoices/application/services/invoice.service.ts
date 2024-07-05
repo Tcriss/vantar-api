@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { InvoiceProductList, SelectedFields } from '../../domain/types';
 import { ProductListRepository } from '../../../products/application/decotators';
@@ -7,9 +7,12 @@ import { ProductList } from '../../../products/domain/entities/product-list.enti
 import { Pagination } from '../../../common/domain/types';
 import { Repository } from '../../../common/domain/entities';
 import { InvoiceRepository } from '../decorators';
+import { productListCreation } from 'src/common/application/utils';
 
 @Injectable()
 export class InvoiceService {
+
+    private logger: Logger = new Logger(InvoiceService.name);
 
     constructor(
         @InvoiceRepository() private invoiceRepository: Repository<InvoiceEntity>,
@@ -46,19 +49,9 @@ export class InvoiceService {
     }
     
     public async createInvoice(userId: string, invoice: Partial<InvoiceEntity>): Promise<InvoiceEntity> {
-        let invoiceTotal: number = 0;
-        const list: ProductList[] = invoice.products.map(product => {
-            const newProduct = {
-                unit_price: product.unit_price,
-                amount: product.amount,
-                name: product.name,
-                total: product.unit_price * product.amount
-            };
-            invoiceTotal += newProduct.total;
-            return newProduct;
-        });
+        const { list, subtotal } = productListCreation(invoice.products, 0);
 
-        invoice.total = invoiceTotal;
+        invoice.total = subtotal;
         invoice.user_id = userId;
 
         const newInvoice: InvoiceEntity = await this.invoiceRepository.create(invoice);
@@ -83,30 +76,21 @@ export class InvoiceService {
         if (!data) return null;
         if (data.user_id !== userId) return undefined;
         
-        let invoiceTotal: number = 0;
-        const list: ProductList[] = invoice.products.map(product => {
-            const newProduct = {
-                unit_price: product.unit_price,
-                amount: product.amount,
-                name: product.name,
-                total: product.unit_price * product.amount
-            };
-            invoiceTotal += newProduct.total;
-            return newProduct;
-        });
-        const productList: InvoiceProductList = {
-            products: list,
-            id: id,
-        };
-        const productListRes = await this.productListRepository.updateDoc(id, productList);
+        console.log(invoice);
 
-        if (!productListRes) return null;
+        const { list, subtotal } = productListCreation(invoice.products, 0);
+        const [ updatedInvoice, updatedProductList ] = await Promise.all([
+            this.invoiceRepository.update(id, { total: subtotal }),
+            this.productListRepository.updateDoc(id, { id: id, products: list })
+        ]);
 
-        const updated = await this.invoiceRepository.update(id, { total: invoiceTotal });
+        console.log(updatedInvoice);
 
-        updated.products = list;
+        if (!updatedInvoice || !updatedProductList) return null;
 
-        return updated;
+        updatedInvoice.products = list;
+
+        return updatedInvoice;
     }
 
     public async deleteInvoice(id: string, userId: string): Promise<InvoiceEntity> {

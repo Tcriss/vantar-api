@@ -17,15 +17,15 @@ export const ApiGetInvoice = () => applyDecorators(
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid id' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Not enough permissions' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Invoice not found' }),
-    ApiParam({ name: 'id', description: 'Invoice id', format: 'uuid', required: true })
+    ApiParam({ name: 'id', description: 'Invoice id', format: 'uuid', required: true }),
+    ApiQuery({ name: 'fields', required: false, description: 'fields you want to select from response' })
 );
 
 export const ApiCreateInvoice = () => applyDecorators(
     ApiOperation({ summary: 'Create one invoice' }),
     ApiResponse({ status: HttpStatus.CREATED, description: 'Invoice created succesfully', type: InvoiceEntity, }),
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Validations error' }),
-    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Invoice not found' }),
-    ApiParam({ name: 'id', format: 'uuid', required: true }),
+    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Invoice not found' })
 );
 
 export const ApiUpdateInvoice = () => applyDecorators(

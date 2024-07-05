@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsNotEmpty, ValidateNested } from "class-validator";
 
-import { UpdateProductListDto } from "../../../products/domain/dtos/update-product-list.dto";
+import { UpdateProductListDto } from "../../../products/domain/dtos";
 import { Type } from "class-transformer";
 
 export class UpdateInvoiceDto {
