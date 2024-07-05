@@ -1,12 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsString, MaxLength } from "class-validator";
+import { IsNotEmpty, IsNumber } from "class-validator";
 
 export class CreateInventoryDto {
-    @ApiProperty({ format: 'uuid' })
-    @IsNotEmpty()
-    @IsString()
-    user_id: string;
-
     @ApiProperty({ example: 3000.00 })
     @IsNotEmpty()
     @IsNumber({ maxDecimalPlaces: 2 })
