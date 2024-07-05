@@ -4,8 +4,7 @@ import { InvoiceRepositoryToken } from "./domain/interfaces";
 import { InvoiceRepository } from "./infrastructure/repositories/invoice.repository";
 import { InvoiceService } from './application/services/invoice.service';
 import { InvoiceController } from "./infrastructure/controllers/invoice.controller";
-import { ProductListRepositoryToken } from "../products/application/decotators";
-import { ProductListRepository } from "../products/infrastructure/repositories/product-list/product-list.repositroy";
+import { ProductModule } from "../products/product.module";
 
 @Module({
     providers: [
@@ -13,12 +12,9 @@ import { ProductListRepository } from "../products/infrastructure/repositories/p
             provide: InvoiceRepositoryToken,
             useClass: InvoiceRepository
         },
-        {
-            provide: ProductListRepositoryToken,
-            useClass: ProductListRepository
-        },
         InvoiceService
     ],
-    controllers: [InvoiceController]
+    controllers: [InvoiceController],
+    imports: [ProductModule]
 })
 export class InvoiceModule {}

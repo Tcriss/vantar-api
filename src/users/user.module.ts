@@ -15,6 +15,7 @@ import { CommonModule } from '../common/common.module';
         UserService
     ],
     controllers: [UserController],
-    imports: [CommonModule]
+    imports: [CommonModule],
+    exports: [UserRepositoryToken]
 })
 export class UserModule { }

@@ -8,9 +8,8 @@ import { jwtFactory } from './application/config/jwt.factory';
 import { AccessTokenStrategy } from './application/strategies/access-token/access-token.strategy';
 import { GoogleAuthStrategy } from './application/strategies/google/google.strategy';
 import { RefreshTokenStrategy } from './application/strategies/refresh-token/refresh-token.strategy';
-import { UserRepository } from '../users/infrastructure/repositories/user.repository';
 import { CommonModule } from '../common/common.module';
-import { UserRepositoryToken } from '../users/application/decorators/repository.decorator';
+import { UserModule } from '../users/user.module';
 
 @Module({
   providers: [
@@ -18,10 +17,6 @@ import { UserRepositoryToken } from '../users/application/decorators/repository.
     AccessTokenStrategy,
     RefreshTokenStrategy,
     //GoogleAuthStrategy,
-    {
-      provide: UserRepositoryToken,
-      useClass: UserRepository,
-    }
   ],
   controllers: [AuthController],
   imports: [
@@ -30,7 +25,8 @@ import { UserRepositoryToken } from '../users/application/decorators/repository.
       inject: [ConfigService],
       useFactory: jwtFactory
     }),
-    CommonModule
+    CommonModule,
+    UserModule
   ]
 })
 export class AuthModule {}
