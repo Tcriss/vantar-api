@@ -3,7 +3,6 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common/pipes';
 import { ConfigService } from '@nestjs/config';
 import { ClassSerializerInterceptor } from '@nestjs/common';
-import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
 import { appConfig, swaggerOptions, validationOptions } from './common/application/config';
@@ -17,7 +16,6 @@ async function bootstrap() {
   const { httpAdapter } = app.get(HttpAdapterHost);
   const reflector = app.get(Reflector);
 
-  //app.useLogger(app.get(Logger));
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
@@ -26,7 +24,7 @@ async function bootstrap() {
     swaggerOptions: { tagsSorter: 'alpha' }
   });
 
-  await app.listen(configService.get<number>('PORT'));
+  await app.listen(configService.get<number>('PORT'), '0.0.0.0');
   console.log(`Application running on: ${await app.getUrl()}`);
 }
 
