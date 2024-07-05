@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { CreateUserDto, UpdateUserDto } from '../dtos';
+import { CreateUserDto, UpdateUserDto } from '../../domain/dtos';
 import { ReqUser } from '../../../common/domain/types';
 import { UserQueries } from '../../domain/types';
 import { UserEntity } from '../../domain/entities/user.entity';

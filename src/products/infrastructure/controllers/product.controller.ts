@@ -6,7 +6,7 @@ import { ProductEntity } from '../../domain/entities/product.entity';
 import { ProductQueries } from '../../domain/types/product-queries.type';
 import { ReqUser } from '../../../common/domain/types';
 import { ApiCreateProduct, ApiCreateProducts, ApiDeleteProduct, ApiGetProduct, ApiGetProducts, ApiUpdateProduct } from '../../application/decotators';
-import { CreateProductDto, UpdateProductDto } from '../dtos';
+import { CreateProductDto, UpdateProductDto } from '../../domain/dtos';
 import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
 import { Role } from '../../../common/application/decorators';
 import { Roles } from '../../../common/domain/enums';

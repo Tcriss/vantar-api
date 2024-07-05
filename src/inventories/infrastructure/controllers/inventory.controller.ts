@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { InventoryService } from '../../application/services/inventory.service';
 import { InventoryEntity } from '../../domain/entities/inventory.entity';
-import { CreateInventoryDto, UpdateInventoryDto } from '../dtos';
+import { CreateInventoryDto, UpdateInventoryDto } from '../../domain/dtos';
 import { InventoyResponse } from '../../domain/types';
 import { InventoryQueries } from '../../domain/types/inventory-queries.type';
 import { ReqUser } from '../../../common/domain/types';
