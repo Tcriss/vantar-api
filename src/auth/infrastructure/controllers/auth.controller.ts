@@ -8,16 +8,15 @@ import { PublicAccess } from '../../../common/application/decorators';
 import { AuthResponseI } from '../../domain/interfaces/auth-response.interface';
 import { RefreshTokenGuard } from '../../application/guards/refresh-token/refresh-token.guard';
 import { ApiLogin, ApiLogout, ApiRefresh } from '../../application/decorators';
-import { ReqUser } from '../../../common/domain/types';
 
 @ApiTags('Authentication')
+@PublicAccess()
 @Controller('auth')
 export class AuthController {
 
     constructor(private service: AuthService) { }
 
     @ApiLogin()
-    @PublicAccess()
     @HttpCode(200)
     @Post('/login')
     public async login(@Body() credentials: LoginUserDto): Promise<AuthResponseI> {
@@ -37,11 +36,11 @@ export class AuthController {
     @HttpCode(200)
     @UseGuards(RefreshTokenGuard)
     @Post('/refresh')
-    public async refresh(@Req() req: ReqUser, @Body() token: RefreshTokenDto): Promise<string> {
-        const res: string = await this.service.refreshTokens(req.user.id, token.refresh_token);
+    public async refresh(@Req() req: Request, @Body() token: RefreshTokenDto): Promise<string> {
+        const res: string = await this.service.refreshTokens(req['refresh_token']['id'], token.refresh_token);
 
-        if (res === null) throw new HttpException('Session not found', HttpStatus.NOT_FOUND);
-        if (res === undefined) throw new HttpException('Invalid token', HttpStatus.NOT_ACCEPTABLE);
+        if (res === null) throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED, { cause: 'Session expired' });
+        if (res === undefined) throw new HttpException('Invalid token', HttpStatus.NOT_ACCEPTABLE, { cause: 'Token does not match' });
 
         return res;
     }
@@ -50,7 +49,7 @@ export class AuthController {
     @UseGuards(RefreshTokenGuard)
     @Get('/logout')
     public async logOut(@Req() req: Request): Promise<string> {
-        const res: string = await this.service.logOut(req['user']['id']);
+        const res: string = await this.service.logOut(req['refresh_token']['id']);
 
         if (res === null) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         if (res === undefined) throw new HttpException('User could not logout', HttpStatus.INTERNAL_SERVER_ERROR);

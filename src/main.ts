@@ -8,6 +8,7 @@ import { AppModule } from './app.module';
 import { appConfig, swaggerOptions, validationOptions } from './common/application/config';
 import { PrismaClientExceptionFilter } from './database/application/filters/prisma-client-exception/prisma-client-exception.filter';
 import { AccessTokenGuard } from './auth/application/guards/access-token/access-token.guard';
+import { JwtExceptionsFilter } from './auth/application/filters/jwt-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, appConfig);
@@ -16,7 +17,10 @@ async function bootstrap() {
   const { httpAdapter } = app.get(HttpAdapterHost);
   const reflector = app.get(Reflector);
 
-  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
+  app.useGlobalFilters(
+    new PrismaClientExceptionFilter(httpAdapter),
+    new JwtExceptionsFilter()
+  );
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.useGlobalGuards(new AccessTokenGuard(reflector));

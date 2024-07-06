@@ -59,6 +59,14 @@ export class AuthService {
         return res ? 'User logout successfully' : undefined;
     }
 
+    public async verifyRefreshToken(token: string): Promise<unknown> {
+        const payload = await this.jwt.verifyAsync(token, {secret: this.config.get('RT_SECRET')});
+
+        if (!payload) return null;
+
+        return payload;
+    }
+
     private async getTokens(user: Partial<UserEntity>): Promise<Token> {
         const { id, name, email, role } = user;
         const [ accessToken, refreshToken ] = await Promise.all([
@@ -67,7 +75,7 @@ export class AuthService {
                 expiresIn: this.config.get<string>('AT_TIME')
             }),
             this.jwt.signAsync({ id }, {
-                secret: this.config.get<string>('SECRET'), 
+                secret: this.config.get<string>('RT_SECRET'), 
                 expiresIn: this.config.get<string>('RT_TIME')
             })
         ]);
@@ -79,9 +87,9 @@ export class AuthService {
     }
 
     private async getAccessToken(user: Partial<UserEntity>): Promise<string> {
-        const { id, name, email, password } = user;
+        const { id, name, email, role } = user;
 
-        return this.jwt.signAsync({ id, name, email, password }, {
+        return this.jwt.signAsync({ id, name, email, role }, {
             secret: this.config.get<string>('SECRET'), 
             expiresIn: this.config.get<string>('AT_TIME')
         });
