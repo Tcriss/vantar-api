@@ -8,11 +8,15 @@ import { Repository } from 'src/common/domain/entities';
 import { InventoryRepositoryToken } from '../decorators';
 import { ProductListRepositoryToken } from '../../../products/application/decotators';
 import { mockProductListRepository } from '../../../products/domain/mocks/product-providers.mock';
+import { InventoryProductList } from 'src/inventories/domain/types/inventory-prodcut-list.type';
+import { ProductList } from 'src/products/domain/entities/product-list.entity';
+import { ObjectId } from 'mongodb';
 
 
 describe('InventoryService', () => {
   let service: InventoryService;
   let repository: Repository<InventoryEntity>;
+  let productListRepository: Repository<InventoryProductList>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -25,12 +29,13 @@ describe('InventoryService', () => {
         {
           provide: ProductListRepositoryToken,
           useValue: mockProductListRepository
-      },
+        },
       ],
     }).compile();
 
     service = module.get<InventoryService>(InventoryService);
     repository = module.get<Repository<InventoryEntity>>(InventoryRepositoryToken);
+    productListRepository = module.get<Repository<InventoryProductList>>(ProductListRepositoryToken);
   });
 
   it('should be defined', () => {
@@ -58,8 +63,12 @@ describe('InventoryService', () => {
   describe('Find One Inventory', () => {
     it('should find an inventory by its id', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockInventory1);
+      jest.spyOn(productListRepository, 'findOne').mockResolvedValue({
+        id: mockInventory1.id,
+        products: mockInventory1.products as ProductList[]
+      });
 
-      const { id, user_id, products } = mockInventory1; 
+      const { id, user_id } = mockInventory1; 
       const res: Partial<InventoryEntity> = await service.findOneInventory(id, user_id);
 
       expect(res).toEqual(mockInventory1);
@@ -67,18 +76,21 @@ describe('InventoryService', () => {
 
     it('should get some fields', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockPartialInventory1);
+      jest.spyOn(productListRepository, 'findOne').mockResolvedValue({
+        id: mockInventory1.id,
+        products: mockInventory1.products as ProductList[]
+      });
 
-      const { id, user_id, products } = mockInventory1; 
+      const { id, user_id } = mockInventory1; 
       const res: Partial<InventoryEntity> = await service.findOneInventory(id, user_id, 'id, products_amount, company_name');
 
       expect(res).toBe(mockPartialInventory1);
     });
 
-    it('should return null if is not the ownder', async () => {
-      //jest.spyOn(repository, 'findOneInventory').mockResolvedValue(mockPartialInventory1);
+    it('should return null if inventory not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      const { user_id } = mockInventory2;
-      const { id } = mockInventory1;
+      const { id, user_id } = mockInventory2;
       const res: Partial<InventoryEntity> = await service.findOneInventory(id, user_id);
 
       expect(res).toBeNull();
@@ -88,9 +100,13 @@ describe('InventoryService', () => {
   describe('Create Inventory', () => {
     it('should create an inventory', async () => {
       jest.spyOn(repository, 'create').mockResolvedValue(mockInventory2);
+      jest.spyOn(productListRepository, 'insert').mockResolvedValue({
+        insertedId: new ObjectId(),
+        acknowledged: true
+      });
 
-      const { user_id, total, subtotal, cost } = mockInventory2;
-      const res: InventoryEntity = await service.createInventory({ user_id, total, subtotal, cost });
+      const { user_id, cost, products } = mockInventory2;
+      const res: InventoryEntity = await service.createInventory({ user_id, cost, products });
 
       expect(res).toBe(mockInventory2);
     });
@@ -99,32 +115,39 @@ describe('InventoryService', () => {
   describe('Update Inventory', () => {
     it('should update inventory', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockInventory2);
+      jest.spyOn(productListRepository, 'updateDoc').mockResolvedValue({
+        upsertedId: new ObjectId(),
+        acknowledged: true,
+        matchedCount: 1,
+        modifiedCount: 1,
+        upsertedCount: 0
+      });
       jest.spyOn(repository, 'update').mockResolvedValue(mockInventory3);
 
-      const { total, subtotal, cost, user_id } = mockInventory2;
-      const res: InventoryEntity = await service.updateInventory(mockInventory1.id, { total, subtotal, cost }, user_id);
+      const { cost, user_id, products } = mockInventory2;
+      const res: InventoryEntity = await service.updateInventory(mockInventory1.id, { cost, products }, user_id);
 
       expect(res).toBe(mockInventory3);
     });
 
-    it('should return undefined if inventory was not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null)
+    it('should return null if inventory was not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       //jest.spyOn(repository, 'updateInventory').mockResolvedValue(null);
 
-      const { total, subtotal, cost, user_id } = mockInventory2;
-      const res: InventoryEntity = await service.updateInventory(mockInventory2.id, { total, subtotal, cost }, user_id);
+      const { cost, user_id, products } = mockInventory2;
+      const res: InventoryEntity = await service.updateInventory(mockInventory2.id, { products, cost }, user_id);
 
-      expect(res).toBeUndefined();
+      expect(res).toBeNull();
     });
 
     it('should return null if is not the owner', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockInventory1);
 
       const { id } = mockInventory1;
-      const { total, subtotal, cost, user_id } = mockInventory2;
-      const res: InventoryEntity = await service.updateInventory(id, { total, subtotal, cost }, user_id);
+      const { cost, user_id, products } = mockInventory2;
+      const res: InventoryEntity = await service.updateInventory(id, { products, cost }, user_id);
 
-      expect(res).toBeNull();
+      expect(res).toBeUndefined();
     });
   });
 
@@ -132,6 +155,10 @@ describe('InventoryService', () => {
     it('should delete iventory', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockInventory3);
       jest.spyOn(repository, 'delete').mockResolvedValue(mockInventory3);
+      jest.spyOn(productListRepository, 'deleteDoc').mockResolvedValue({
+        deletedCount: 1,
+        acknowledged: true
+      })
 
       const { id, user_id } = mockInventory3;
       const res: InventoryEntity = await service.deleteInventory(id, user_id);
@@ -141,23 +168,28 @@ describe('InventoryService', () => {
 
     it('should return undefined if inventory was not found', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(productListRepository, 'findOne').mockResolvedValue(null);
       //jest.spyOn(repository, 'deleteInventory').mockResolvedValue(null);
 
       const { id, user_id } = mockInventory3;
       const res: InventoryEntity = await service.deleteInventory(id, user_id);
 
-      expect(res).toBeUndefined();
+      expect(res).toBeNull();
     });
 
     it('should return null if is not the owner', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockInventory1);
+      jest.spyOn(productListRepository, 'findOne').mockResolvedValue({
+        id: mockInventory1.id,
+        products: mockInventory1.products as ProductList[]
+      });
       //jest.spyOn(repository, 'deleteInventory').mockResolvedValue(null);
 
       const { id } = mockInventory1;
       const { user_id } = mockInventory2;
       const res: InventoryEntity = await service.deleteInventory(id, user_id);
 
-      expect(res).toBeNull();
+      expect(res).toBeUndefined();
     });
   });
 });

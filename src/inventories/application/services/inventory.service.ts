@@ -47,8 +47,8 @@ export class InventoryService {
         } : null;
         const inventory: Partial<InventoryEntity> = await this.repository.findOne(id, fields);
 
-        if (!inventory) return undefined;
-        if (userId && inventory.user_id !== userId) return null;
+        if (!inventory) return null;
+        if (userId && inventory.user_id !== userId) return undefined;
 
         const inventoryProductist = await this.productListRepository.findOne(inventory.id);
         inventory.products = inventoryProductist.products || [];
@@ -86,8 +86,8 @@ export class InventoryService {
         const resource: Partial<InventoryEntity> = await this.findOneInventory(id);
         const resourceList: Partial<InventoryProductList> = await this.productListRepository.findOne(id);
 
-        if (!resource || !resourceList) return undefined;
-        if (resource.user_id !== userId) return null;
+        if (!resource || !resourceList) return null;
+        if (resource.user_id !== userId) return undefined;
         if (!inventory.products) {
             const updatedInventory = await this.repository.update(id, {
                 cost: inventory.cost,

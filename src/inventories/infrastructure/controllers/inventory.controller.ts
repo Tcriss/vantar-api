@@ -34,8 +34,8 @@ export class InventoryController {
     public async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser, @Query('fields') fields?: string): Promise<Partial<InventoryEntity>> {
         const res: Partial<InventoryEntity> = await this.service.findOneInventory(id, req.user.id, fields);
 
-        if (res === null) throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
-        if (res === undefined) throw new HttpException('Inventory not found', HttpStatus.NOT_FOUND);
+        if (res === undefined) throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
+        if (res === null) throw new HttpException('Inventory not found', HttpStatus.NOT_FOUND);
 
         return res;
     }
@@ -59,8 +59,8 @@ export class InventoryController {
     public async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() inventory: UpdateInventoryDto, @Req() req: ReqUser): Promise<InventoyResponse> {
         const res: InventoryEntity = await this.service.updateInventory(id, inventory, req.user.id);
 
-        if (res === null) throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
-        if (res === undefined) throw new HttpException('Inventory not found', HttpStatus.NOT_FOUND);
+        if (res === undefined) throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
+        if (res === null) throw new HttpException('Inventory not found', HttpStatus.NOT_FOUND);
 
         return {
             message: 'Inventory updated succesfully',
@@ -73,8 +73,8 @@ export class InventoryController {
     public async delete(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser): Promise<InventoyResponse> {
         const res: InventoryEntity = await this.service.deleteInventory(id, req.user.id);
 
-        if (res === null) throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
-        if (res === undefined) throw new HttpException('Inventory not found', HttpStatus.NOT_FOUND);
+        if (res === undefined) throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
+        if (res === null) throw new HttpException('Inventory not found', HttpStatus.NOT_FOUND);
 
         return { message: 'Inventory deleted succesfully' };
     }

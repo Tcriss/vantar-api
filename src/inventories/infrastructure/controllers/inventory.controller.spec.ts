@@ -127,8 +127,8 @@ describe('InventoryController', () => {
       expect(res).toBe(mockPartialInventory2);
     });
 
-    it('shoudl throw an exception if invenoty was not found', async () => {
-      jest.spyOn(service, 'findOneInventory').mockResolvedValue(undefined);
+    it('shoudl throw an exception if inventory was not found', async () => {
+      jest.spyOn(service, 'findOneInventory').mockResolvedValue(null);
 
       try {
         await controller.findOne(mockInventory1.id, {
@@ -302,7 +302,7 @@ describe('InventoryController', () => {
     });
 
     it('should throw an exception if inventory was not found', async () => {
-      jest.spyOn(service, 'deleteInventory').mockResolvedValue(undefined);
+      jest.spyOn(service, 'deleteInventory').mockResolvedValue(null);
 
       try {
         await controller.delete(mockInventory1.id, {
@@ -321,7 +321,7 @@ describe('InventoryController', () => {
     });
 
     it('shoudl throw an exception if is not owner', async () => {
-      jest.spyOn(service, 'deleteInventory').mockResolvedValue(null);
+      jest.spyOn(service, 'deleteInventory').mockResolvedValue(undefined);
 
       try {
         await controller.delete(mockInventory1.id, {
