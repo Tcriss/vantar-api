@@ -1,18 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { InvoiceProductList, SelectedFields } from '../../domain/types';
 import { ProductListRepository } from '../../../products/application/decotators';
 import { InvoiceEntity } from '../../domain/entities/invoice.entity';
-import { ProductList } from '../../../products/domain/entities/product-list.entity';
 import { Pagination } from '../../../common/domain/types';
 import { Repository } from '../../../common/domain/entities';
 import { InvoiceRepository } from '../decorators';
-import { productListCreation } from 'src/common/application/utils';
+import { productListCreation } from '../../../common/application/utils';
 
 @Injectable()
 export class InvoiceService {
-
-    private logger: Logger = new Logger(InvoiceService.name);
 
     constructor(
         @InvoiceRepository() private invoiceRepository: Repository<InvoiceEntity>,
@@ -75,16 +72,12 @@ export class InvoiceService {
         
         if (!data) return null;
         if (data.user_id !== userId) return undefined;
-        
-        console.log(invoice);
 
         const { list, subtotal } = productListCreation(invoice.products, 0);
         const [ updatedInvoice, updatedProductList ] = await Promise.all([
             this.invoiceRepository.update(id, { total: subtotal }),
             this.productListRepository.updateDoc(id, { id: id, products: list })
         ]);
-
-        console.log(updatedInvoice);
 
         if (!updatedInvoice || !updatedProductList) return null;
 

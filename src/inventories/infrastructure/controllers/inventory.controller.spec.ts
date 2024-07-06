@@ -182,23 +182,17 @@ describe('InventoryController', () => {
     it('should create an inventory', async () => {
       jest.spyOn(service, 'createInventory').mockResolvedValue(mockInventory1);
 
-      const { user_id, total, subtotal, cost } = mockInventory1;
-      const res: InventoyResponse  = await controller.create({ user_id, total, subtotal, cost });
+      const req = { user: { id: mockInventory1.user_id }} as any
+
+      const { cost } = mockInventory1;
+      const res: InventoyResponse  = await controller.create(req,{
+        cost: cost,
+        products: []
+      });
 
       expect(res.message).toBe('Inventory created succesfully');
       expect(res.data).toBe(mockInventory1);
     });
-
-    // it('should throw exception if fields are bad implemented', async () => {
-    //   jest.spyOn(service, 'createInventory').mockResolvedValue(null);
-
-    //   try {
-    //     await controller.create({ company_name: null, user_id: '123', capital: 4, service_charge: 4 });
-    //   } catch (err) {
-    //     expect(err).toBeInstanceOf(HttpException);
-    //     expect(err.status).toBe(HttpStatus.BAD_REQUEST);
-    //   }
-    // });
   });
 
   describe('Update Inventory', () => {
@@ -206,7 +200,10 @@ describe('InventoryController', () => {
       jest.spyOn(service, 'updateInventory').mockResolvedValue(mockInventory3);
 
       const { total, subtotal, cost } = mockInventory2;
-      const res: InventoyResponse  = await controller.update(mockInventory1.id, { total, subtotal, cost }, {
+      const res: InventoyResponse  = await controller.update(mockInventory1.id, {
+        cost: 5,
+        products: []
+      }, {
         user: {
           id: mockInventory1.user_id,
           email: '',
@@ -225,7 +222,10 @@ describe('InventoryController', () => {
       const { total, subtotal, cost } = mockInventory2;
 
       try {
-        await controller.update('123', { total, subtotal, cost }, {
+        await controller.update('123', {
+          cost: 5,
+          products: []
+        }, {
           user: {
             id: mockInventory2.user_id,
             email: '',
@@ -244,7 +244,10 @@ describe('InventoryController', () => {
       jest.spyOn(service, 'createInventory').mockResolvedValue(null);
 
       try {
-        await controller.update(mockInventory1.id, { user_id: '123', cost: 5, subtotal: 4, total: 4 }, {
+        await controller.update(mockInventory1.id, {
+          cost: 5,
+          products: []
+        }, {
           user: {
             id: mockInventory1.user_id,
             email: '',
@@ -260,9 +263,12 @@ describe('InventoryController', () => {
 
     it('shoudl throw an exception if is not owner', async () => {
       //jest.spyOn(service, 'findOneInventory').mockResolvedValue(undefined);
-      const { total, subtotal, cost } = mockInventory2;
+      const { cost } = mockInventory2;
       try {
-        await controller.update(mockInventory2.id, { total, subtotal, cost }, {
+        await controller.update(mockInventory2.id, {
+          cost: cost,
+          products: []
+        }, {
           user: {
             id: mockInventory1.user_id,
             email: '',

@@ -6,6 +6,9 @@ import { mockInventory1, mockInventory2, mockInventory3, mockPartialInventory1 }
 import { InventoryEntity } from '../../domain/entities/inventory.entity';
 import { Repository } from 'src/common/domain/entities';
 import { InventoryRepositoryToken } from '../decorators';
+import { ProductListRepositoryToken } from '../../../products/application/decotators';
+import { mockProductListRepository } from '../../../products/domain/mocks/product-providers.mock';
+
 
 describe('InventoryService', () => {
   let service: InventoryService;
@@ -18,7 +21,11 @@ describe('InventoryService', () => {
         {
           provide: InventoryRepositoryToken,
           useValue: mockInventoryRepository
-        }
+        },
+        {
+          provide: ProductListRepositoryToken,
+          useValue: mockProductListRepository
+      },
       ],
     }).compile();
 
@@ -46,21 +53,13 @@ describe('InventoryService', () => {
 
       expect(res).toStrictEqual([ mockPartialInventory1 ]);
     });
-
-    // it('should fetch by search query', async () => {
-    //   jest.spyOn(repository, 'findAllInventories').mockResolvedValue([ mockInventory1 ]);
-
-    //   const res: Partial<InventoryEntity>[] = await service.findAllInventories('be702a7b-13a3-4e03-93f6-65b2a82e1905', '0,3', '', 'Bodega');
-
-    //   expect(res).toStrictEqual([ mockInventory1 ]);
-    // });
   });
 
   describe('Find One Inventory', () => {
     it('should find an inventory by its id', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockInventory1);
 
-      const { id, user_id } = mockInventory1; 
+      const { id, user_id, products } = mockInventory1; 
       const res: Partial<InventoryEntity> = await service.findOneInventory(id, user_id);
 
       expect(res).toEqual(mockInventory1);
@@ -69,7 +68,7 @@ describe('InventoryService', () => {
     it('should get some fields', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockPartialInventory1);
 
-      const { id, user_id } = mockInventory1; 
+      const { id, user_id, products } = mockInventory1; 
       const res: Partial<InventoryEntity> = await service.findOneInventory(id, user_id, 'id, products_amount, company_name');
 
       expect(res).toBe(mockPartialInventory1);
