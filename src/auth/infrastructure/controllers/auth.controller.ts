@@ -39,8 +39,8 @@ export class AuthController {
     public async refresh(@Req() req: Request, @Body() token: RefreshTokenDto): Promise<string> {
         const res: string = await this.service.refreshTokens(req['refresh_token']['id'], token.refresh_token);
 
-        if (res === null) throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED, { cause: 'Session expired' });
-        if (res === undefined) throw new HttpException('Invalid token', HttpStatus.NOT_ACCEPTABLE, { cause: 'Token does not match' });
+        if (res === null) throw new HttpException('Session expired', HttpStatus.UNAUTHORIZED);
+        if (res === undefined) throw new HttpException('Invalid token', HttpStatus.NOT_ACCEPTABLE);
 
         return res;
     }
