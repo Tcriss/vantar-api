@@ -64,12 +64,14 @@ NODE_ENV = development
 PORT = 2000
 
 # db variables
-DB_PASSWORD = #db password
-DB_USER = #db user
-DB_NAME = #db name
+DB_PASSWORD = # postgres password
+DB_USER = # postgres user
+DB_NAME = # postgres name
 
 # replace connection variable where host name is localhost and port
 DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?schema=public
+MONGO_URI = # mongo database url
+MONGO_DB_NAME = # mongoDB name
 
 # Tokens & security
 AT_TIME = # Access_token time
@@ -98,6 +100,13 @@ $ pnpm run start:prod
 ```
 
 Using docker
+
+Before creating the container, it is required to create a first migration with `migrate dev`. Because compose uses prisma migrate deploy for applying migrations. The command you have to run:
+
+```bash
+pnpm dlx prisma migrate dev --name init
+```
+then you can continue with:
 ```bash
 docker compose --env-file .env.docker up --build -d
 ```
