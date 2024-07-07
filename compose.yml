@@ -10,7 +10,7 @@ services:
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_USER: ${DB_USER}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_DB: vantar
     volumes:
       - vantar-todo:/var/lib/postgresql/data
     ports:
@@ -29,14 +29,6 @@ services:
         DB_USER: ${DB_USER}
         DB_PASSWORD: ${DB_PASSWORD}
         DB_NAME: ${DB_NAME}
-        HASH: ${HASH}
-        SECRET: ${SECRET}
-        CLIENT_ID: ${CLIENT_ID}
-        CLIENT_SECRET: ${CLIENT_SECRET}
-        CB_URL: ${CB_URL}
-        AT_TIME: ${AT_TIME}
-        RT_TIME: ${RT_TIME}
-        RT_SECRET: ${RT_SECRET}
     container_name: vantar_api
     networks: 
       - vantar_net

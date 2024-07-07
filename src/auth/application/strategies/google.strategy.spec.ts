@@ -4,8 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { Strategy } from 'passport-google-oauth20';
 
 import { GoogleAuthStrategy } from './google.strategy';
-import { UserService } from '../../../../users/application/services/user.service';
-import { mockUserService } from '../../../../users/domain/mocks/user-providers.mock';
+import { UserService } from '../../../users/application/services/user.service';
+import { mockUserService } from '../../../users/domain/mocks/user-providers.mock';
 
 describe('GoogleAuthStrategy', () => {
   let strategy: GoogleAuthStrategy;
