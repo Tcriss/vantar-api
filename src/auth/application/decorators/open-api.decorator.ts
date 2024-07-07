@@ -12,7 +12,7 @@ export const ApiLogin = () => applyDecorators(
 
 export const ApiRefresh = () => applyDecorators(
     ApiBearerAuth(),
-    ApiOperation({ summary: 'Refresh user tokens to not relogin' }),
+    ApiOperation({ summary: 'Refresh user access token to keep session' }),
     ApiResponse({ status: HttpStatus.OK, type: AuthEntity }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Session not found' }),
     ApiResponse({ status: HttpStatus.NOT_ACCEPTABLE, description: 'Invalid token' })

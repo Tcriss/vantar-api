@@ -16,7 +16,7 @@ services:
     ports:
       - 5434:5432
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      # test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -29,14 +29,6 @@ services:
         DB_USER: ${DB_USER}
         DB_PASSWORD: ${DB_PASSWORD}
         DB_NAME: ${DB_NAME}
-        HASH: ${HASH}
-        SECRET: ${SECRET}
-        CLIENT_ID: ${CLIENT_ID}
-        CLIENT_SECRET: ${CLIENT_SECRET}
-        CB_URL: ${CB_URL}
-        AT_TIME: ${AT_TIME}
-        RT_TIME: ${RT_TIME}
-        RT_SECRET: ${RT_SECRET}
     container_name: vantar_api
     networks: 
       - vantar_net

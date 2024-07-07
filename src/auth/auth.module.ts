@@ -5,23 +5,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './application/services/auth.service';
 import { AuthController } from './infrastructure/controllers/auth.controller';
 import { jwtFactory } from './application/config/jwt.factory';
-import { AccessTokenStrategy } from './application/strategies/access-token/access-token.strategy';
-import { GoogleAuthStrategy } from './application/strategies/google/google.strategy';
-import { RefreshTokenStrategy } from './application/strategies/refresh-token/refresh-token.strategy';
-import { UserRepositoryToken } from '../users/domain/interfaces';
-import { UserRepository } from '../users/infrastructure/repositories/user.repository';
+import { GoogleAuthStrategy } from './application/strategies/google.strategy';
 import { CommonModule } from '../common/common.module';
+import { UserModule } from '../users/user.module';
 
 @Module({
   providers: [
     AuthService,
-    AccessTokenStrategy,
-    RefreshTokenStrategy,
     //GoogleAuthStrategy,
-    {
-      provide: UserRepositoryToken,
-      useClass: UserRepository,
-    }
   ],
   controllers: [AuthController],
   imports: [
@@ -30,7 +21,8 @@ import { CommonModule } from '../common/common.module';
       inject: [ConfigService],
       useFactory: jwtFactory
     }),
-    CommonModule
+    CommonModule,
+    UserModule
   ]
 })
 export class AuthModule {}

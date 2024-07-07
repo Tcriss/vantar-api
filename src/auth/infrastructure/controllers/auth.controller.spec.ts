@@ -8,9 +8,8 @@ import { AuthService } from '../../application/services/auth.service';
 import { mockAuthService } from '../../domain/mocks/auth-providers.mock';
 import { userMock, userMock2 } from '../../../users/domain/mocks/user.mocks';
 import { jwtFactory } from '../../application/config/jwt.factory';
-import { AuthResponseI } from 'src/auth/domain/interfaces';
-import { Roles } from 'src/common/domain/enums';
-import { Token } from 'src/auth/domain/types';
+import { AuthResponseI } from '../../domain/interfaces';
+import { Roles } from '../../../common/domain/enums';
 
 describe('AuthController', () => {
   let service: AuthService;
@@ -91,42 +90,36 @@ describe('AuthController', () => {
 
   describe('Refresh Tokens', () => {
     it('should refresh tokens', async () => {
-      jest.spyOn(service, 'refreshTokens').mockResolvedValue({
-        access_token: '123456',
-        refresh_token: '654321'
-      });
+      jest.spyOn(service, 'refreshTokens').mockResolvedValue('654321');
 
-      const res: Token = await controller.refresh({
-        user: {
+      const res: string = await controller.refresh({
+        refresh_token: {
           id: userMock2.id,
           email: userMock2.email,
           name: userMock2.name,
           role: userMock2.role as Roles
         }
-      });
+      } as any, { refresh_token: '12222' });
 
-      expect(res).toEqual({
-        access_token: '123456',
-        refresh_token: '654321'
-      });
+      expect(res).toEqual('654321');
     });
 
-    it('should throw an exception if user not found', async () => {
+    it('should throw an exception if user was not found', async () => {
       jest.spyOn(service, 'refreshTokens').mockResolvedValue(null);
       
       try {
         await controller.refresh({
-          user: {
+          refresh_token: {
             id: userMock2.id,
             email: userMock2.email,
             name: userMock2.name,
             role: userMock2.role as Roles
           }
-        });
+        } as any, { refresh_token: '12222' });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.NOT_FOUND);
-        expect(err.message).toBe('Session not found');
+        expect(err.status).toBe(HttpStatus.UNAUTHORIZED);
+        expect(err.message).toBe('Session expired');
       }
     });
 
@@ -135,17 +128,17 @@ describe('AuthController', () => {
       
       try {
         await controller.refresh({
-          user: {
+          refresh_token: {
             id: userMock2.id,
             email: userMock2.email,
             name: userMock2.name,
             role: userMock2.role as Roles
           }
-        });
+        } as any, { refresh_token: '12222' });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.NOT_FOUND);
-        expect(err.message).toBe('Session not found');
+        expect(err.status).toBe(HttpStatus.UNAUTHORIZED);
+        expect(err.message).toBe('Session expired');
       }
     });
 
@@ -154,13 +147,13 @@ describe('AuthController', () => {
       
       try {
         await controller.refresh({
-          user: {
+          refresh_token: {
             id: userMock2.id,
             email: userMock2.email,
             name: userMock2.name,
             role: userMock2.role as Roles
           }
-        });
+        } as any, { refresh_token: '12222' });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_ACCEPTABLE);
@@ -173,7 +166,14 @@ describe('AuthController', () => {
     it('should logout user', async () => {
       jest.spyOn(service, 'logOut').mockResolvedValue('User logout successfully');
 
-      const res: string = await controller.logOut(mockReq);
+      const res: string = await controller.logOut({
+          refresh_token: {
+            id: userMock2.id,
+            email: userMock2.email,
+            name: userMock2.name,
+            role: userMock2.role as Roles
+          }
+        } as any);
 
       expect(res).toBe('User logout successfully');
     });
@@ -182,7 +182,14 @@ describe('AuthController', () => {
       jest.spyOn(service, 'logOut').mockResolvedValue(null);
 
       try {
-        await controller.logOut(mockReq);
+        await controller.logOut({
+          refresh_token: {
+            id: userMock2.id,
+            email: userMock2.email,
+            name: userMock2.name,
+            role: userMock2.role as Roles
+          }
+        } as any);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -194,7 +201,14 @@ describe('AuthController', () => {
       jest.spyOn(service, 'logOut').mockResolvedValue(undefined);
 
       try {
-        await controller.logOut(mockReq);
+        await controller.logOut({
+          refresh_token: {
+            id: userMock2.id,
+            email: userMock2.email,
+            name: userMock2.name,
+            role: userMock2.role as Roles
+          }
+        } as any)
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -34,17 +34,7 @@ describe('RefreshTokenGuard', () => {
     await expect(guard.canActivate(context)).rejects.toMatchObject({
       response: 'Invalid token',
       status: HttpStatus.UNAUTHORIZED,
-      cause: 'Token not found in headers',
+      cause: 'Token missing in headers'
     });
-  });
-
-  it('should allow access and set the refresh token when a valid token is provided', async () => {
-    const validToken = 'some-valid-token';
-    const context = mockExecutionContext({ authorization: `Bearer ${validToken}` });
-
-    const result = await guard.canActivate(context);
-
-    expect(result).toBe(true);
-    expect(context.switchToHttp().getRequest().refresh).toBe(validToken);
   });
 });

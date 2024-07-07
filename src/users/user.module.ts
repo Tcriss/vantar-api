@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
+import { UserRepositoryToken } from './application/decorators/repository.decorator';
 import { UserRepository } from './infrastructure/repositories/user.repository';
 import { UserService } from './application/services/user.service';
 import { UserController } from './infrastructure/controllers/user.controller';
-import { UserRepositoryToken } from './domain/interfaces';
 import { CommonModule } from '../common/common.module';
 
 @Module({
@@ -15,6 +15,7 @@ import { CommonModule } from '../common/common.module';
         UserService
     ],
     controllers: [UserController],
-    imports: [CommonModule]
+    imports: [CommonModule],
+    exports: [UserRepositoryToken]
 })
 export class UserModule { }

@@ -3,7 +3,8 @@ import { Module } from '@nestjs/common';
 import { InventoryService } from './application/services/inventory.service';
 import { InventoryRepository } from './infrastructure/repositories/inventory.repository';
 import { InventoryController } from './infrastructure/controllers/inventory.controller';
-import { InventoryRepositoryToken } from './domain/interfaces/inventory-repository.interface';
+import { InventoryRepositoryToken } from './application/decorators';
+import { ProductModule } from '../products/product.module';
 
 @Module({
     providers: [
@@ -13,6 +14,7 @@ import { InventoryRepositoryToken } from './domain/interfaces/inventory-reposito
         },
         InventoryService
     ],
-    controllers: [InventoryController]
+    controllers: [InventoryController],
+    imports: [ProductModule]
 })
 export class InventoryModule {}

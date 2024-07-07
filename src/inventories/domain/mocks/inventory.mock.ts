@@ -1,3 +1,4 @@
+import { productListMock, productListMock1, productListMock2 } from "../../../products/domain/mocks/product-list.mock";
 import { InventoryEntity } from "../entities/inventory.entity";
 
 export const mockInventory1: InventoryEntity = {
@@ -7,6 +8,7 @@ export const mockInventory1: InventoryEntity = {
     total: 300,
     created_at: new Date('2024-05-01T14:30:00Z'),
     user_id: 'be702a7b-13a3-4e03-93f6-65b2a82e1905',
+    products: [productListMock]
 };
 
 export const mockInventory2: InventoryEntity = {
@@ -16,6 +18,7 @@ export const mockInventory2: InventoryEntity = {
     total: 3000,
     created_at: new Date('2024-05-01T14:30:00Z'),
     user_id: '10c55da3-44c9-4a17-910c-6ae9235b993b',
+    products: [productListMock1]
 };
 
 export const mockInventory3: InventoryEntity = {
@@ -25,6 +28,7 @@ export const mockInventory3: InventoryEntity = {
     total: 4000,
     created_at: new Date('2024-05-01T14:30:00Z'),
     user_id: 'be702a7b-13a3-4e03-93f6-65b2a82e1905',
+    products: [productListMock2]
 };
 
 export const mockPartialInventory1: Partial<InventoryEntity> = {

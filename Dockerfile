@@ -13,7 +13,7 @@ WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY package.json pnpm-lock.yaml ./
-COPY /src/prisma ./src/prisma
+COPY /src/database ./src/database
 RUN corepack enable pnpm && corepack use pnpm@latest && pnpm install
 
 # Generate Prisma Client code

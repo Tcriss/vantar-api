@@ -4,16 +4,16 @@ import { ConfigService } from '@nestjs/config';
 
 import { Token } from '../../domain/types';
 import { UserEntity } from '../../../users/domain/entities/user.entity';
-import { Repository } from '../../../users/application/decorators/repository.decorator';
-import { UserRepositoryI } from '../../../users/domain/interfaces';
+import { UserRepository } from '../../../users/application/decorators/repository.decorator';
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
+import { Repository } from '../../../common/domain/entities';
 
 @Injectable()
 export class AuthService {
 
     constructor(
-        @Repository()
-        private userRepository: UserRepositoryI,
+        @UserRepository()
+        private userRepository: Repository<UserEntity>,
         private config: ConfigService,
         private bcrypt: BcryptProvider,
         private jwt: JwtService
@@ -21,7 +21,7 @@ export class AuthService {
 
     public async login(credentials: Partial<UserEntity>): Promise<Token> {
         const { email, password } = credentials;
-        const user: UserEntity = await this.userRepository.findOneUser({ email: email });
+        const user: Partial<UserEntity> = await this.userRepository.findOne(null, email);
 
         if (!user) return undefined;
 
@@ -35,8 +35,8 @@ export class AuthService {
         return updatedTokens ? tokens : undefined;
     }
 
-    public async refreshTokens(userId: string, refreshToken: string): Promise<Token> {
-        const user: UserEntity = await this.userRepository.findOneUser({ id: userId });
+    public async refreshTokens(userId: string, refreshToken: string): Promise<string> {
+        const user: Partial<UserEntity> = await this.userRepository.findOne(userId);
 
         if (!user || user.refresh_token === null) return null;
 
@@ -44,20 +44,27 @@ export class AuthService {
 
         if (!match) return undefined;
 
-        const tokens: Token = await this.getTokens(user);
-        const updatedTokens: string = await this.updateRefreshToken(user.id, tokens.refresh_token);
+        const token: string = await this.getAccessToken(user);
 
-        return updatedTokens ? tokens : undefined;
+        return token || undefined;
     }
 
     public async logOut(userId: string): Promise<string> {
-        const user: UserEntity = await this.userRepository.findOneUser({ id: userId });
+        const user: Partial<UserEntity> = await this.userRepository.findOne(userId);
 
         if (!user) return null;
 
-        const res = await this.userRepository.updateUser(userId, { refresh_token: null })
+        const res = await this.userRepository.update(userId, { refresh_token: null })
 
         return res ? 'User logout successfully' : undefined;
+    }
+
+    public async verifyToken(token: string, secretKey: string): Promise<unknown> {
+        const payload = await this.jwt.verifyAsync(token, {secret: this.config.get(secretKey)});
+
+        if (!payload) return null;
+
+        return payload;
     }
 
     private async getTokens(user: Partial<UserEntity>): Promise<Token> {
@@ -68,7 +75,7 @@ export class AuthService {
                 expiresIn: this.config.get<string>('AT_TIME')
             }),
             this.jwt.signAsync({ id }, {
-                secret: this.config.get<string>('SECRET'), 
+                secret: this.config.get<string>('RT_SECRET'), 
                 expiresIn: this.config.get<string>('RT_TIME')
             })
         ]);
@@ -79,10 +86,19 @@ export class AuthService {
         };
     }
 
+    private async getAccessToken(user: Partial<UserEntity>): Promise<string> {
+        const { id, name, email, role } = user;
+
+        return this.jwt.signAsync({ id, name, email, role }, {
+            secret: this.config.get<string>('SECRET'), 
+            expiresIn: this.config.get<string>('AT_TIME')
+        });
+    }
+
     private async updateRefreshToken(userId: string, token: string): Promise<string> {
         const hashedToken = await this.bcrypt.hash(token);
 
-        const res = await this.userRepository.updateUser(userId, {
+        const res = await this.userRepository.update(userId, {
             refresh_token: hashedToken
         });
 
