@@ -1,18 +1,15 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AuthGuard } from '@nestjs/passport';
-import { Observable } from 'rxjs';
 
 import { PUBLIC_KEY } from '../../../../common/application/decorators';
+import { AuthService } from '../../services/auth.service';
 
 @Injectable()
-export class AccessTokenGuard extends AuthGuard('access') { 
+export class AccessTokenGuard { 
 
-    constructor(private reflector: Reflector) {
-        super()
-    }
+    constructor(private reflector: Reflector, private authService: AuthService) {}
 
-    public canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    public async canActivate(context: ExecutionContext): Promise<boolean> {
         const isPublic: boolean = this.reflector.getAllAndOverride<boolean>(PUBLIC_KEY, [
             context.getHandler(),
             context.getClass(),
@@ -20,6 +17,25 @@ export class AccessTokenGuard extends AuthGuard('access') {
 
         if (isPublic) return true;
           
-        return super.canActivate(context);
+        return this.isValid(context.switchToHttp().getRequest());
+    }
+
+    private async isValid(req: Request): Promise<boolean> {
+        if (!req.headers) throw new HttpException('No headers provided', HttpStatus.BAD_REQUEST);
+        
+        const token: string = await this.extractTokenFromHeader(req.headers);
+        
+        if (!token) throw new HttpException('Token missing in headers', HttpStatus.UNAUTHORIZED);
+
+        const payload = await this.authService.verifyToken(token, 'SECRET');
+
+        req['user'] = payload;
+        return true;
+    }
+
+    private async extractTokenFromHeader(headers: Headers): Promise<string> {
+        const [type, token]: string[] = headers['authorization']?.split(' ') ?? [];
+        
+        return type === 'Bearer' ? token : undefined;
     }
 }

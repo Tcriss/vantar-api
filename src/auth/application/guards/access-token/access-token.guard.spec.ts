@@ -2,14 +2,16 @@ import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 import { AccessTokenGuard } from './access-token.guard';
+import { AuthService } from '../../services/auth.service';
 
 describe('AccessTokenGuard', () => {
   let guard: AccessTokenGuard;
   let reflector: Reflector;
+  let authService: AuthService;
 
   beforeEach(() => {
     reflector = new Reflector();
-    guard = new AccessTokenGuard(reflector);
+    guard = new AccessTokenGuard(reflector, authService);
   });
 
   it('should return true if the route is public', () => {

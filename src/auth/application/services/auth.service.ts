@@ -59,8 +59,8 @@ export class AuthService {
         return res ? 'User logout successfully' : undefined;
     }
 
-    public async verifyRefreshToken(token: string): Promise<unknown> {
-        const payload = await this.jwt.verifyAsync(token, {secret: this.config.get('RT_SECRET')});
+    public async verifyToken(token: string, secretKey: string): Promise<unknown> {
+        const payload = await this.jwt.verifyAsync(token, {secret: this.config.get(secretKey)});
 
         if (!payload) return null;
 

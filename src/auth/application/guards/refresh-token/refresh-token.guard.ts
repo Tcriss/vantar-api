@@ -7,7 +7,7 @@ export class RefreshTokenGuard implements CanActivate {
 
     constructor(private authService: AuthService) {}
 
-    public async canActivate(context: ExecutionContext): Promise<boolean> {
+    public async canActivate(context: ExecutionContext, ): Promise<boolean> {
         const req: Request = context.switchToHttp().getRequest();
 
         return this.isValid(req);
@@ -20,7 +20,7 @@ export class RefreshTokenGuard implements CanActivate {
         
         if (!token) throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED, { cause: 'Token missing in headers' });
 
-        const payload: unknown = await this.authService.verifyRefreshToken(token);
+        const payload: unknown = await this.authService.verifyToken(token, 'RT_SECRET');
 
         req['refresh_token'] = payload;
         return true;
