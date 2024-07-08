@@ -1,15 +1,16 @@
 import { Module } from "@nestjs/common";
 
-import { InvoiceRepositoryToken } from "./domain/interfaces";
 import { InvoiceRepository } from "./infrastructure/repositories/invoice.repository";
 import { InvoiceService } from './application/services/invoice.service';
 import { InvoiceController } from "./infrastructure/controllers/invoice.controller";
 import { ProductModule } from "../products/product.module";
+import { Repository } from "../common/domain/entities";
+import { InvoiceEntity } from "./domain/entities/invoice.entity";
 
 @Module({
     providers: [
         {
-            provide: InvoiceRepositoryToken,
+            provide: Repository<InvoiceEntity>,
             useClass: InvoiceRepository
         },
         InvoiceService

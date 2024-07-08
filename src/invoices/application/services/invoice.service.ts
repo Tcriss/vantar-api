@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
 import { InvoiceProductList, SelectedFields } from '../../domain/types';
-import { ProductListRepository } from '../../../products/application/decotators';
 import { InvoiceEntity } from '../../domain/entities/invoice.entity';
 import { Pagination } from '../../../common/domain/types';
 import { Repository } from '../../../common/domain/entities';
-import { InvoiceRepository } from '../decorators';
 import { productListCreation } from '../../../common/application/utils';
 
 @Injectable()
 export class InvoiceService {
 
     constructor(
-        @InvoiceRepository() private invoiceRepository: Repository<InvoiceEntity>,
-        @ProductListRepository() private productListRepository: Repository<InvoiceProductList>
+        private invoiceRepository: Repository<InvoiceEntity>,
+        private productListRepository: Repository<InvoiceProductList>
     ) {
         this.productListRepository.setCollection('product-history');
     }

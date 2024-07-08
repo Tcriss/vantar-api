@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { Pagination } from '../../../common/domain/types';
-import { UserRepository } from '../decorators/repository.decorator';
 import { Roles } from '../../../common/domain/enums';
 import { Repository } from '../../../common/domain/entities';
 
@@ -11,7 +10,7 @@ import { Repository } from '../../../common/domain/entities';
 export class UserService {
 
     constructor(
-        @UserRepository() private repository: Repository<UserEntity>,
+        private repository: Repository<UserEntity>,
         private bcrypt: BcryptProvider
     ) {}
 

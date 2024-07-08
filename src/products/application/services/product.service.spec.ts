@@ -4,8 +4,8 @@ import { ProductService } from './product.service';
 import { ProductEntity } from '../../domain/entities/product.entity';
 import { partialProductMock1, partialProductMock2, productMock1, productMock2, productMock3, productMock6 } from '../../domain/mocks/product.mock';
 import { mockProductRepository } from '../../domain/mocks/product-providers.mock';
-import { Repository } from 'src/common/domain/entities';
-import { ProductRepositoryToken } from '../decotators';
+import { Repository } from '../../../common/domain/entities';
+import { InvoiceProductList } from '../../../invoices/domain/types';
 
 describe('ProductService', () => {
   let service: ProductService;
@@ -16,14 +16,14 @@ describe('ProductService', () => {
       providers: [
         ProductService,
         {
-          provide: ProductRepositoryToken,
+          provide: Repository<InvoiceProductList>,
           useValue: mockProductRepository
         }
       ],
     }).compile();
 
     service = module.get<ProductService>(ProductService);
-    repository = module.get<Repository<ProductEntity>>(ProductRepositoryToken);
+    repository = module.get<Repository<ProductEntity>>(Repository<InvoiceProductList>);
   });
 
   it('should be defined', () => {

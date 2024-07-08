@@ -2,14 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ObjectId } from 'mongodb';
 
 import { InvoiceService } from './invoice.service';
-import { InvoiceRepositoryToken } from '../../domain/interfaces';
 import { invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock, partialInvoiceMock1 } from '../../domain/mocks/invoice..mock';
 import { InvoiceEntity } from '../../domain/entities/invoice.entity';
 import { mockInvoiceRepository } from '../../domain/mocks/invoice-providers.mock';
-import { ProductListRepositoryToken } from '../../../products/application/decotators/product-list-repository.decorator';
 import { mockProductListRepository } from '../../../products/domain/mocks/product-providers.mock';
 import { Repository } from '../../../common/domain/entities';
-import { ProductList } from '../../../products/domain/entities/product-list.entity';
 import { InvoiceProductList } from '../../../invoices/domain/types';
 
 describe('InvoiceService', () => {
@@ -22,19 +19,19 @@ describe('InvoiceService', () => {
       providers: [
         InvoiceService,
         {
-          provide: InvoiceRepositoryToken,
+          provide: Repository<InvoiceEntity>,
           useValue: mockInvoiceRepository
         },
         {
-          provide: ProductListRepositoryToken,
+          provide: Repository<InvoiceProductList>,
           useValue: mockProductListRepository
         }
       ],
     }).compile();
 
     service = module.get<InvoiceService>(InvoiceService);
-    repository = module.get<Repository<InvoiceEntity>>(InvoiceRepositoryToken);
-    productListRepository = module.get<Repository<InvoiceProductList>>(ProductListRepositoryToken)
+    repository = module.get<Repository<InvoiceEntity>>(Repository<InvoiceEntity>);
+    productListRepository = module.get<Repository<InvoiceProductList>>(Repository<InvoiceProductList>)
   });
 
   it('should be defined', () => {

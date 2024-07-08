@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 
 import { Token } from '../../domain/types';
 import { UserEntity } from '../../../users/domain/entities/user.entity';
-import { UserRepository } from '../../../users/application/decorators/repository.decorator';
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { Repository } from '../../../common/domain/entities';
 
@@ -12,7 +11,6 @@ import { Repository } from '../../../common/domain/entities';
 export class AuthService {
 
     constructor(
-        @UserRepository()
         private userRepository: Repository<UserEntity>,
         private config: ConfigService,
         private bcrypt: BcryptProvider,

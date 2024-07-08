@@ -3,18 +3,17 @@ import { Injectable } from '@nestjs/common';
 import { Pagination } from '../../../common/domain/types';
 import { SelectedFields } from '../../domain/types';
 import { InventoryEntity } from '../../domain/entities/inventory.entity';
-import { InventoryRepository } from '../decorators';
 import { Repository } from '../../../common/domain/entities';
-import { ProductListRepository } from '../../../products/application/decotators';
 import { InventoryProductList } from '../../../inventories/domain/types/inventory-prodcut-list.type';
 import { productListCreation } from '../../../common/application/utils';
+import { InvoiceProductList } from '../../../invoices/domain/types';
 
 @Injectable()
 export class InventoryService {
 
     constructor(
-        @InventoryRepository() private repository: Repository<InventoryEntity>,
-        @ProductListRepository() private productListRepository: Repository<InventoryProductList>
+        private inventoryRepository: Repository<InventoryEntity>,
+        private productListRepository: Repository<InvoiceProductList>
     ) {
         this.productListRepository.setCollection('inventory-product-list');
     }
@@ -33,7 +32,7 @@ export class InventoryService {
             created_at: selected.includes('created_at')
         } : null;
 
-        return this.repository.findAll(userId, pagination, fields);
+        return this.inventoryRepository.findAll(userId, pagination, fields);
     }
 
     public async findOneInventory(id: string, userId?: string, selected?: string): Promise<Partial<InventoryEntity>> {
@@ -45,7 +44,7 @@ export class InventoryService {
             total: selected.includes('total') ? true : false,
             created_at: selected.includes('created_at') ? true : false
         } : null;
-        const inventory: Partial<InventoryEntity> = await this.repository.findOne(id, fields);
+        const inventory: Partial<InventoryEntity> = await this.inventoryRepository.findOne(id, fields);
 
         if (!inventory) return null;
         if (userId && inventory.user_id !== userId) return undefined;
@@ -62,7 +61,7 @@ export class InventoryService {
         inventory.subtotal = subtotal;
         inventory.total = inventory.subtotal + inventory.cost;
 
-        const newInventory  = await this.repository.create(inventory);
+        const newInventory  = await this.inventoryRepository.create(inventory);
 
         if (!newInventory) return null;
 
@@ -89,7 +88,7 @@ export class InventoryService {
         if (!resource || !resourceList) return null;
         if (resource.user_id !== userId) return undefined;
         if (!inventory.products) {
-            const updatedInventory = await this.repository.update(id, {
+            const updatedInventory = await this.inventoryRepository.update(id, {
                 cost: inventory.cost,
                 total: inventory.cost + resource.subtotal
             });
@@ -105,7 +104,7 @@ export class InventoryService {
 
         const [ updatedProductList, updatedInventory ] = await Promise.all([
             await this.productListRepository.updateDoc(id, { products: list, id: id }),
-            await this.repository.update(id, {
+            await this.inventoryRepository.update(id, {
                 cost: inventory.cost,
                 subtotal: inventory.subtotal,
                 total: inventory.total
@@ -128,6 +127,6 @@ export class InventoryService {
 
         if (!res) return null;
         
-        return this.repository.delete(id);
+        return this.inventoryRepository.delete(id);
     }
 }

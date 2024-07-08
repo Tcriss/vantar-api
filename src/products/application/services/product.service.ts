@@ -3,13 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { SelectedFields } from '../../domain/types';
 import { Pagination } from "../../../common/domain/types/pagination.type";
 import { ProductEntity } from '../../domain/entities/product.entity';
-import { ProductRepository } from '../decotators';
 import { Repository } from '../../../common/domain/entities';
 
 @Injectable()
 export class ProductService {
 
-    constructor(@ProductRepository() private productRepository: Repository<ProductEntity>) { }
+    constructor(private productRepository: Repository<ProductEntity>) { }
 
     public async findAll(page: string, userId: string, query?: string, selected?: string): Promise<Partial<ProductEntity>[]> {
         const pagination: Pagination = {

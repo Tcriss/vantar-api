@@ -8,7 +8,6 @@ import { mockUserRepository } from '../../domain/mocks/user-providers.mock';
 import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
-import { UserRepositoryToken } from '../decorators/repository.decorator';
 import { Repository } from '../../../common/domain/entities';
 
 describe('UserService', () => {
@@ -20,7 +19,7 @@ describe('UserService', () => {
       providers: [
         UserService,
         {
-          provide: UserRepositoryToken,
+          provide: Repository<UserEntity>,
           useValue: mockUserRepository 
         },
         BcryptProvider
@@ -29,7 +28,7 @@ describe('UserService', () => {
     }).compile();
 
     service = module.get<UserService>(UserService);
-    repository = module.get<Repository<UserEntity>>(UserRepositoryToken);
+    repository = module.get<Repository<UserEntity>>(Repository<UserEntity>);
   });
 
   it('should be defined', () => {

@@ -1,16 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ObjectId } from 'mongodb';
 
 import { InventoryService } from './inventory.service';
 import { mockInventoryRepository } from '../../domain/mocks/inventory-providers.mock';
 import { mockInventory1, mockInventory2, mockInventory3, mockPartialInventory1 } from '../../domain/mocks/inventory.mock';
-import { InventoryEntity } from '../../domain/entities/inventory.entity';
-import { Repository } from 'src/common/domain/entities';
-import { InventoryRepositoryToken } from '../decorators';
-import { ProductListRepositoryToken } from '../../../products/application/decotators';
 import { mockProductListRepository } from '../../../products/domain/mocks/product-providers.mock';
-import { InventoryProductList } from 'src/inventories/domain/types/inventory-prodcut-list.type';
-import { ProductList } from 'src/products/domain/entities/product-list.entity';
-import { ObjectId } from 'mongodb';
+import { InventoryProductList } from '../../domain/types/inventory-prodcut-list.type';
+import { InvoiceProductList } from '../../../invoices/domain/types';
+import { InventoryEntity } from '../../domain/entities/inventory.entity';
+import { ProductList } from '../../../products/domain/entities/product-list.entity';
+import { Repository } from '../../../common/domain/entities';
 
 
 describe('InventoryService', () => {
@@ -23,19 +22,19 @@ describe('InventoryService', () => {
       providers: [
         InventoryService,
         {
-          provide: InventoryRepositoryToken,
+          provide: Repository<InventoryEntity>,
           useValue: mockInventoryRepository
         },
         {
-          provide: ProductListRepositoryToken,
+          provide: Repository<InvoiceProductList>,
           useValue: mockProductListRepository
         },
       ],
     }).compile();
 
     service = module.get<InventoryService>(InventoryService);
-    repository = module.get<Repository<InventoryEntity>>(InventoryRepositoryToken);
-    productListRepository = module.get<Repository<InventoryProductList>>(ProductListRepositoryToken);
+    repository = module.get<Repository<InventoryEntity>>(Repository<InventoryEntity>);
+    productListRepository = module.get<Repository<InventoryProductList>>(Repository<InvoiceProductList>);
   });
 
   it('should be defined', () => {
