@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { LoginUserDto, RefreshTokenDto } from '../../domain/dto';
+import { LoginUserDto, RefreshTokenDto } from '../../domain/dtos';
 import { Token } from '../../domain/types';
 import { AuthService } from '../../application/services/auth.service';
 import { PublicAccess } from '../../../common/application/decorators';
