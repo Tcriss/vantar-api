@@ -16,12 +16,13 @@ datasource db {
 model User {
   id                String         @id @default(uuid()) @db.Uuid
   name              String         @db.VarChar(30)
-  email             String         @unique @db.Char(100)
+  email             String         @unique @db.VarChar(60)
   password          String         @db.VarChar(130)
   role              String         @db.VarChar(8) @default("CUSTOMER")
   created_at        DateTime       @db.Timestamp() @default(now())
-  active            Boolean        @default(true)
-  refresh_token     String?         
+  active            Boolean        @default(false)
+  refresh_token     String?
+  activation_token  String?
   products          Product[]
   Invoices          Invoice[]
   inventories       Inventory[]
