@@ -1,0 +1,1 @@
+export const DatabaseModuleOptionsKey = Symbol('DB_MODULE_OPTIONS');

@@ -1,12 +1,14 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { MongoClient, ServerApiVersion } from 'mongodb';
-import { ConfigService } from '@nestjs/config';
+import { Collection, MongoClient, ServerApiVersion } from 'mongodb';
+
+import { DatabaseOptions } from '../../../domain/interfaces';
+import { Options } from '../../../application/decorators/options.decorator';
 
 @Injectable()
 export class MongoProvider extends MongoClient implements OnModuleInit, OnModuleDestroy {
 
-    constructor(private config: ConfigService) {
-        super(config.get<string>('MONGO_URI'), {
+    constructor(@Options() private readonly config: DatabaseOptions) {
+        super(config.mongoUri, {
             serverApi: {
                 version: ServerApiVersion.v1,
                 deprecationErrors: true,
@@ -21,5 +23,9 @@ export class MongoProvider extends MongoClient implements OnModuleInit, OnModule
 
     public onModuleDestroy(): void {
         this.close();
+    }
+
+    public database(): Collection {
+        return this.db(this.config.databaseName).collection(this.config.collectionName);
     }
 }
