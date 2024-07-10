@@ -59,12 +59,12 @@ export class AuthController {
 
     @ApiActivateAccount()
     @Get('/activate')
-    public async activateAccount(@Query('token') token: string): Promise<string> {
+    public async activateAccount(@Query('token') token: string): Promise<{ message: string }> {
         const res: string = await this.service.activateAccount(token);
 
         if (res === null) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         if (res === undefined) throw new HttpException('Invalid token', HttpStatus.CONFLICT);
 
-        return res;
+        return { message: res };
     }
 }

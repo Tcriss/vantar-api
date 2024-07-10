@@ -70,8 +70,10 @@ export class AuthService {
         const user = await this.userRepository.findOne(null, payload['email']);
 
         if (!user) return null;
-        console.log('storaged token: ', user.activation_token)
-        if (await this.bcrypt.compare(token, user.activation_token)) return undefined;
+
+        const isMatch: boolean = await this.bcrypt.compare(token, user.activation_token);
+
+        if (!isMatch) return undefined;
 
         const res = await this.userRepository.update(user.id, {
             active: true,
