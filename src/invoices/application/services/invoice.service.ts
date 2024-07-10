@@ -12,9 +12,7 @@ export class InvoiceService {
     constructor(
         private invoiceRepository: Repository<InvoiceEntity>,
         private productListRepository: Repository<InvoiceProductList>
-    ) {
-        this.productListRepository.setCollection('product-history');
-    }
+    ) {}
 
     public async findAllInvoices(userId: string, page: string, selected?: string): Promise<Partial<InvoiceEntity>[]> {
         const pagination: Pagination = {

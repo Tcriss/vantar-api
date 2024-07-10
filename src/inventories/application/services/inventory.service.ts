@@ -14,9 +14,7 @@ export class InventoryService {
     constructor(
         private inventoryRepository: Repository<InventoryEntity>,
         private productListRepository: Repository<InvoiceProductList>
-    ) {
-        this.productListRepository.setCollection('inventory-product-list');
-    }
+    ) {}
 
     public async findAllInventories(userId: string, page: string, selected?: string): Promise<Partial<InventoryEntity>[]> {
         const pagination: Pagination = {

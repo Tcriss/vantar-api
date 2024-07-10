@@ -12,11 +12,11 @@ import { InvoiceProductList } from '../invoices/domain/types';
     providers: [
         {
             provide: Repository<ProductEntity>,
-            useExisting: ProductRepository
+            useClass: ProductRepository
         },
         {
             provide: Repository<InvoiceProductList>,
-            useExisting: ProductListRepository
+            useClass: ProductListRepository
         },
         ProductService
     ],

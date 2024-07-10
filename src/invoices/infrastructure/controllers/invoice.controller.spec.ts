@@ -7,7 +7,7 @@ import { invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock, partialInv
 import { InvoiceEntity } from 'src/invoices/domain/entities/invoice.entity';
 import { Roles } from 'src/common/domain/enums';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { userMock } from 'src/users/domain/mocks/user.mocks';
+import { userMock } from 'src/users/domain/entities/mocks/user.mocks';
 
 describe('InvoiceController', () => {
   let controller: InvoiceController;
