@@ -11,7 +11,7 @@ export class UserEntity implements User {
     @ApiProperty({ default: 'Robert Ramos'})
     name: string;
 
-    @ApiProperty({ format: 'email', uniqueItems: true })
+    @ApiProperty({ example: 'exmaple@email.com', uniqueItems: true })
     email: string;
 
     @ApiProperty({ enum: Roles })
@@ -28,6 +28,9 @@ export class UserEntity implements User {
 
     @Exclude({ toPlainOnly: true })
     refresh_token: string | null;
+
+    @Exclude({ toPlainOnly: true })
+    activation_token: string | null;
 
     constructor(partial: Partial<UserEntity>) {
         Object.assign(this, partial);

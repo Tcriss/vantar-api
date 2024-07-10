@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ResendProviderEntity } from '../domain/entities/resend-provider.entiry';
 import { EmailModuleOptions } from '../domain/interfaces';
 import { EmailOptions } from './decorators/email-options.decorator';
+import { UserEntity } from '../../users/domain/entities/user.entity';
 
 @Injectable()
 export class EmailService {
@@ -12,12 +13,12 @@ export class EmailService {
         private resend: ResendProviderEntity
     ) {}
 
-    public async sendWelcomeEmail(to: string, token: string, user: any): Promise<unknown> {
+    public async sendWelcomeEmail(user: Partial<UserEntity>, token: string): Promise<unknown> {
         const activateUrl: string = this.options.activatationUrl + `/activate?token=${token}`;
         
         return this.resend.emails.send({
-            from: this.options.deafultSenderEmail,
-            to: to,
+            from: this.options.deafultSenderEmail || 'onboarding@resend.dev',
+            to: user.email,
             subject: 'Bienvenido a Vantar',
             html: `
                 <html lang="en">

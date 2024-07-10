@@ -6,7 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from '../../application/services/auth.service';
 import { mockAuthService } from '../../domain/mocks/auth-providers.mock';
-import { userMock, userMock2 } from '../../../users/domain/mocks/user.mocks';
+import { userMock, userMock2 } from '../../../users/domain/entities/mocks/user.mocks';
 import { jwtFactory } from '../../application/config/jwt.factory';
 import { AuthResponseI } from '../../domain/interfaces';
 import { Roles } from '../../../common/domain/enums';

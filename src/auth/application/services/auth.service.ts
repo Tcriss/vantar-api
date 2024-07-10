@@ -65,6 +65,22 @@ export class AuthService {
         return payload;
     }
 
+    public async activateAccount(token: string): Promise<string> {
+        const payload = await this.verifyToken(token, 'ACTIVATION_SECRET');
+        const user = await this.userRepository.findOne(null, payload['email']);
+
+        if (!user) return null;
+        console.log('storaged token: ', user.activation_token)
+        if (await this.bcrypt.compare(token, user.activation_token)) return undefined;
+
+        const res = await this.userRepository.update(user.id, {
+            active: true,
+            activation_token: null
+        });
+
+        return res ? 'Account activated succesfully' : null;
+    }
+
     private async getTokens(user: Partial<UserEntity>): Promise<Token> {
         const { id, name, email, role } = user;
         const [ accessToken, refreshToken ] = await Promise.all([

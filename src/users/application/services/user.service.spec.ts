@@ -4,8 +4,8 @@ import { randomUUID } from 'crypto';
 
 import { Roles } from '../../../common/domain/enums';
 import { UserService } from './user.service';
-import { mockUserRepository } from '../../domain/mocks/user-providers.mock';
-import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
+import { mockUserRepository } from '../../domain/entities/mocks/user-providers.mock';
+import { userMock, userMock1, userMock2, userMock3 } from '../../domain/entities/mocks/user.mocks';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { Repository } from '../../../common/domain/entities';

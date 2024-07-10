@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { LoginUserDto, RefreshTokenDto } from '../../domain/dtos';
@@ -7,7 +7,7 @@ import { AuthService } from '../../application/services/auth.service';
 import { PublicAccess } from '../../../common/application/decorators';
 import { AuthResponseI } from '../../domain/interfaces/auth-response.interface';
 import { RefreshTokenGuard } from '../../application/guards/refresh-token/refresh-token.guard';
-import { ApiLogin, ApiLogout, ApiRefresh } from '../../application/decorators';
+import { ApiActivateAccount, ApiLogin, ApiLogout, ApiRefresh } from '../../application/decorators';
 
 @ApiTags('Authentication')
 @PublicAccess()
@@ -53,6 +53,17 @@ export class AuthController {
 
         if (res === null) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         if (res === undefined) throw new HttpException('User could not logout', HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return res;
+    }
+
+    @ApiActivateAccount()
+    @Get('/activate')
+    public async activateAccount(@Query('token') token: string): Promise<string> {
+        const res: string = await this.service.activateAccount(token);
+
+        if (res === null) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        if (res === undefined) throw new HttpException('Invalid token', HttpStatus.CONFLICT);
 
         return res;
     }

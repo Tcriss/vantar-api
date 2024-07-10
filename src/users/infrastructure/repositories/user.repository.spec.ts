@@ -4,8 +4,8 @@ import { randomUUID } from "crypto";
 
 import { PrismaProvider } from "../../../database/infrastructure/providers/prisma/prisma.provider";
 import { UserRepository } from "./user.repository";
-import { prismaMock } from "../../domain/mocks/user-providers.mock";
-import { userMock, userMock1, userMock2 } from "../../domain/mocks/user.mocks";
+import { prismaMock } from "../../domain/entities/mocks/user-providers.mock";
+import { userMock, userMock1, userMock2 } from "../../domain/entities/mocks/user.mocks";
 import { UserEntity } from "src/users/domain/entities/user.entity";
 
 describe('User Repository', () => {

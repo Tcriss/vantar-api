@@ -1,17 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { Pagination } from '../../../common/domain/types';
 import { Roles } from '../../../common/domain/enums';
 import { Repository } from '../../../common/domain/entities';
+import { EmailService } from '../../../email/application/email.service';
 
 @Injectable()
 export class UserService {
 
+    private logger = new Logger(UserService.name);
+
     constructor(
         private repository: Repository<UserEntity>,
-        private bcrypt: BcryptProvider
+        private emailService: EmailService,
+        private bcrypt: BcryptProvider,
+        private jwt: JwtService
     ) {}
 
     public async findAllUsers(page: string, query?: string): Promise<UserEntity[] | Partial<UserEntity>[]> {
@@ -34,9 +40,18 @@ export class UserService {
     }
 
     public async createUser(user: Partial<UserEntity>): Promise<UserEntity> {
-        user.password = await this.bcrypt.hash(user.password);
+        const [ password, activationToken ] = await Promise.all([
+            this.bcrypt.hash(user.password),
+            this.jwt.signAsync({ email: user.email })
+        ]);
+        user.password = password;
+        user.activation_token = await this.bcrypt.hash(activationToken);
+        const newUser = await this.repository.create(user);
+        const emailResponse = await this.emailService.sendWelcomeEmail(newUser, activationToken);
+        
+        if (!emailResponse) this.logger.log('error: ', emailResponse);
 
-        return this.repository.create(user);;
+        return newUser;
     }
 
     public async updateUser(id: string, user: Partial<UserEntity>, role: Roles): Promise<UserEntity> {

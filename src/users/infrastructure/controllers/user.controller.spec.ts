@@ -4,8 +4,8 @@ import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 
 import { UserController } from './user.controller';
 import { UserService } from '../../application/services/user.service';
-import { mockUserService } from '../../domain/mocks/user-providers.mock';
-import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
+import { mockUserService } from '../../domain/entities/mocks/user-providers.mock';
+import { userMock, userMock1, userMock2, userMock3 } from '../../domain/entities/mocks/user.mocks';
 import { Roles } from '../../../common/domain/enums';
 import { UserEntity } from '../../domain/entities/user.entity';
 
