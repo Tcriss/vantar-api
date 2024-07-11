@@ -7,7 +7,8 @@ import { invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock, partialInv
 import { InvoiceEntity } from 'src/invoices/domain/entities/invoice.entity';
 import { Roles } from 'src/common/domain/enums';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { userMock } from 'src/users/domain/entities/mocks/user.mocks';
+import { productListMock } from 'src/products/domain/mocks/product-list.mock';
+import { CreateProductListDto } from 'src/products/domain/dtos';
 
 describe('InvoiceController', () => {
   let controller: InvoiceController;
@@ -175,7 +176,9 @@ describe('InvoiceController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, { total, user_id });
+      }, {
+        products: [productListMock as CreateProductListDto]
+      });
 
       expect(res['message']).toBe('Invoice created successfully');
       expect(res['invoice']).toBe(invoiceMock2);
@@ -194,7 +197,9 @@ describe('InvoiceController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, { total }, invoiceMock.id);
+      } as unknown as Request, {
+        products: [productListMock]
+      }, invoiceMock.id);
 
       expect(res['message']).toBe('Invoice updated successfully');
       expect(res['invoice']).toBe(invoiceMock2);
@@ -214,7 +219,9 @@ describe('InvoiceController', () => {
             email: '',
             role: Roles.CUSTOMER
           }
-        }, { total }, '123');
+        } as unknown as Request, {
+          products: [productListMock]
+        }, '123');
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -236,7 +243,9 @@ describe('InvoiceController', () => {
             email: '',
             role: Roles.CUSTOMER
           }
-        }, { total }, '123');
+        } as any as Request, {
+          products: [productListMock]
+        }, '123');
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);
@@ -272,7 +281,7 @@ describe('InvoiceController', () => {
             email: '',
             role: Roles.CUSTOMER
           }
-        }, userMock.id);
+        }, invoiceMock.user_id);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -291,7 +300,7 @@ describe('InvoiceController', () => {
             email: '',
             role: Roles.CUSTOMER
           }
-        }, userMock.id);
+        }, invoiceMock.user_id);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);

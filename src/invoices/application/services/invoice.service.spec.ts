@@ -8,6 +8,7 @@ import { mockInvoiceRepository } from '../../domain/mocks/invoice-providers.mock
 import { mockProductListRepository } from '../../../products/domain/mocks/product-providers.mock';
 import { Repository } from '../../../common/domain/entities';
 import { InvoiceProductList } from '../../../invoices/domain/types';
+import { ProductListRepositoryToken } from 'src/products/application/decotators';
 
 describe('InvoiceService', () => {
   let service: InvoiceService;
@@ -23,7 +24,7 @@ describe('InvoiceService', () => {
           useValue: mockInvoiceRepository
         },
         {
-          provide: Repository<InvoiceProductList>,
+          provide: ProductListRepositoryToken,
           useValue: mockProductListRepository
         }
       ],
@@ -31,7 +32,7 @@ describe('InvoiceService', () => {
 
     service = module.get<InvoiceService>(InvoiceService);
     repository = module.get<Repository<InvoiceEntity>>(Repository<InvoiceEntity>);
-    productListRepository = module.get<Repository<InvoiceProductList>>(Repository<InvoiceProductList>)
+    productListRepository = module.get<Repository<InvoiceProductList>>(ProductListRepositoryToken)
   });
 
   it('should be defined', () => {
@@ -104,7 +105,7 @@ describe('InvoiceService', () => {
   });
 
   describe('Create Invoice', () => {
-    it('should create a invoice', async () => {
+    it('should create an invoice', async () => {
       jest.spyOn(productListRepository, 'insert').mockResolvedValue({
         acknowledged: true,
         insertedId: new ObjectId("60b8d3f60e841169c1e8c1a9")

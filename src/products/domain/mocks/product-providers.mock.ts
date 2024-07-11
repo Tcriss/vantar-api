@@ -32,7 +32,6 @@ export const mockProductRepository = {
 };
 
 export const mockProductListRepository = {
-  setCollection: jest.fn(),
   findOne: jest.fn(),
   insert: jest.fn(),
   updateDoc: jest.fn(),
