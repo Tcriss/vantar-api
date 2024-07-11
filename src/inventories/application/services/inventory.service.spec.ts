@@ -6,10 +6,10 @@ import { mockInventoryRepository } from '../../domain/mocks/inventory-providers.
 import { mockInventory1, mockInventory2, mockInventory3, mockPartialInventory1 } from '../../domain/mocks/inventory.mock';
 import { mockProductListRepository } from '../../../products/domain/mocks/product-providers.mock';
 import { InventoryProductList } from '../../domain/types/inventory-prodcut-list.type';
-import { InvoiceProductList } from '../../../invoices/domain/types';
 import { InventoryEntity } from '../../domain/entities/inventory.entity';
-import { ProductList } from '../../../products/domain/entities/product-list.entity';
+import { ProductEntityList } from '../../../products/domain/entities/product-list.entity';
 import { Repository } from '../../../common/domain/entities';
+import { ProductListRepositoryToken } from 'src/products/application/decotators';
 
 
 describe('InventoryService', () => {
@@ -26,7 +26,7 @@ describe('InventoryService', () => {
           useValue: mockInventoryRepository
         },
         {
-          provide: Repository<InvoiceProductList>,
+          provide: ProductListRepositoryToken,
           useValue: mockProductListRepository
         },
       ],
@@ -34,7 +34,7 @@ describe('InventoryService', () => {
 
     service = module.get<InventoryService>(InventoryService);
     repository = module.get<Repository<InventoryEntity>>(Repository<InventoryEntity>);
-    productListRepository = module.get<Repository<InventoryProductList>>(Repository<InvoiceProductList>);
+    productListRepository = module.get<Repository<InventoryProductList>>(ProductListRepositoryToken);
   });
 
   it('should be defined', () => {
@@ -64,7 +64,7 @@ describe('InventoryService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockInventory1);
       jest.spyOn(productListRepository, 'findOne').mockResolvedValue({
         id: mockInventory1.id,
-        products: mockInventory1.products as ProductList[]
+        products: mockInventory1.products as ProductEntityList[]
       });
 
       const { id, user_id } = mockInventory1; 
@@ -77,7 +77,7 @@ describe('InventoryService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockPartialInventory1);
       jest.spyOn(productListRepository, 'findOne').mockResolvedValue({
         id: mockInventory1.id,
-        products: mockInventory1.products as ProductList[]
+        products: mockInventory1.products as ProductEntityList[]
       });
 
       const { id, user_id } = mockInventory1; 
@@ -180,7 +180,7 @@ describe('InventoryService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockInventory1);
       jest.spyOn(productListRepository, 'findOne').mockResolvedValue({
         id: mockInventory1.id,
-        products: mockInventory1.products as ProductList[]
+        products: mockInventory1.products as ProductEntityList[]
       });
       //jest.spyOn(repository, 'deleteInventory').mockResolvedValue(null);
 
