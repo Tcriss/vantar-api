@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Invoice } from "@prisma/client";
 
-import { ProductList } from "../../../products/domain/entities/product-list.entity";
+import { ProductEntityList } from "../../../products/domain/entities/product-list.entity";
 
 export class InvoiceEntity implements Invoice {
     @ApiProperty({ format: 'uuid' })
@@ -16,6 +16,6 @@ export class InvoiceEntity implements Invoice {
     @ApiProperty({ format: 'date' })
     date: Date;
 
-    @ApiProperty({ type: ProductList, isArray: true })
-    products?: Partial<ProductList>[]
+    @ApiProperty({ type: ProductEntityList, isArray: true })
+    products?: Partial<ProductEntityList>[]
 }

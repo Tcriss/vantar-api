@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { InvoiceProductList, SelectedFields } from '../../domain/types';
+import { SelectedFields } from '../../domain/types';
 import { InvoiceEntity } from '../../domain/entities/invoice.entity';
 import { Pagination } from '../../../common/domain/types';
 import { Repository } from '../../../common/domain/entities';
 import { productListCreation } from '../../../common/application/utils';
+import { ProductList } from '../../../products/domain/types/product-list.type';
+import { ProductListRepository } from '../../../products/application/decotators';
 
 @Injectable()
 export class InvoiceService {
 
     constructor(
         private invoiceRepository: Repository<InvoiceEntity>,
-        private productListRepository: Repository<InvoiceProductList>
+        @ProductListRepository() private productListRepository: Repository<ProductList>
     ) {}
 
     public async findAllInvoices(userId: string, page: string, selected?: string): Promise<Partial<InvoiceEntity>[]> {
@@ -35,7 +37,7 @@ export class InvoiceService {
         if (!invoice) return null;
         if (!(invoice.user_id === userId)) return undefined;
 
-        const list: Partial<InvoiceProductList> = await this.productListRepository.findOne(invoice.id);
+        const list: Partial<ProductList> = await this.productListRepository.findOne(invoice.id);
         
         invoice.products = list ? list.products : [];
         return invoice;

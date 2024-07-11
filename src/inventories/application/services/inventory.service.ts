@@ -6,14 +6,15 @@ import { InventoryEntity } from '../../domain/entities/inventory.entity';
 import { Repository } from '../../../common/domain/entities';
 import { InventoryProductList } from '../../../inventories/domain/types/inventory-prodcut-list.type';
 import { productListCreation } from '../../../common/application/utils';
-import { InvoiceProductList } from '../../../invoices/domain/types';
+import { ProductList } from '../../../products/domain/types/product-list.type';
+import { ProductListRepository } from '../../../products/application/decotators';
 
 @Injectable()
 export class InventoryService {
 
     constructor(
         private inventoryRepository: Repository<InventoryEntity>,
-        private productListRepository: Repository<InvoiceProductList>
+        @ProductListRepository() private productListRepository: Repository<ProductList>
     ) {}
 
     public async findAllInventories(userId: string, page: string, selected?: string): Promise<Partial<InventoryEntity>[]> {

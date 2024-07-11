@@ -5,7 +5,7 @@ import { DatabaseOptions } from '../../../domain/interfaces';
 import { Options } from '../../../application/decorators/options.decorator';
 
 @Injectable()
-export class MongoProvider extends MongoClient implements OnModuleInit, OnModuleDestroy {
+export class MongoProvider<T> extends MongoClient implements OnModuleInit, OnModuleDestroy {
 
     constructor(@Options() private readonly config: DatabaseOptions) {
         super(config.mongoUri, {
@@ -25,7 +25,7 @@ export class MongoProvider extends MongoClient implements OnModuleInit, OnModule
         this.close();
     }
 
-    public database(): Collection {
-        return this.db(this.config.databaseName).collection(this.config.collectionName);
+    public database(): Collection<T> {
+        return this.db(this.config.databaseName).collection<T>(this.config.collectionName);
     }
 }
