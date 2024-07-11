@@ -1,13 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from '../../application/services/auth.service';
 import { mockAuthService } from '../../domain/mocks/auth-providers.mock';
-import { userMock, userMock2 } from '../../../users/domain/entities/mocks/user.mocks';
-import { jwtFactory } from '../../application/config/jwt.factory';
+import { userMock, userMock2 } from '../../../users/domain/mocks/user.mocks';
 import { AuthResponseI } from '../../domain/interfaces';
 import { Roles } from '../../../common/domain/enums';
 
@@ -26,11 +25,7 @@ describe('AuthController', () => {
       ],
       controllers: [AuthController],
       imports: [
-        JwtModule.registerAsync({
-          imports: [ConfigModule],
-          inject: [ConfigService],
-          useFactory: jwtFactory
-        }),
+        JwtModule.register({}),
         ConfigModule
       ]
     }).compile();

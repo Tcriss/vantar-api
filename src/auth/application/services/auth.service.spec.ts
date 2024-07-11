@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 
 import { Token } from '../../domain/types';
 import { AuthService } from './auth.service';
-import { jwtFactory } from '../config/jwt.factory';
 import { mockUserRepository } from '../../../users/domain/mocks/user-providers.mock';
 import { userMock1, userMock2 } from '../../../users/domain/mocks/user.mocks';
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
@@ -21,21 +20,17 @@ describe('AuthService', () => {
         AuthService,
         BcryptProvider,
         {
-          provide: UserRepositoryToken,
+          provide: Repository<UserEntity>,
           useValue: mockUserRepository
         }
       ],
       imports: [
         ConfigModule,
-        JwtModule.registerAsync({
-          imports: [ConfigModule],
-          inject: [ConfigService],
-          useFactory: jwtFactory
-        })
+        JwtModule.register({})
       ]
     }).compile();
 
-    userRepository = module.get<Repository<UserEntity>>(UserRepositoryToken);
+    userRepository = module.get<Repository<UserEntity>>(Repository<UserEntity>);
     service = module.get<AuthService>(AuthService);
   });
 

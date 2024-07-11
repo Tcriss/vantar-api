@@ -15,8 +15,8 @@ import { UserModule } from '../users/user.module';
   controllers: [AuthController],
   imports: [
     JwtModule.register({}),
-    CommonModule,
-    UserModule
+    UserModule.forFeature(),
+    CommonModule
   ]
 })
 export class AuthModule {}

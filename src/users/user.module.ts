@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -30,4 +30,17 @@ import { Repository } from '../common/domain/entities';
     ],
     exports: [Repository<UserEntity>]
 })
-export class UserModule { }
+export class UserModule {
+    static forFeature(): DynamicModule {
+        return {
+            module: UserModule,
+            providers: [
+                {
+                    provide: Repository<UserEntity>,
+                    useClass: UserRepository
+                }
+            ],
+            exports: [Repository<UserEntity>]
+        }
+    }
+}
