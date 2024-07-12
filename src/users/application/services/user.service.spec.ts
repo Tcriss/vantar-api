@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 
-import { Roles } from '../../../common/domain/enums';
 import { UserService } from './user.service';
+import { Roles } from '../../../common/domain/enums';
 import { mockUserRepository } from '../../domain/mocks/user-providers.mock';
 import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
 import { UserEntity } from '../../domain/entities/user.entity';
-import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { Repository } from '../../../common/domain/entities';
-import { CommonModule } from '../../../common/common.module';
+import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
+import { EmailModule } from '../../../email/email.module';
 
 describe('UserService', () => {
   let service: UserService;
@@ -24,12 +24,18 @@ describe('UserService', () => {
           provide: Repository<UserEntity>,
           useValue: mockUserRepository 
         },
-        BcryptProvider
+        BcryptProvider,
+        ConfigService
       ],
       imports: [
-        ConfigModule,
         JwtModule.register({ secret: 'JWT-SECRET' }),
-        CommonModule
+        EmailModule.register({
+          options: {
+            activatationUrl: 'ulr',
+            apiKey: 'key',
+            resetPasswordUrl: 'url'
+          }
+        })
       ]
     }).compile();
 

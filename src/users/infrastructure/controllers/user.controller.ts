@@ -45,11 +45,9 @@ export class UserController {
     @ApiCreateUser()
     @PublicAccess()
     @Post()
-    public async create(@Body() body: CreateUserDto, @Req() req: Request): Promise<UserEntity> {
-        const isLogged: boolean = req['user'] ? true : false;
+    public async create(@Body() body: CreateUserDto): Promise<UserEntity> {
         const isExist: Boolean = await this.service.findOneUser(null, body.email) ? true : false;
 
-        if (isLogged) throw new HttpException('You are already authenticated', HttpStatus.NOT_ACCEPTABLE);
         if (isExist) throw new HttpException('This user already exists', HttpStatus.NOT_ACCEPTABLE);
 
         const user: UserEntity = await this.service.createUser(body);

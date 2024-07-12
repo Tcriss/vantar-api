@@ -1,12 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 import { ProductController } from './product.controller';
 import { ProductService } from '../../application/services/product.service';
 import { mockProductService } from '../../domain/mocks/product-providers.mock';
 import { partialProductMock1, partialProductMock2, productMock1, productMock2, productMock6 } from '../../domain/mocks/product.mock';
 import { ProductEntity } from '../../domain/entities/product.entity';
-import { ProductResponse } from '../../domain/types';
 import { Roles } from '../../../common/domain/enums';
 
 describe('ProductController', () => {
@@ -39,7 +38,7 @@ describe('ProductController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, { page: '0,10' });
+      } as unknown as Request, { page: '0,10' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([productMock1, productMock6]);
@@ -55,7 +54,7 @@ describe('ProductController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, { page: '1,1' });
+      } as unknown as Request, { page: '1,1' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([productMock2]);
@@ -71,7 +70,7 @@ describe('ProductController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, { page: '0,10', selected: 'name, user_id' });
+      } as unknown as Request, { page: '0,10', selected: 'name, user_id' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([partialProductMock1, partialProductMock2]);
@@ -88,7 +87,7 @@ describe('ProductController', () => {
             email: '',
             role: Roles.CUSTOMER
           }
-        }, { page: null });
+        } as unknown as Request, { page: null });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.BAD_REQUEST);
@@ -108,7 +107,7 @@ describe('ProductController', () => {
           name: '',
           role: Roles.CUSTOMER
         }
-      });
+      } as unknown as Request);
 
       expect(res).toBe(productMock1)
     });
@@ -123,7 +122,7 @@ describe('ProductController', () => {
           name: '',
           role: Roles.CUSTOMER
         }
-      }, 'name, user_id');
+      } as unknown as Request, 'name, user_id');
 
       expect(res).toBe(partialProductMock1);
     });
@@ -139,7 +138,7 @@ describe('ProductController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        }, 'name, user_id');
+        } as unknown as Request, 'name, user_id');
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -158,7 +157,7 @@ describe('ProductController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        });
+        } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);
@@ -178,7 +177,7 @@ describe('ProductController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, [
+      } as unknown as Request, [
         {
           name: productMock1.name,
           price: productMock1.price
@@ -189,8 +188,8 @@ describe('ProductController', () => {
         }
       ]);
 
-      expect(res.message).toBe('Products created successfully');
-      expect(res.count).toBe(2);
+      expect(res['message']).toBe('Products created successfully');
+      expect(res['count']).toBe(2);
     });
   });
 
@@ -206,7 +205,7 @@ describe('ProductController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, { name, price });
+      } as unknown as Request, { name, price });
 
       expect(res['message']).toBe('Product created successfully');
       expect(res['product']).toBe(productMock2);
@@ -226,7 +225,7 @@ describe('ProductController', () => {
           name: '',
           role: Roles.CUSTOMER
         }
-      }, { name, price });
+      } as unknown as Request, { name, price });
 
       expect(res['message']).toBe('Product updated successfully');
       expect(res['product']).toBe(productMock6);
@@ -245,7 +244,7 @@ describe('ProductController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        }, { name, price });
+        } as unknown as Request, { name, price });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -281,7 +280,7 @@ describe('ProductController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        }, { name, price });
+        } as unknown as Request, { name, price });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);
@@ -302,7 +301,7 @@ describe('ProductController', () => {
           name: '',
           role: Roles.CUSTOMER
         }
-      });
+      } as unknown as Request);
 
       expect(res['message']).toBe('Product deleted');
     });
@@ -318,7 +317,7 @@ describe('ProductController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        });
+        } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -352,7 +351,7 @@ describe('ProductController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        });
+        } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);

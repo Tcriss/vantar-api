@@ -27,11 +27,10 @@ import { Repository } from '../common/domain/entities';
                 secret: config.get('ACTIVATION_SECRET')
             })
         })
-    ],
-    exports: [Repository<UserEntity>]
+    ]
 })
 export class UserModule {
-    static forFeature(): DynamicModule {
+    public static forFeature(): DynamicModule {
         return {
             module: UserModule,
             providers: [

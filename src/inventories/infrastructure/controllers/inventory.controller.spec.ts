@@ -44,7 +44,7 @@ describe('InventoryController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, {page: '0,3'});
+      } as unknown as Request, {page: '0,3'});
 
       expect(res.length).toBe(2);
       expect(res).toStrictEqual([ mockInventory1, mockInventory3 ]);
@@ -60,7 +60,7 @@ describe('InventoryController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, {page: '0,3', fields: 'name, contact, userId' });
+      } as unknown as Request, {page: '0,3', fields: 'name, contact, userId' });
 
       expect(res.length).toBe(2);
       expect(res).toStrictEqual([ mockPartialInventory1, mockPartialInventory3 ]);
@@ -86,7 +86,7 @@ describe('InventoryController', () => {
             email: '',
             role: Roles.CUSTOMER
           }
-        }, {page: null});
+        } as unknown as Request, {page: null});
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.BAD_REQUEST);
@@ -106,7 +106,7 @@ describe('InventoryController', () => {
           name: '',
           role: Roles.CUSTOMER
         }
-      });
+      } as unknown as Request);
 
       expect(res).toBe(mockInventory2);
     });
@@ -122,7 +122,7 @@ describe('InventoryController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        },'company_name, id, products_amount');
+        } as unknown as Request,'company_name, id, products_amount');
 
       expect(res).toBe(mockPartialInventory2);
     });
@@ -138,7 +138,7 @@ describe('InventoryController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        });
+        } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -157,7 +157,7 @@ describe('InventoryController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        });
+        } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);
@@ -182,7 +182,7 @@ describe('InventoryController', () => {
     it('should create an inventory', async () => {
       jest.spyOn(service, 'createInventory').mockResolvedValue(mockInventory1);
 
-      const req = { user: { id: mockInventory1.user_id }} as any
+      const req = { user: { id: mockInventory1.user_id }} as unknown as Request;
 
       const { cost } = mockInventory1;
       const res: InventoyResponse  = await controller.create(req,{
@@ -210,7 +210,7 @@ describe('InventoryController', () => {
           name: '',
           role: Roles.CUSTOMER
         }
-      });
+      } as unknown as Request);
 
       expect(res.message).toBe('Inventory updated succesfully');
       expect(res.data).toBe(mockInventory3);
@@ -232,7 +232,7 @@ describe('InventoryController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        });
+        } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.BAD_REQUEST);
@@ -254,7 +254,7 @@ describe('InventoryController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        });
+        } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.BAD_REQUEST);
@@ -275,7 +275,7 @@ describe('InventoryController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        });
+        } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);
@@ -296,7 +296,7 @@ describe('InventoryController', () => {
           name: '',
           role: Roles.CUSTOMER
         }
-      });
+      } as unknown as Request);
 
       expect(res.message).toBe('Inventory deleted succesfully');
     });
@@ -312,7 +312,7 @@ describe('InventoryController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        });
+        } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -331,7 +331,7 @@ describe('InventoryController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        });
+        } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);
