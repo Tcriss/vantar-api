@@ -13,7 +13,6 @@ import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
 import { Roles } from '../../../common/domain/enums';
 
 @ApiTags('Users')
-@UseInterceptors(UserFieldsInterceptor)
 @Controller('users')
 export class UserController {
 
@@ -22,6 +21,7 @@ export class UserController {
     @ApiGetUsers()
     @Role(Roles.ADMIN)
     @UseGuards(RoleGuard)
+    @UseInterceptors(UserFieldsInterceptor)
     @Get()
     public async findAll(@Req() req: Request, @Query() queries?: UserQueries): Promise<UserEntity[] | Partial<UserEntity>[]> {
         if (!req['user']) throw new HttpException('credentials missing', HttpStatus.BAD_REQUEST);
@@ -32,6 +32,7 @@ export class UserController {
     @ApiGetUser()
     @Role(Roles.ADMIN, Roles.CUSTOMER)
     @UseGuards(RoleGuard, UserGuard)
+    @UseInterceptors(UserFieldsInterceptor)
     @Get(':id')
     public async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<UserEntity> {
         const user: UserEntity = await this.service.findOneUser(id);
@@ -44,6 +45,7 @@ export class UserController {
     
     @ApiCreateUser()
     @PublicAccess()
+    @UseInterceptors(UserFieldsInterceptor)
     @Post()
     public async create(@Body() body: CreateUserDto): Promise<UserEntity> {
         const isExist: Boolean = await this.service.findOneUser(null, body.email) ? true : false;
@@ -58,6 +60,7 @@ export class UserController {
     @ApiUpdateUser()
     @Role(Roles.ADMIN, Roles.CUSTOMER)
     @UseGuards(RoleGuard, UserGuard)
+    @UseInterceptors(UserFieldsInterceptor)
     @Patch(':id')
     public async update(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: Request, @Body() body: UpdateUserDto): Promise<UserEntity> {
         const user: UserEntity = await this.service.updateUser(id, body, req['user']['role']);

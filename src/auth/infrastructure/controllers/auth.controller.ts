@@ -22,8 +22,7 @@ export class AuthController {
     public async login(@Body() credentials: LoginUserDto): Promise<AuthResponseI> {
         const res: Token = await this.service.login(credentials);
 
-        if (res === undefined) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-        if (res === null) throw new HttpException('Wrong credentials', HttpStatus.NOT_ACCEPTABLE);
+        if (!res) throw new HttpException('Wrong credentials', HttpStatus.NOT_ACCEPTABLE);
 
         return {
             message: 'Login successful',

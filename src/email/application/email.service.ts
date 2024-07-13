@@ -15,36 +15,43 @@ export class EmailService {
 
     public async sendWelcomeEmail(user: Partial<UserEntity>, token: string): Promise<unknown> {
         const activateUrl: string = this.options.activatationUrl + `/activate?token=${token}`;
+        const year: number = 2024;
         
         return this.resend.emails.send({
             from: this.options.deafultSenderEmail || 'onboarding@resend.dev',
             to: user.email,
             subject: 'Bienvenido a Vantar',
             html: `
-                <html lang="en">
+                <!DOCTYPE HTML>
+                <html>
                     <head>
-                        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
-                        <meta name="x-apple-disable-message-reformatting" />
-                        <link rel="preconnect" href="https://fonts.googleapis.com">
-                        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
                         <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+                        <style>
+                            * { margin: 0; box-sizing: border-box; font-family: Poppins, sans-serif !important;}
+                        </style>
                     </head>
-                    <body style="font-family: Poppins; box-sizing: border-box; width: 100vw; display: flex; flex-direction: column; align-items: center;">
-                        <main style="box-sizing: border-box; max-width: 400px; width: 100% !important; display: grid; gap: 10px; padding: 10px">
-                            <section style="width: 100%; display: flex; flex-direction: column; gap: 10px;">
+                    <body style="box-sizing: border-box; width: 100%; padding: 0 20px;">
+                        <main style="box-sizing: border-box; width: 100%; padding: 10px">
+                            <section style="width: 100%;">
                                 <header style="width: 100%;">
-                                    <h1 style="margin: 0; text-align: center;">Hola ${user.name} bienvenido a Vantar</h1>
+                                    <h1 style="margin: 60px 0; text-align: center;">Bienvenido a Vantar, ${user.name}</h1>
                                 </header>
-                                <content style="width: 100%; display: flex; flex-direction: column; gap: 10px;">
-                                    <p style="text-align: center; margin: 0; font-size: 15px;">Gracias por preferirnos, ahora el siguiente paso es activar tu cuenta. clickea en confirmar e-mail, y ya podrás disfrutar de todos los beneficios que te brinda Vantar.</p>
-                                    <a href='${activateUrl}' style="box-sizing: border-box; border-radius: 10px; width: 100%; text-align: center; background-color: rgb(0, 157, 255); padding: 10px; font-weight: 600; color: white; text-decoration: none; box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;">
-                                        Confirmar e-mail
-                                    </a>
-                                    <!-- <p style="text-align: center;">No compartas este correo con nadie, es estrictamente confidencial.</p> -->
+                                <content style="width: 100%; display: block;">
+                                    <p style="margin: 20px 0; font-size: 14px;">Hola ${user.name}!</p>
+                                    <p style="margin: 30px 0; font-size: 14px;">Gracias por preferirrnos, ahora el siguiente paso será activar tu cuenta. Solo necesitamos confirmar tu e-mail y ya podrás usar todos los beneficios que te ofrece Vantar.</p>
+                                    <div style="margin: 50px 0; text-align: center;">
+                                        <a href='${activateUrl}' style="box-sizing: border-box; border-radius: 10px; width: 100%; text-align: center; background-color: rgb(0, 157, 255); padding: 10px; font-size: 14px; font-weight: 600; color: white; text-decoration: none; box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;">Confirmar e-mail</a>
+                                    </div>
+                                    <div style="font-size: 14px;">
+                                        <p style="margin: 0;">Saludos cordiales,</p>
+                                        <p style="margin: 0;">Equipo tecnico de Vantar</p>
+                                    </div>
                                 </content>
                             </section>
-                            <footer style="width: 100%;">
-                                <p style="font-weight: 600; color: gray; font-size: 14px; text-align: center;">Copyright &copy; 2024 | Vantar Inventory</p>
+                            <footer style="width: 100%; margin: 30px 0;">
+                                <p style="font-weight: 600; color: gray; font-size: 14px; text-align: center;">Copyright &copy; ${year} | Vantar Inventory</p>
                             </footer>
                         </main>
                     </body>
