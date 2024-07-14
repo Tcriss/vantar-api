@@ -22,9 +22,9 @@ import { EmailModule } from './email/email.module';
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
         apiKey: config.get('EMAIL_KEY'),
-        activatationUrl: config.get('ACTIVATION_URL'),
+        authUrl: config.get('AUTH_URL'),
         resetPasswordUrl: config.get('RESET_URL'),
-        appUrl: config.get('APP_URL')
+        host: config.get('HOST')
         //deafultSenderEmail: config.get('DEFAULT_EMAIL')
       })
     }),

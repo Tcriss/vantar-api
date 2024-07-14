@@ -15,12 +15,24 @@ export class UserFieldsInterceptor implements NestInterceptor {
   private excludeSensitiveFields(data: UserEntity | UserEntity[]): Partial<UserEntity> | Partial<UserEntity>[] {
     if (data instanceof Array) {
       return data.map(user => {
-        const { refresh_token, password, activation_token, ...rest } = user;
+        const {
+          password,
+          refresh_token,
+          activation_token,
+          reset_token,
+          ...rest
+        } = user;
   
         return rest;
       })
     } else {
-      const { refresh_token, password, activation_token, ...rest } = data;
+      const {
+        password,
+        refresh_token,
+        activation_token,
+        reset_token,
+        ...rest
+      } = data;
 
       return rest;
     }

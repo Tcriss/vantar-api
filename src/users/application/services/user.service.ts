@@ -7,6 +7,7 @@ import { Pagination } from '../../../common/domain/types';
 import { Roles } from '../../../common/domain/enums';
 import { Repository } from '../../../common/domain/entities';
 import { EmailService } from '../../../email/application/email.service';
+import { UpdateUserDto } from 'src/users/domain/dtos';
 
 @Injectable()
 export class UserService {
@@ -54,11 +55,11 @@ export class UserService {
         return newUser;
     }
 
-    public async updateUser(id: string, user: Partial<UserEntity>, role: Roles): Promise<UserEntity> {
+    public async updateUser(id: string, user: UpdateUserDto, role: Roles): Promise<UserEntity> {
         const isExist: boolean = await this.findOneUser(id) ? true : false;
 
         if (!isExist) return null;
-        if (user.password) {
+        if (user.password && user.newPassword) {
             if (role === Roles.CUSTOMER) {
                 const originalUser: UserEntity = await this.findOneUser(id);
                 const match: boolean = await this.bcrypt.compare(user.password, originalUser.password);
@@ -66,10 +67,11 @@ export class UserService {
                 if (!match) return null;
             };
 
-            user.password = await this.bcrypt.hash(user.password);
+            user.password = await this.bcrypt.hash(user.newPassword);
         };
 
-        const res: UserEntity = await this.repository.update(id, user);
+        const { newPassword, ...userUpdate } = user
+        const res: UserEntity = await this.repository.update(id, userUpdate);
 
         return res ?? undefined;
     }

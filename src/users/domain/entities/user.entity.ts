@@ -32,6 +32,9 @@ export class UserEntity implements User {
     @Exclude({ toPlainOnly: true })
     activation_token: string | null;
 
+    @Exclude({ toPlainOnly: true })
+    reset_token: string | null;
+
     constructor(partial: Partial<UserEntity>) {
         Object.assign(this, partial);
     }
