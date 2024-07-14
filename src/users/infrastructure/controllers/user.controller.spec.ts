@@ -175,12 +175,12 @@ describe('UserController', () => {
   });
 
   describe('Delete User', () => {
-    it('should find a user by id', async  () => {
+    it('should delete a user by id', async  () => {
       jest.spyOn(service, 'deleteUser').mockResolvedValue('User deleted');
 
       const res = await controller.delete(userMock.id);
 
-      expect(res).toBe({ message: 'User deleted' });
+      expect(res).toStrictEqual({ message: 'User deleted' });
     });
 
     it('should throw an exception if user does not exist', async () => {

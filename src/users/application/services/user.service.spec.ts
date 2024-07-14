@@ -10,11 +10,13 @@ import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/us
 import { UserEntity } from '../../domain/entities/user.entity';
 import { Repository } from '../../../common/domain/entities';
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
-import { EmailModule } from '../../../email/email.module';
+import { emailServiceMock } from '../../../email/domain/mocks/email-provider.mock';
+import { EmailService } from '../../../email/application/email.service';
 
 describe('UserService', () => {
   let service: UserService;
   let repository: Repository<UserEntity>;
+  let emailService: EmailService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,23 +26,21 @@ describe('UserService', () => {
           provide: Repository<UserEntity>,
           useValue: mockUserRepository 
         },
+        {
+          provide: EmailService,
+          useValue: emailServiceMock
+        },
         BcryptProvider,
         ConfigService
       ],
       imports: [
         JwtModule.register({ secret: 'JWT-SECRET' }),
-        EmailModule.register({
-          options: {
-            activatationUrl: 'ulr',
-            apiKey: 'key',
-            resetPasswordUrl: 'url'
-          }
-        })
       ]
     }).compile();
 
     service = module.get<UserService>(UserService);
     repository = module.get<Repository<UserEntity>>(Repository<UserEntity>);
+    emailService = module.get<EmailService>(EmailService);
   });
 
   it('should be defined', () => {
@@ -107,6 +107,7 @@ describe('UserService', () => {
     const { name, email, password } = userMock1;
 
     it('should update user', async () => {
+      jest.spyOn(emailService, 'sendWelcomeEmail');
       jest.spyOn(repository, 'create').mockResolvedValue(userMock1);
 
       const res: UserEntity = await service.createUser({ name, email, password });
@@ -127,6 +128,7 @@ describe('UserService', () => {
     });
 
     it('should return undefined if user was not updated', async () => {
+      jest.spyOn(service, 'findOneUser').mockResolvedValue(userMock2);
       jest.spyOn(repository, 'update').mockResolvedValue(undefined);
 
       const { name, password } = userMock2;
@@ -136,7 +138,8 @@ describe('UserService', () => {
     });
 
     it('should return null if user was not found', async () => {
-      jest.spyOn(repository, 'update').mockResolvedValue(undefined);
+      jest.spyOn(service, 'findOneUser').mockResolvedValue(null);
+      jest.spyOn(repository, 'update').mockResolvedValue(null);
 
       const { name, password } = userMock2;
       const res: UserEntity = await service.updateUser(randomUUID(), { name, password}, Roles.CUSTOMER);
@@ -147,6 +150,7 @@ describe('UserService', () => {
 
   describe('Delete User', () => {
     it('should delete user', async () => {
+      jest.spyOn(service, 'findOneUser').mockResolvedValue(userMock3);
       jest.spyOn(repository, 'delete').mockResolvedValue(userMock3);
 
       const res: string = await service.deleteUser(userMock3.id);

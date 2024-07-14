@@ -81,6 +81,6 @@ export class UserController {
 
         if (!res) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
-        return { message: res };``
+        return { message: res };
     }
 }

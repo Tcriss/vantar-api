@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { UserEntity } from '../../domain/entities/user.entity';
+import { UpdateUserDto } from '../../domain/dtos';
 import { Pagination } from '../../../common/domain/types';
 import { Roles } from '../../../common/domain/enums';
 import { Repository } from '../../../common/domain/entities';
+import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { EmailService } from '../../../email/application/email.service';
-import { UpdateUserDto } from 'src/users/domain/dtos';
 
 @Injectable()
 export class UserService {
@@ -56,12 +56,11 @@ export class UserService {
     }
 
     public async updateUser(id: string, user: UpdateUserDto, role: Roles): Promise<UserEntity> {
-        const isExist: boolean = await this.findOneUser(id) ? true : false;
+        const originalUser = await this.findOneUser(id);
 
-        if (!isExist) return null;
+        if (!originalUser) return null;
         if (user.password && user.newPassword) {
             if (role === Roles.CUSTOMER) {
-                const originalUser: UserEntity = await this.findOneUser(id);
                 const match: boolean = await this.bcrypt.compare(user.password, originalUser.password);
 
                 if (!match) return null;
