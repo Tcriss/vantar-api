@@ -1,5 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './users/user.module';
@@ -22,9 +24,11 @@ import { EmailModule } from './email/email.module';
         apiKey: config.get('EMAIL_KEY'),
         activatationUrl: config.get('ACTIVATION_URL'),
         resetPasswordUrl: config.get('RESET_URL'),
+        appUrl: config.get('APP_URL')
         //deafultSenderEmail: config.get('DEFAULT_EMAIL')
       })
     }),
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'public'), }),
     DatabaseModule,
     AuthModule,
     UserModule,

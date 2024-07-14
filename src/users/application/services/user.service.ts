@@ -75,6 +75,10 @@ export class UserService {
     }
 
     public async deleteUser(id: string): Promise<string> {
+        const user = await this.findOneUser(id);
+
+        if (!user) return null;
+        
         const res: UserEntity = await this.repository.delete(id);
 
         return res ? 'User deleted' : undefined;

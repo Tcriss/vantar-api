@@ -31,7 +31,7 @@ export class EmailModule {
   public static registerAsync(options: EmailModuleAsyncOptions): DynamicModule {
     return {
       module: EmailModule,
-      imports: options.imports || [],
+      imports: options.imports ?? [],
       global: options.isGlobal ?? false,
       providers: [
         EmailService,

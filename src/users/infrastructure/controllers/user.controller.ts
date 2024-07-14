@@ -76,11 +76,11 @@ export class UserController {
     @Role(Roles.ADMIN, Roles.CUSTOMER)
     @UseGuards(RoleGuard, UserGuard)
     @Delete(':id')
-    public async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<string> {
+    public async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<unknown> {
         const res: string = await this.service.deleteUser(id);
 
-        if (res === undefined) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        if (!res) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
-        return res;
+        return { message: res };``
     }
 }
