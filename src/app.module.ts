@@ -16,6 +16,7 @@ import { EmailModule } from './email/email.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    DatabaseModule.forRoot({ isGlobal: true }),
     EmailModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],
@@ -29,7 +30,6 @@ import { EmailModule } from './email/email.module';
       })
     }),
     ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'public'), }),
-    DatabaseModule,
     AuthModule,
     UserModule,
     InventoryModule,
