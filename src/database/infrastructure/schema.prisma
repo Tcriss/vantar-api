@@ -23,6 +23,7 @@ model User {
   active            Boolean        @default(false)
   refresh_token     String?
   activation_token  String?
+  reset_token       String?
   products          Product[]
   Invoices          Invoice[]
   inventories       Inventory[]
