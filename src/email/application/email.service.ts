@@ -20,10 +20,31 @@ export class EmailService {
         const templatePath: string = join(__dirname, 'templates', 'activate-account.template.html');
         const templateSource: string = readFileSync(templatePath, 'utf8');
         const template = compile(templateSource);
-        const activateUrl: string = this.options.activatationUrl + `/activate?token=${token}`;
+        const activateUrl: string = this.options.authUrl + `/activate?token=${token}`;
         const year: number = 2024;
         const html = template({
-            url: this.options.appUrl,
+            url: this.options.host,
+            name: user.name,
+            activateUrl,
+            year
+        });
+        
+        return this.resend.emails.send({
+            from: this.options.deafultSenderEmail || 'onboarding@resend.dev',
+            to: user.email,
+            subject: 'Bienvenido a Vantar',
+            html
+        });
+    }
+
+    public async sendResetPassword(user: Partial<UserEntity>, token: string): Promise<unknown> {
+        const templatePath: string = join(__dirname, 'templates', 'reset-password.template.html');
+        const templateSource: string = readFileSync(templatePath, 'utf8');
+        const template = compile(templateSource);
+        const activateUrl: string = this.options.authUrl + `/reset?token=${token}`;
+        const year: number = 2024;
+        const html = template({
+            url: this.options.host,
             name: user.name,
             activateUrl,
             year

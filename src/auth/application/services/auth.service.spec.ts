@@ -2,13 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 
-import { Token } from '../../domain/types';
 import { AuthService } from './auth.service';
 import { mockUserRepository } from '../../../users/domain/mocks/user-providers.mock';
 import { userMock1, userMock2 } from '../../../users/domain/mocks/user.mocks';
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { Repository } from '../../../common/domain/entities';
 import { UserEntity } from '../../../users/domain/entities/user.entity';
+import { EmailModule } from 'src/email/email.module';
 
 describe('AuthService', () => {
   let userRepository: Repository<UserEntity>;
@@ -26,7 +26,15 @@ describe('AuthService', () => {
       ],
       imports: [
         ConfigModule,
-        JwtModule.register({})
+        JwtModule.register({}),
+        EmailModule.register({
+          options: {
+            apiKey: 'API_KEY',
+            authUrl: '',
+            host: '',
+            resetPasswordUrl: ''
+          }
+        })
       ]
     }).compile();
 
@@ -42,7 +50,7 @@ describe('AuthService', () => {
     it('should login user', async () => {
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock2);
 
-      const res: Token = await service.login({
+      const res = await service.login({
         email: userMock2.email,
         password: userMock2.password
       });
@@ -53,7 +61,7 @@ describe('AuthService', () => {
     it('should return undefined if user does not exist', async () => {
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
-      const res: Token = await service.login({
+      const res = await service.login({
         email: userMock2.email,
         password: userMock2.password
       });
@@ -64,7 +72,7 @@ describe('AuthService', () => {
     it('should return null if password does not match', async () => {
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock2);
 
-      const res: Token = await service.login({
+      const res = await service.login({
         email: userMock2.email,
         password: userMock1.password
       });

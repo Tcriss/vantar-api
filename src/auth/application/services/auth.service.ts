@@ -2,22 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
-import { Token } from '../../domain/types';
+import { AuthEntity } from '../../domain/entities/auth.entity';
 import { UserEntity } from '../../../users/domain/entities/user.entity';
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { Repository } from '../../../common/domain/entities';
+import { EmailService } from '../../../email/application/email.service';
 
 @Injectable()
 export class AuthService {
 
     constructor(
         private userRepository: Repository<UserEntity>,
+        private emailService: EmailService,
         private config: ConfigService,
         private bcrypt: BcryptProvider,
         private jwt: JwtService
     ) {}
 
-    public async login(credentials: Partial<UserEntity>): Promise<Token> {
+    public async login(credentials: Partial<UserEntity>): Promise<AuthEntity> {
         const { email, password } = credentials;
         const user: Partial<UserEntity> = await this.userRepository.findOne(null, email);
 
@@ -27,7 +29,7 @@ export class AuthService {
 
         if (!isValid) return null;
 
-        const tokens: Token = await this.getTokens(user);
+        const tokens: AuthEntity = await this.getTokens(user);
         const updatedTokens = await this.updateRefreshToken(user.id, tokens.refresh_token);
 
         return updatedTokens ? tokens : undefined;
@@ -57,12 +59,19 @@ export class AuthService {
         return res ? 'User logout successfully' : undefined;
     }
 
-    public async verifyToken(token: string, secretKey: string): Promise<unknown> {
-        const payload = await this.jwt.verifyAsync(token, {secret: this.config.get(secretKey)});
+    public async forgotPassword(email: string): Promise<void> {
+        const user = await this.userRepository.findOne(null, email);
 
-        if (!payload) return null;
+        if (!user) return null;
 
-        return payload;
+        const token: string = await this.jwt.signAsync(
+            { email: user.email },
+            { secret: this.config.get('RESET_SECRET') }
+        );
+        const hashedToken: string = await this.bcrypt.hash(token);
+
+        await this.userRepository.update(user.id, { reset_token: hashedToken });
+        await this.emailService.sendResetPassword(user, token);
     }
 
     public async activateAccount(token: string): Promise<string> {
@@ -83,7 +92,33 @@ export class AuthService {
         return res ? 'Account activated succesfully' : null;
     }
 
-    private async getTokens(user: Partial<UserEntity>): Promise<Token> {
+    public async resetPassword(token: string, password: string): Promise<string> {
+        const payload = await this.verifyToken(token, 'RESET_SECRET');
+        const user = await this.userRepository.findOne(null, payload['email']);
+
+        if (!user) return null;
+
+        const isMatch: boolean = await this.bcrypt.compare(token, user.reset_token);
+
+        if (!isMatch) return undefined;
+
+        const res = await this.userRepository.update(user.id, {
+            refresh_token: null,
+            password
+        });
+
+        return res ? 'Password reseted succesfully' : null;
+    }
+
+    public async verifyToken(token: string, secretKey: string): Promise<unknown> {
+        const payload = await this.jwt.verifyAsync(token, {secret: this.config.get(secretKey)});
+
+        if (!payload) return null;
+
+        return payload;
+    }
+
+    private async getTokens(user: Partial<UserEntity>): Promise<AuthEntity> {
         const { id, name, email, role } = user;
         const [ accessToken, refreshToken ] = await Promise.all([
             this.jwt.signAsync({ id, name, email, role }, {

@@ -1,7 +1,7 @@
 export interface EmailModuleOptions {
     apiKey: string;
-    activatationUrl: string;
+    authUrl: string;
     resetPasswordUrl: string;
-    appUrl: string;
+    host: string;
     deafultSenderEmail?: string;
 }

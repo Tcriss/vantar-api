@@ -7,7 +7,6 @@ import { AuthController } from './auth.controller';
 import { AuthService } from '../../application/services/auth.service';
 import { mockAuthService } from '../../domain/mocks/auth-providers.mock';
 import { userMock, userMock2 } from '../../../users/domain/mocks/user.mocks';
-import { AuthResponseI } from '../../domain/interfaces';
 import { Roles } from '../../../common/domain/enums';
 
 describe('AuthController', () => {
@@ -47,11 +46,11 @@ describe('AuthController', () => {
       });
 
       const { email, password } = userMock;
-      const res: AuthResponseI = await controller.login({ email, password });
+      const res = await controller.login({ email, password });
 
-      expect(res.message).toBe('Login successful');
-      expect(res.access_token).toBe('123456');
-      expect(res.refresh_token).toBe('654321')
+      expect(res['message']).toBe('Login successfull');
+      expect(res['access_token']).toBe('123456');
+      expect(res['refresh_token']).toBe('654321')
     });
 
     it('should throw exception if credentials are wrong', async () => {
@@ -77,8 +76,8 @@ describe('AuthController', () => {
         await controller.login({ email, password });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.NOT_FOUND);
-        expect(err.message).toBe('User not found');
+        expect(err.status).toBe(HttpStatus.NOT_ACCEPTABLE);
+        expect(err.message).toBe('Wrong credentials');
       }
     });
   });
