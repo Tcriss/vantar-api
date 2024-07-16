@@ -2,15 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ObjectId } from 'mongodb';
 
 import { InvoiceService } from './invoice.service';
-import { InvoiceRepositoryToken } from '../../domain/interfaces';
 import { invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock, partialInvoiceMock1 } from '../../domain/mocks/invoice..mock';
 import { InvoiceEntity } from '../../domain/entities/invoice.entity';
 import { mockInvoiceRepository } from '../../domain/mocks/invoice-providers.mock';
-import { ProductListRepositoryToken } from '../../../products/application/decotators/product-list-repository.decorator';
 import { mockProductListRepository } from '../../../products/domain/mocks/product-providers.mock';
 import { Repository } from '../../../common/domain/entities';
-import { ProductList } from '../../../products/domain/entities/product-list.entity';
 import { InvoiceProductList } from '../../../invoices/domain/types';
+import { ProductListRepositoryToken } from 'src/products/application/decotators';
 
 describe('InvoiceService', () => {
   let service: InvoiceService;
@@ -22,7 +20,7 @@ describe('InvoiceService', () => {
       providers: [
         InvoiceService,
         {
-          provide: InvoiceRepositoryToken,
+          provide: Repository<InvoiceEntity>,
           useValue: mockInvoiceRepository
         },
         {
@@ -33,7 +31,7 @@ describe('InvoiceService', () => {
     }).compile();
 
     service = module.get<InvoiceService>(InvoiceService);
-    repository = module.get<Repository<InvoiceEntity>>(InvoiceRepositoryToken);
+    repository = module.get<Repository<InvoiceEntity>>(Repository<InvoiceEntity>);
     productListRepository = module.get<Repository<InvoiceProductList>>(ProductListRepositoryToken)
   });
 
@@ -107,7 +105,7 @@ describe('InvoiceService', () => {
   });
 
   describe('Create Invoice', () => {
-    it('should create a invoice', async () => {
+    it('should create an invoice', async () => {
       jest.spyOn(productListRepository, 'insert').mockResolvedValue({
         acknowledged: true,
         insertedId: new ObjectId("60b8d3f60e841169c1e8c1a9")

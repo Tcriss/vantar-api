@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 
@@ -7,8 +7,6 @@ import { AuthController } from './auth.controller';
 import { AuthService } from '../../application/services/auth.service';
 import { mockAuthService } from '../../domain/mocks/auth-providers.mock';
 import { userMock, userMock2 } from '../../../users/domain/mocks/user.mocks';
-import { jwtFactory } from '../../application/config/jwt.factory';
-import { AuthResponseI } from '../../domain/interfaces';
 import { Roles } from '../../../common/domain/enums';
 
 describe('AuthController', () => {
@@ -26,11 +24,7 @@ describe('AuthController', () => {
       ],
       controllers: [AuthController],
       imports: [
-        JwtModule.registerAsync({
-          imports: [ConfigModule],
-          inject: [ConfigService],
-          useFactory: jwtFactory
-        }),
+        JwtModule.register({}),
         ConfigModule
       ]
     }).compile();
@@ -52,11 +46,11 @@ describe('AuthController', () => {
       });
 
       const { email, password } = userMock;
-      const res: AuthResponseI = await controller.login({ email, password });
+      const res = await controller.login({ email, password });
 
-      expect(res.message).toBe('Login successful');
-      expect(res.access_token).toBe('123456');
-      expect(res.refresh_token).toBe('654321')
+      expect(res['message']).toBe('Login successfull');
+      expect(res['access_token']).toBe('123456');
+      expect(res['refresh_token']).toBe('654321')
     });
 
     it('should throw exception if credentials are wrong', async () => {
@@ -82,8 +76,8 @@ describe('AuthController', () => {
         await controller.login({ email, password });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.NOT_FOUND);
-        expect(err.message).toBe('User not found');
+        expect(err.status).toBe(HttpStatus.NOT_ACCEPTABLE);
+        expect(err.message).toBe('Wrong credentials');
       }
     });
   });
@@ -213,6 +207,60 @@ describe('AuthController', () => {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
         expect(err.message).toBe('User could not logout');
+      }
+    });
+  });
+
+  describe('Forgot Password', () => {
+    it('Should pass', async () => {
+      jest.spyOn(service, 'forgotPassword').mockResolvedValue();
+
+      const res = await controller.forgotPassword({ email: 'example@email.com' });
+
+      expect(res['message']).toBe('If this user exist, an email will be sent by e-mail')
+    });
+  });
+
+  describe('Activate Account', () => {
+    it('', async () => {
+      jest.spyOn(service, 'activateAccount').mockResolvedValue('Account activated successfully');
+
+      const res = await controller.activateAccount('TOKEN');
+
+      expect(res['message']).toBe('Account activated successfully');
+    });
+
+    it('should throw an exception if token is invalid', async () => {
+      jest.spyOn(service, 'activateAccount').mockResolvedValue(null);
+
+      try {
+        await controller.activateAccount('TOKEN');
+      } catch (err) {
+        expect(err).toBeInstanceOf(HttpException);
+        expect(err.status).toBe(HttpStatus.CONFLICT);
+        expect(err.message).toBe('Invalid token');
+      }
+    });
+  });
+
+  describe('Reset Password', () => {
+    it('should reset password', async () => {
+      jest.spyOn(service, 'resetPassword').mockResolvedValue('Password reseted successfully');
+
+      const res = await controller.resetPassword({ password: '123456' }, 'TOKEN');
+
+      expect(res['message']).toBe('Password updated successfully');
+    });
+
+    it('should throw an exception if token is invalid', async () => {
+      jest.spyOn(service, 'resetPassword').mockResolvedValue(null);
+
+      try {
+        await controller.resetPassword({ password: '123456' }, 'TOKEN');
+      } catch (err) {
+        expect(err).toBeInstanceOf(HttpException);
+        expect(err.status).toBe(HttpStatus.CONFLICT);
+        expect(err.message).toBe('Invalid token');
       }
     });
   });

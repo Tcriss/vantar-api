@@ -1,35 +1,46 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 
-import { Roles } from '../../../common/domain/enums';
 import { UserService } from './user.service';
+import { Roles } from '../../../common/domain/enums';
 import { mockUserRepository } from '../../domain/mocks/user-providers.mock';
 import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
 import { UserEntity } from '../../domain/entities/user.entity';
-import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
-import { UserRepositoryToken } from '../decorators/repository.decorator';
 import { Repository } from '../../../common/domain/entities';
+import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
+import { emailServiceMock } from '../../../email/domain/mocks/email-provider.mock';
+import { EmailService } from '../../../email/application/email.service';
 
 describe('UserService', () => {
   let service: UserService;
   let repository: Repository<UserEntity>;
+  let emailService: EmailService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
         {
-          provide: UserRepositoryToken,
+          provide: Repository<UserEntity>,
           useValue: mockUserRepository 
         },
-        BcryptProvider
+        {
+          provide: EmailService,
+          useValue: emailServiceMock
+        },
+        BcryptProvider,
+        ConfigService
       ],
-      imports: [ConfigModule]
+      imports: [
+        JwtModule.register({ secret: 'JWT-SECRET' }),
+      ]
     }).compile();
 
     service = module.get<UserService>(UserService);
-    repository = module.get<Repository<UserEntity>>(UserRepositoryToken);
+    repository = module.get<Repository<UserEntity>>(Repository<UserEntity>);
+    emailService = module.get<EmailService>(EmailService);
   });
 
   it('should be defined', () => {
@@ -96,6 +107,7 @@ describe('UserService', () => {
     const { name, email, password } = userMock1;
 
     it('should update user', async () => {
+      jest.spyOn(emailService, 'sendWelcomeEmail');
       jest.spyOn(repository, 'create').mockResolvedValue(userMock1);
 
       const res: UserEntity = await service.createUser({ name, email, password });
@@ -116,6 +128,7 @@ describe('UserService', () => {
     });
 
     it('should return undefined if user was not updated', async () => {
+      jest.spyOn(service, 'findOneUser').mockResolvedValue(userMock2);
       jest.spyOn(repository, 'update').mockResolvedValue(undefined);
 
       const { name, password } = userMock2;
@@ -125,7 +138,8 @@ describe('UserService', () => {
     });
 
     it('should return null if user was not found', async () => {
-      jest.spyOn(repository, 'update').mockResolvedValue(undefined);
+      jest.spyOn(service, 'findOneUser').mockResolvedValue(null);
+      jest.spyOn(repository, 'update').mockResolvedValue(null);
 
       const { name, password } = userMock2;
       const res: UserEntity = await service.updateUser(randomUUID(), { name, password}, Roles.CUSTOMER);
@@ -136,6 +150,7 @@ describe('UserService', () => {
 
   describe('Delete User', () => {
     it('should delete user', async () => {
+      jest.spyOn(service, 'findOneUser').mockResolvedValue(userMock3);
       jest.spyOn(repository, 'delete').mockResolvedValue(userMock3);
 
       const res: string = await service.deleteUser(userMock3.id);

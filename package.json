@@ -28,15 +28,18 @@
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/serve-static": "^4.0.2",
     "@nestjs/swagger": "^7.3.1",
     "@prisma/client": "5.14.0",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "handlebars": "^4.7.8",
     "mongodb": "^6.8.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "reflect-metadata": "^0.2.0",
+    "resend": "^3.4.0",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
@@ -74,7 +77,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src/auth/application/guards",
+    "rootDir": "src/auth",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "@swc/jest"

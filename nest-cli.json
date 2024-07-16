@@ -5,6 +5,8 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "builder": "swc",
-    "typeCheck": true
+    "typeCheck": true,
+    "watchAssets": true,
+    "assets": ["email/application/templates/**/*.html"]
   }
 }

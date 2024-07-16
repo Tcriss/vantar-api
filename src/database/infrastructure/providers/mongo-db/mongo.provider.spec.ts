@@ -1,26 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigService } from '@nestjs/config';
 
 import { MongoProvider } from './mongo.provider';
+import { DatabaseModuleOptionsKey } from '../../../application/constans/database=module-options.key';
 
 describe('MongoDb', () => {
-  let provider: MongoProvider;
-  let configServiceMock = {
-    get: jest.fn().mockReturnValue('mongodb://test_db_name'),
-  } as any;
+  let provider: MongoProvider<unknown>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
-          provide: ConfigService,
-          useValue: configServiceMock
+          provide: DatabaseModuleOptionsKey,
+          useValue: {
+            mongoUri: 'mongodb://test_db_name',
+            collectionName: 'test',
+            databaseName: 'test'
+          }
         },
         MongoProvider
       ],
     }).compile();
 
-    provider = module.get<MongoProvider>(MongoProvider);
+    provider = module.get<MongoProvider<unknown>>(MongoProvider);
   });
 
   it('should be defined', () => {

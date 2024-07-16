@@ -6,7 +6,6 @@ import { InventoryEntity } from '../../domain/entities/inventory.entity';
 import { CreateInventoryDto, UpdateInventoryDto } from '../../domain/dtos';
 import { InventoyResponse } from '../../domain/types';
 import { InventoryQueries } from '../../domain/types/inventory-queries.type';
-import { ReqUser } from '../../../common/domain/types';
 import { ApiCreateInventory, ApiDeleteInventory, ApiGetInventories, ApiGetInventory, ApiUpdateInventory } from '../../application/decorators/open-api.decorator';
 import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
 import { Role } from '../../../common/application/decorators';
@@ -23,16 +22,16 @@ export class InventoryController {
 
     @ApiGetInventories()
     @Get()
-    public async findAll(@Req() req: ReqUser, @Query() queries: InventoryQueries): Promise<Partial<InventoryEntity>[]> {
+    public async findAll(@Req() req: Request, @Query() queries: InventoryQueries): Promise<Partial<InventoryEntity>[]> {
         if (!queries.page || !queries) throw new HttpException('page query param is missing in url', HttpStatus.BAD_REQUEST);
 
-        return this.service.findAllInventories(req.user.id, queries.page, queries.fields);
+        return this.service.findAllInventories(req['user']['id'], queries.page, queries.fields);
     }
 
     @ApiGetInventory()
     @Get(':id')
-    public async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser, @Query('fields') fields?: string): Promise<Partial<InventoryEntity>> {
-        const res: Partial<InventoryEntity> = await this.service.findOneInventory(id, req.user.id, fields);
+    public async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: Request, @Query('fields') fields?: string): Promise<Partial<InventoryEntity>> {
+        const res: Partial<InventoryEntity> = await this.service.findOneInventory(id, req['user']['id'], fields);
 
         if (res === undefined) throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
         if (res === null) throw new HttpException('Inventory not found', HttpStatus.NOT_FOUND);
@@ -56,8 +55,8 @@ export class InventoryController {
 
     @ApiUpdateInventory()
     @Patch(':id')
-    public async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() inventory: UpdateInventoryDto, @Req() req: ReqUser): Promise<InventoyResponse> {
-        const res: InventoryEntity = await this.service.updateInventory(id, inventory, req.user.id);
+    public async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() inventory: UpdateInventoryDto, @Req() req: Request): Promise<InventoyResponse> {
+        const res: InventoryEntity = await this.service.updateInventory(id, inventory, req['user']['id']);
 
         if (res === undefined) throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
         if (res === null) throw new HttpException('Inventory not found', HttpStatus.NOT_FOUND);
@@ -70,8 +69,8 @@ export class InventoryController {
 
     @ApiDeleteInventory()
     @Delete(':id')
-    public async delete(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: ReqUser): Promise<InventoyResponse> {
-        const res: InventoryEntity = await this.service.deleteInventory(id, req.user.id);
+    public async delete(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: Request): Promise<InventoyResponse> {
+        const res: InventoryEntity = await this.service.deleteInventory(id, req['user']['id']);
 
         if (res === undefined) throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
         if (res === null) throw new HttpException('Inventory not found', HttpStatus.NOT_FOUND);

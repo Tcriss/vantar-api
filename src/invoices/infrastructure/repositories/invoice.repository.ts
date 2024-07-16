@@ -4,7 +4,7 @@ import { Pagination } from '../../../common/domain/types';
 import { InvoiceEntity } from '../../domain/entities/invoice.entity';
 import { SelectedFields } from '../../domain/types';
 import { PrismaProvider } from '../../../database/infrastructure/providers/prisma/prisma.provider';
-import { Repository } from 'src/common/domain/entities';
+import { Repository } from '../../../common/domain/entities';
 
 @Injectable()
 export class InvoiceRepository implements Partial<Repository<InvoiceEntity>> {

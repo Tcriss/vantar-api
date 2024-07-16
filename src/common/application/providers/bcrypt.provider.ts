@@ -7,7 +7,7 @@ export class BcryptProvider {
 
     constructor(private config: ConfigService) {}
 
-    public async compare(value: string, hashedValue: string) {
+    public async compare(value: string, hashedValue: string): Promise<boolean> {
         return bcrypt.compare(value, hashedValue);
     }
 

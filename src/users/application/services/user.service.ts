@@ -1,18 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
-import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { UserEntity } from '../../domain/entities/user.entity';
+import { UpdateUserDto } from '../../domain/dtos';
 import { Pagination } from '../../../common/domain/types';
-import { UserRepository } from '../decorators/repository.decorator';
 import { Roles } from '../../../common/domain/enums';
 import { Repository } from '../../../common/domain/entities';
+import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
+import { EmailService } from '../../../email/application/email.service';
 
 @Injectable()
 export class UserService {
 
+    private logger = new Logger(UserService.name);
+
     constructor(
-        @UserRepository() private repository: Repository<UserEntity>,
-        private bcrypt: BcryptProvider
+        private repository: Repository<UserEntity>,
+        private emailService: EmailService,
+        private bcrypt: BcryptProvider,
+        private jwt: JwtService
     ) {}
 
     public async findAllUsers(page: string, query?: string): Promise<UserEntity[] | Partial<UserEntity>[]> {
@@ -35,32 +41,45 @@ export class UserService {
     }
 
     public async createUser(user: Partial<UserEntity>): Promise<UserEntity> {
-        user.password = await this.bcrypt.hash(user.password);
+        const [ password, activationToken ] = await Promise.all([
+            this.bcrypt.hash(user.password),
+            this.jwt.signAsync({ email: user.email })
+        ]);
+        user.password = password;
+        user.activation_token = await this.bcrypt.hash(activationToken);
+        const newUser = await this.repository.create(user);
+        const emailResponse = await this.emailService.sendWelcomeEmail(newUser, activationToken);
+        
+        if (!emailResponse) this.logger.log('error: ', emailResponse);
 
-        return this.repository.create(user);;
+        return newUser;
     }
 
-    public async updateUser(id: string, user: Partial<UserEntity>, role: Roles): Promise<UserEntity> {
-        const isExist: boolean = await this.findOneUser(id) ? true : false;
+    public async updateUser(id: string, user: UpdateUserDto, role: Roles): Promise<UserEntity> {
+        const originalUser = await this.findOneUser(id);
 
-        if (!isExist) return null;
-        if (user.password) {
+        if (!originalUser) return null;
+        if (user.password && user.newPassword) {
             if (role === Roles.CUSTOMER) {
-                const originalUser: UserEntity = await this.findOneUser(id);
                 const match: boolean = await this.bcrypt.compare(user.password, originalUser.password);
 
                 if (!match) return null;
             };
 
-            user.password = await this.bcrypt.hash(user.password);
+            user.password = await this.bcrypt.hash(user.newPassword);
         };
 
-        const res: UserEntity = await this.repository.update(id, user);
+        const { newPassword, ...userUpdate } = user
+        const res: UserEntity = await this.repository.update(id, userUpdate);
 
         return res ?? undefined;
     }
 
     public async deleteUser(id: string): Promise<string> {
+        const user = await this.findOneUser(id);
+
+        if (!user) return null;
+        
         const res: UserEntity = await this.repository.delete(id);
 
         return res ? 'User deleted' : undefined;

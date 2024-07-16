@@ -32,6 +32,7 @@ export class UserRepository implements Partial<Repository<UserEntity>> {
                 email: user.email,
                 password: user.password,
                 role: user.role,
+                activation_token: user.activation_token
             }
         });
     }

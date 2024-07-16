@@ -1,5 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './users/user.module';
@@ -9,16 +11,30 @@ import { InventoryModule } from './inventories/inventory.module';
 import { ProductModule } from './products/product.module';
 import { InvoiceModule } from './invoices/invoice.module';
 import { LoggerMiddleware } from './common/application/middlewares/logger/logger.middleware';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    DatabaseModule,
+    DatabaseModule.forRoot({ isGlobal: true }),
+    EmailModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+        apiKey: config.get('EMAIL_KEY'),
+        authUrl: config.get('AUTH_URL'),
+        resetPasswordUrl: config.get('RESET_URL'),
+        host: config.get('HOST')
+        //deafultSenderEmail: config.get('DEFAULT_EMAIL')
+      })
+    }),
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'public'), }),
     AuthModule,
     UserModule,
     InventoryModule,
     ProductModule,
-    InvoiceModule,
+    InvoiceModule
   ],
 })
 export class AppModule implements NestModule {

@@ -1,7 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
-import { Strategy } from 'passport-google-oauth20';
 
 import { GoogleAuthStrategy } from './google.strategy';
 import { UserService } from '../../../users/application/services/user.service';

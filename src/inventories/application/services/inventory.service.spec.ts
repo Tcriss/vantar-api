@@ -1,16 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ObjectId } from 'mongodb';
 
 import { InventoryService } from './inventory.service';
 import { mockInventoryRepository } from '../../domain/mocks/inventory-providers.mock';
 import { mockInventory1, mockInventory2, mockInventory3, mockPartialInventory1 } from '../../domain/mocks/inventory.mock';
-import { InventoryEntity } from '../../domain/entities/inventory.entity';
-import { Repository } from 'src/common/domain/entities';
-import { InventoryRepositoryToken } from '../decorators';
-import { ProductListRepositoryToken } from '../../../products/application/decotators';
 import { mockProductListRepository } from '../../../products/domain/mocks/product-providers.mock';
-import { InventoryProductList } from 'src/inventories/domain/types/inventory-prodcut-list.type';
-import { ProductList } from 'src/products/domain/entities/product-list.entity';
-import { ObjectId } from 'mongodb';
+import { InventoryProductList } from '../../domain/types/inventory-prodcut-list.type';
+import { InventoryEntity } from '../../domain/entities/inventory.entity';
+import { ProductEntityList } from '../../../products/domain/entities/product-list.entity';
+import { Repository } from '../../../common/domain/entities';
+import { ProductListRepositoryToken } from 'src/products/application/decotators';
 
 
 describe('InventoryService', () => {
@@ -23,7 +22,7 @@ describe('InventoryService', () => {
       providers: [
         InventoryService,
         {
-          provide: InventoryRepositoryToken,
+          provide: Repository<InventoryEntity>,
           useValue: mockInventoryRepository
         },
         {
@@ -34,7 +33,7 @@ describe('InventoryService', () => {
     }).compile();
 
     service = module.get<InventoryService>(InventoryService);
-    repository = module.get<Repository<InventoryEntity>>(InventoryRepositoryToken);
+    repository = module.get<Repository<InventoryEntity>>(Repository<InventoryEntity>);
     productListRepository = module.get<Repository<InventoryProductList>>(ProductListRepositoryToken);
   });
 
@@ -65,7 +64,7 @@ describe('InventoryService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockInventory1);
       jest.spyOn(productListRepository, 'findOne').mockResolvedValue({
         id: mockInventory1.id,
-        products: mockInventory1.products as ProductList[]
+        products: mockInventory1.products as ProductEntityList[]
       });
 
       const { id, user_id } = mockInventory1; 
@@ -78,7 +77,7 @@ describe('InventoryService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockPartialInventory1);
       jest.spyOn(productListRepository, 'findOne').mockResolvedValue({
         id: mockInventory1.id,
-        products: mockInventory1.products as ProductList[]
+        products: mockInventory1.products as ProductEntityList[]
       });
 
       const { id, user_id } = mockInventory1; 
@@ -181,7 +180,7 @@ describe('InventoryService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockInventory1);
       jest.spyOn(productListRepository, 'findOne').mockResolvedValue({
         id: mockInventory1.id,
-        products: mockInventory1.products as ProductList[]
+        products: mockInventory1.products as ProductEntityList[]
       });
       //jest.spyOn(repository, 'deleteInventory').mockResolvedValue(null);
 

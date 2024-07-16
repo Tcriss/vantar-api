@@ -1,13 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 import { InvoiceController } from './invoice.controller';
 import { mockInvoiceService } from '../../domain/mocks/invoice-providers.mock';
 import { InvoiceService } from '../../application/services/invoice.service';
-import { invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock, partialInvoiceMock1, partialInvoiceMock2 } from 'src/invoices/domain/mocks/invoice..mock';
-import { InvoiceEntity } from 'src/invoices/domain/entities/invoice.entity';
-import { Roles } from 'src/common/domain/enums';
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { userMock } from 'src/users/domain/mocks/user.mocks';
+import { invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock, partialInvoiceMock1, partialInvoiceMock2 } from '../../../invoices/domain/mocks/invoice..mock';
+import { InvoiceEntity } from '../../../invoices/domain/entities/invoice.entity';
+import { productListMock } from '../../../products/domain/mocks/product-list.mock';
+import { CreateProductListDto } from '../../../products/domain/dtos';
+import { Roles } from '../../../common/domain/enums';
 
 describe('InvoiceController', () => {
   let controller: InvoiceController;
@@ -43,7 +44,7 @@ describe('InvoiceController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, { page: '0,10' });
+      } as unknown as Request, { page: '0,10' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([invoiceMock, invoiceMock1]);
@@ -59,7 +60,7 @@ describe('InvoiceController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, { page: '1,1' });
+      } as unknown as Request, { page: '1,1' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([invoiceMock1]);
@@ -79,7 +80,7 @@ describe('InvoiceController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, { page: '0,10', fields: 'id, user_id' });
+      } as unknown as Request, { page: '0,10', fields: 'id, user_id' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([
@@ -101,7 +102,7 @@ describe('InvoiceController', () => {
           name: '',
           role: Roles.CUSTOMER
         }
-      }, invoiceMock.id);
+      } as unknown as Request, invoiceMock.id);
 
       expect(res).toBe(invoiceMock);
     });
@@ -116,7 +117,7 @@ describe('InvoiceController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        }, 
+        } as unknown as Request, 
         invoiceMock1.id,
         'name, user_id'
       );
@@ -135,7 +136,7 @@ describe('InvoiceController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        }, invoiceMock.id, 'name, user_id');
+        } as unknown as Request, invoiceMock.id, 'name, user_id');
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -154,7 +155,7 @@ describe('InvoiceController', () => {
             name: '',
             role: Roles.CUSTOMER
           }
-        }, invoiceMock2.id);
+        } as unknown as Request, invoiceMock2.id);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);
@@ -175,7 +176,9 @@ describe('InvoiceController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, { total, user_id });
+      } as unknown as Request, {
+        products: [productListMock as CreateProductListDto]
+      });
 
       expect(res['message']).toBe('Invoice created successfully');
       expect(res['invoice']).toBe(invoiceMock2);
@@ -194,7 +197,9 @@ describe('InvoiceController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, { total }, invoiceMock.id);
+      } as unknown as Request, {
+        products: [productListMock]
+      }, invoiceMock.id);
 
       expect(res['message']).toBe('Invoice updated successfully');
       expect(res['invoice']).toBe(invoiceMock2);
@@ -214,7 +219,9 @@ describe('InvoiceController', () => {
             email: '',
             role: Roles.CUSTOMER
           }
-        }, { total }, '123');
+        } as unknown as Request, {
+          products: [productListMock]
+        }, '123');
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -236,7 +243,9 @@ describe('InvoiceController', () => {
             email: '',
             role: Roles.CUSTOMER
           }
-        }, { total }, '123');
+        } as unknown as Request, {
+          products: [productListMock]
+        }, '123');
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);
@@ -256,7 +265,7 @@ describe('InvoiceController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      }, invoiceMock2.id);
+      } as unknown as Request, invoiceMock2.id);
 
       expect(res['message']).toBe('Invoice deleted');
     });
@@ -272,7 +281,7 @@ describe('InvoiceController', () => {
             email: '',
             role: Roles.CUSTOMER
           }
-        }, userMock.id);
+        } as unknown as Request, invoiceMock.user_id);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -291,7 +300,7 @@ describe('InvoiceController', () => {
             email: '',
             role: Roles.CUSTOMER
           }
-        }, userMock.id);
+        } as unknown as Request, invoiceMock.user_id);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);

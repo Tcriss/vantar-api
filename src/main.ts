@@ -18,7 +18,7 @@ async function bootstrap() {
   const { httpAdapter } = app.get(HttpAdapterHost);
   const reflector = app.get(Reflector);
   const authService = app.get(AuthService);
-
+  
   app.useGlobalFilters(
     new PrismaClientExceptionFilter(httpAdapter),
     new JwtExceptionsFilter()

@@ -49,12 +49,19 @@ DB_NAME = #db name
 ## connection
 DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@localhost:5434/${DB_NAME}?schema=public
 
+# Email config
+EMAIL_KEY = # RESEND API KEY
+DEAFULT_EMAIL = # YOUR OWN EMAIL SERVER REGISTERED ON RESEND
+AUTH_URL = ${HOST}/auth # URL used for account activation endpoint
+
 # Tokens & security
-AT_TIME = # Access_token time
-RT_TIME = # Refresh_token time
+AT_TIME = # Access_token expiry time
+RT_TIME = # Refresh_token expiry time
 HASH = # Rounds salts for bcrypt
 SECRET = # Secret to sign access_tokens
 RT_SECRET = # Refresh_token secret to sign them
+ACTIVATION_SECRET = # Activation for activation token
+RESET_SECRET = # Secret for reset token validation
 
 ```
 
@@ -73,12 +80,19 @@ DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?sch
 MONGO_URI = # mongo database url
 MONGO_DB_NAME = # mongoDB name
 
+# Email config
+EMAIL_KEY = # RESEND API KEY
+DEAFULT_EMAIL = # YOUR OWN EMAIL SERVER REGISTERED ON RESEND
+AUTH_URL = ${HOST}/auth # URL used for account activation endpoint
+
 # Tokens & security
-AT_TIME = # Access_token time
-RT_TIME = # Refresh_token time
+AT_TIME = # Access_token expiry time
+RT_TIME = # Refresh_token expiry time
 HASH = # Rounds salts for bcrypt
 SECRET = # Secret to sign access_tokens
 RT_SECRET = # Refresh_token secret to sign them
+ACTIVATION_SECRET = # Activation for activation token
+RESET_SECRET = # Secret for reset token validation
 ```
 ### 🔄️ Restore dependencies
 

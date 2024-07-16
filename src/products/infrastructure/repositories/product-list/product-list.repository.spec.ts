@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductListRepository } from './product-list.repositroy';
-import { MongoService } from '../../../../database/infrastructure/services/mongo.service';
 import { Collection, InsertOneResult, UpdateResult, DeleteResult, ObjectId } from 'mongodb';
-import { InvoiceProductList } from '../../../../invoices/domain/types';
-import { ProductList } from '../../../domain/entities/product-list.entity';
+import { ProductEntityList } from '../../../domain/entities/product-list.entity';
+import { MongoProvider } from '../../../../database/infrastructure/providers/mongo-db/mongo.provider';
+import { ProductList } from 'src/products/domain/types/product-list.type';
 
 describe('ProductListRepository', () => {
   let repository: ProductListRepository;
-  let mongoService: MongoService<InvoiceProductList>;
-  let collection: Collection<InvoiceProductList>;
+  let mongoProvider: MongoProvider<ProductList>;
+  let collection: Collection<ProductList>;
 
-  const productListMock: ProductList = {
+  const productListMock: ProductEntityList = {
     id: '1',
     name: 'Cloro',
     unit_price: 80.00,
@@ -18,7 +18,7 @@ describe('ProductListRepository', () => {
     total: 240.00
   };
 
-  const invoiceProductListMock: InvoiceProductList = {
+  const ProductListMock: ProductList = {
     id: 'invoice1',
     products: [productListMock]
   };
@@ -28,9 +28,9 @@ describe('ProductListRepository', () => {
       providers: [
         ProductListRepository,
         {
-          provide: MongoService,
+          provide: MongoProvider<ProductList>,
           useValue: {
-            getProductList: jest.fn().mockReturnValue({
+            database: jest.fn().mockReturnValue({
               findOne: jest.fn(),
               insertOne: jest.fn(),
               updateOne: jest.fn(),
@@ -42,9 +42,8 @@ describe('ProductListRepository', () => {
     }).compile();
 
     repository = module.get<ProductListRepository>(ProductListRepository);
-    mongoService = module.get<MongoService<InvoiceProductList>>(MongoService);
-    collection = mongoService.getProductList('test');
-    repository.setCollection('test');
+    mongoProvider = module.get<MongoProvider<ProductList>>(MongoProvider);
+    collection = mongoProvider.database();
   });
 
   it('should be defined', () => {
@@ -52,22 +51,22 @@ describe('ProductListRepository', () => {
   });
 
   it('should find one document by id', async () => {
-    jest.spyOn(collection, 'findOne').mockResolvedValue(invoiceProductListMock);
+    jest.spyOn(collection, 'findOne').mockResolvedValue(ProductListMock);
     const result = await repository.findOne('invoice1');
-    expect(result).toEqual(invoiceProductListMock);
+    expect(result).toEqual(ProductListMock);
   });
 
   it('should insert a document', async () => {
-    const insertResult: InsertOneResult<InvoiceProductList> = { acknowledged: true, insertedId: 'invoice1' as any as ObjectId };
+    const insertResult: InsertOneResult<ProductList> = { acknowledged: true, insertedId: 'invoice1' as any as ObjectId };
     jest.spyOn(collection, 'insertOne').mockResolvedValue(insertResult);
-    const result = await repository.insert(invoiceProductListMock);
+    const result = await repository.insert(ProductListMock);
     expect(result).toEqual(insertResult);
   });
 
   it('should update a document', async () => {
     const updateResult: UpdateResult = { acknowledged: true, matchedCount: 1, modifiedCount: 1, upsertedId: null, upsertedCount: 0 };
     jest.spyOn(collection, 'updateOne').mockResolvedValue(updateResult);
-    const result = await repository.updateDoc('invoice1', invoiceProductListMock);
+    const result = await repository.updateDoc('invoice1', ProductListMock);
     expect(result).toEqual(updateResult);
   });
 

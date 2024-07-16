@@ -9,6 +9,8 @@ export const userMock: UserEntity = {
   role: 'ADMIN',
   password: '$2b$12$KIX8H7JypTzRa7B5F5qWpu1bOCtYX5bHCQJ4L2g7hAl4oEGd6Xb92',
   created_at: new Date('2024-06-05T10:00:00Z'),
+  activation_token: null,
+  reset_token: null
 };
 
 export const userMock1: UserEntity = {
@@ -20,6 +22,8 @@ export const userMock1: UserEntity = {
   role: 'ADMIN',
   password: '$2b$12$KIX8H7JypTzRa7B5F5qWpu1bOCtYX5bHCQJ4L2g7hAl4oEGd6Xb92',
   created_at: new Date('2024-06-05T10:00:00Z'),
+  activation_token: null,
+  reset_token: null
 };
 
 export const userMock2: UserEntity = {
@@ -31,6 +35,8 @@ export const userMock2: UserEntity = {
   role: 'CUSTOMER',
   password: '$2b$12$QmS1K/X7I5H7/CB5V7P9u.eRtPfX6s6JFF9CJYy3FZ5QABw0cN3mK',
   created_at: new Date('2024-06-05T10:00:00Z'),
+  activation_token: null,
+  reset_token: null
 };
 
 export const userMock3: UserEntity = {
@@ -42,6 +48,8 @@ export const userMock3: UserEntity = {
   role: 'CUSTOMER',
   password: '$2b$12$QmS1K/X7I5H7/CB5V7P9u.eRtPfX6s6JFF9CJYy3FZ5QABw0cN3mK',
   created_at: new Date('2024-06-05T10:00:00Z'),
+  activation_token: null,
+  reset_token: null
 };
 
 export const usersMock4: UserEntity = {
@@ -53,4 +61,6 @@ export const usersMock4: UserEntity = {
   role: 'CUSTOMER',
   password: '2b$12$QmS1K/X7I5H7/CB5V7P9u.eRtPfX6s6JFF9CJYy3FZ5QABw0cN3mK',
   created_at: new Date('2024-06-05T10:00:00Z'),
+  activation_token: null,
+  reset_token: null
 };

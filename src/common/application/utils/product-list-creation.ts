@@ -1,6 +1,6 @@
-import { ProductList } from "../../../products/domain/entities/product-list.entity";
+import { ProductEntityList } from "../../../products/domain/entities/product-list.entity";
 
-export function productListCreation(products: Partial<ProductList>[], subtotal: number): { list: ProductList[], subtotal: number } {
+export function productListCreation(products: Partial<ProductEntityList>[], subtotal: number): { list: ProductEntityList[], subtotal: number } {
     let inventorySubtotal: number = subtotal;
         const productList = products.map(product => {
             const newProduct = {
