@@ -4,21 +4,29 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { AuthService } from './auth.service';
 import { mockUserRepository } from '../../../users/domain/mocks/user-providers.mock';
-import { userMock1, userMock2 } from '../../../users/domain/mocks/user.mocks';
+import { userMock, userMock1, userMock2 } from '../../../users/domain/mocks/user.mocks';
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { Repository } from '../../../common/domain/entities';
 import { UserEntity } from '../../../users/domain/entities/user.entity';
 import { EmailModule } from 'src/email/email.module';
+import { EmailService } from 'src/email/application/email.service';
 
 describe('AuthService', () => {
   let userRepository: Repository<UserEntity>;
   let service: AuthService;
+  let bcrypt: BcryptProvider;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
-        BcryptProvider,
+        {
+          provide: BcryptProvider,
+          useValue: {
+            compare: jest.fn(),
+            hash: jest.fn()
+          }
+        },
         {
           provide: Repository<UserEntity>,
           useValue: mockUserRepository
@@ -26,7 +34,7 @@ describe('AuthService', () => {
       ],
       imports: [
         ConfigModule,
-        JwtModule.register({}),
+        JwtModule.register({ secret: 'SECRET' }),
         EmailModule.register({
           options: {
             apiKey: 'API_KEY',
@@ -39,6 +47,7 @@ describe('AuthService', () => {
     }).compile();
 
     userRepository = module.get<Repository<UserEntity>>(Repository<UserEntity>);
+    bcrypt = module.get<BcryptProvider>(BcryptProvider);
     service = module.get<AuthService>(AuthService);
   });
 
@@ -128,6 +137,126 @@ describe('AuthService', () => {
       const res = await service.logOut(userMock2.id);
 
       expect(res).toBeNull();
+    });
+  });
+
+  describe('Forgot Password', () => {
+    const token: string = 'TOKEN';
+    const hashedToken: string = 'HASHED_TOKEN';
+
+    it('should pass', async () => {
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock1);
+      jest.spyOn(bcrypt, 'hash').mockResolvedValue(hashedToken);
+
+      await service.forgotPassword(userMock1.email);
+    });
+
+    it('should return null if user was not found', async () => {
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
+
+      const res = await service.forgotPassword('example@email.com');
+
+      expect(res).toBeNull();
+    });
+  });
+
+  describe('Activate Account', () => {
+    jest.mock('bcrypt', () => ({
+      compare: jest.fn(),
+    }));
+
+    it('should activate account successfully', async () => {
+      const token = 'valid_token';
+      const payload = { email: 'test@example.com' };
+
+      jest.spyOn(service, 'verifyToken').mockResolvedValue(payload);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock1);
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+      jest.spyOn(userRepository, 'update').mockResolvedValue(userMock1);
+
+      const result = await service.activateAccount(token);
+
+      expect(result).toBe('Account activated successfully');
+    });
+
+    it('should return null if user was not found', async () => {
+      const token = 'valid_token';
+      const payload = { email: 'test@example.com' };
+
+      jest.spyOn(service, 'verifyToken').mockResolvedValue(payload);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
+
+      const result = await service.activateAccount(token);
+
+      expect(result).toBeNull();
+    });
+
+    it('should return undefined if token did not match', async () => {
+      const token = 'valid_token';
+      const payload = { email: 'test@example.com' };
+
+      jest.spyOn(service, 'verifyToken').mockResolvedValue(payload);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock1);
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
+
+      const result = await service.activateAccount(token);
+
+      expect(result).toBeUndefined();
+    });
+
+    it('should return null if user could not be updated', async () => {
+      const token = 'valid_token';
+      const payload = { email: 'test@example.com' };
+
+      jest.spyOn(service, 'verifyToken').mockResolvedValue(payload);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock1);
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
+      jest.spyOn(userRepository, 'update').mockResolvedValue(null);
+
+      const result = await service.activateAccount(token);
+
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe('Reset Password', () => {
+    it('should reset password', async () => {
+      const token = 'valid_token';
+      const payload = { email: 'test@example.com' };
+
+      jest.spyOn(service, 'verifyToken').mockResolvedValue(payload);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock1);
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+      jest.spyOn(userRepository, 'update').mockResolvedValue(userMock1);
+
+      const result = await service.resetPassword(token, '123456');
+
+      expect(result).toBe('Password reseted successfully');
+    });
+
+    it('should return null if user was not found', async () => {
+      const token = 'valid_token';
+      const payload = { email: 'test@example.com' };
+
+      jest.spyOn(service, 'verifyToken').mockResolvedValue(payload);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
+
+      const result = await service.resetPassword(token, '123456');
+
+      expect(result).toBeNull();
+    });
+
+    it('should return undefined if token does not match', async () => {
+      const token = 'valid_token';
+      const payload = { email: 'test@example.com' };
+
+      jest.spyOn(service, 'verifyToken').mockResolvedValue(payload);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock1);
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
+
+      const result = await service.resetPassword(token, '123456');
+
+      expect(result).toBeUndefined();
     });
   });
 });

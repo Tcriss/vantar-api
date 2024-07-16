@@ -210,4 +210,58 @@ describe('AuthController', () => {
       }
     });
   });
+
+  describe('Forgot Password', () => {
+    it('Should pass', async () => {
+      jest.spyOn(service, 'forgotPassword').mockResolvedValue();
+
+      const res = await controller.forgotPassword({ email: 'example@email.com' });
+
+      expect(res['message']).toBe('If this user exist, an email will be sent by e-mail')
+    });
+  });
+
+  describe('Activate Account', () => {
+    it('', async () => {
+      jest.spyOn(service, 'activateAccount').mockResolvedValue('Account activated successfully');
+
+      const res = await controller.activateAccount('TOKEN');
+
+      expect(res['message']).toBe('Account activated successfully');
+    });
+
+    it('should throw an exception if token is invalid', async () => {
+      jest.spyOn(service, 'activateAccount').mockResolvedValue(null);
+
+      try {
+        await controller.activateAccount('TOKEN');
+      } catch (err) {
+        expect(err).toBeInstanceOf(HttpException);
+        expect(err.status).toBe(HttpStatus.CONFLICT);
+        expect(err.message).toBe('Invalid token');
+      }
+    });
+  });
+
+  describe('Reset Password', () => {
+    it('should reset password', async () => {
+      jest.spyOn(service, 'resetPassword').mockResolvedValue('Password reseted successfully');
+
+      const res = await controller.resetPassword({ password: '123456' }, 'TOKEN');
+
+      expect(res['message']).toBe('Password updated successfully');
+    });
+
+    it('should throw an exception if token is invalid', async () => {
+      jest.spyOn(service, 'resetPassword').mockResolvedValue(null);
+
+      try {
+        await controller.resetPassword({ password: '123456' }, 'TOKEN');
+      } catch (err) {
+        expect(err).toBeInstanceOf(HttpException);
+        expect(err.status).toBe(HttpStatus.CONFLICT);
+        expect(err.message).toBe('Invalid token');
+      }
+    });
+  });
 });

@@ -89,7 +89,7 @@ export class AuthService {
             activation_token: null
         });
 
-        return res ? 'Account activated succesfully' : null;
+        return res ? 'Account activated successfully' : null;
     }
 
     public async resetPassword(token: string, password: string): Promise<string> {
@@ -107,7 +107,7 @@ export class AuthService {
             password
         });
 
-        return res ? 'Password reseted succesfully' : null;
+        return res ? 'Password reseted successfully' : null;
     }
 
     public async verifyToken(token: string, secretKey: string): Promise<unknown> {
