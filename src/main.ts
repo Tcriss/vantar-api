@@ -30,7 +30,7 @@ async function bootstrap() {
     swaggerOptions: { tagsSorter: 'alpha' }
   });
 
-  await app.listen(configService.get<number>('PORT'), '0.0.0.0');
+  await app.listen(configService.get<number>('PORT') || 2020, '0.0.0.0');
   console.log(`Application running on: ${await app.getUrl()}`);
 }
 
