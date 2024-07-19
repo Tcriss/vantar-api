@@ -40,6 +40,8 @@ Set env files
 # .env
 NODE_ENV = development
 PORT = 2000
+HOST = # app HOST
+CLIENTS = # clients allowed by cors configuration
 
 # db variables
 DB_PASSWORD = #db password
@@ -48,6 +50,8 @@ DB_NAME = #db name
 
 ## connection
 DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@localhost:5434/${DB_NAME}?schema=public
+MONGO_URI = # mongo ulr
+MONGO_DB_NAME = # mongo db database
 
 # Email config
 EMAIL_KEY = # RESEND API KEY
@@ -69,6 +73,8 @@ RESET_SECRET = # Secret for reset token validation
 # .env.docker
 NODE_ENV = development
 PORT = 2000
+HOST = # app HOST
+CLIENTS = # clients allowed by cors configuration
 
 # db variables
 DB_PASSWORD = # postgres password
@@ -115,12 +121,6 @@ $ pnpm run start:prod
 
 Using docker
 
-Before creating the container, it is required to create a first migration with `migrate dev`. Because compose uses prisma migrate deploy for applying migrations. The command you have to run:
-
-```bash
-pnpm dlx prisma migrate dev --name init
-```
-then you can continue with:
 ```bash
 docker compose --env-file .env.docker up --build -d
 ```
