@@ -1,11 +1,11 @@
-import { ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 import { PUBLIC_KEY } from '../../../../common/application/decorators';
 import { AuthService } from '../../services/auth.service';
 
 @Injectable()
-export class AccessTokenGuard { 
+export class AccessTokenGuard implements CanActivate { 
 
     constructor(private reflector: Reflector, private authService: AuthService) {}
 

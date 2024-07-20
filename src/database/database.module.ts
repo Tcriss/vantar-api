@@ -1,9 +1,11 @@
 import { DynamicModule, Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 
 import { DatabaseModuleAsyncOptions, DatabaseOptions } from './domain/interfaces';
 import { DatabaseModuleOptionsKey } from './application/constans/database=module-options.key';
 import { PrismaProvider } from './infrastructure/providers/prisma/prisma.provider';
 import { MongoProvider } from './infrastructure/providers/mongo-db/mongo.provider';
+import { PrismaClientExceptionFilter } from './application/filters/prisma-client-exception/prisma-client-exception.filter';
 
 @Module({})
 export class DatabaseModule {
@@ -11,7 +13,13 @@ export class DatabaseModule {
         return {
             module: DatabaseModule,
             global: options.isGlobal,
-            providers: [PrismaProvider],
+            providers: [
+                PrismaProvider,
+                {
+                    provide: APP_FILTER,
+                    useClass: PrismaClientExceptionFilter
+                }
+            ],
             exports: [PrismaProvider]
         }
     }
@@ -20,7 +28,13 @@ export class DatabaseModule {
         return {
             module: DatabaseModule,
             global: options.isGlobal,
-            providers: [PrismaProvider],
+            providers: [
+                PrismaProvider,
+                {
+                    provide: APP_FILTER,
+                    useClass: PrismaClientExceptionFilter
+                }
+            ],
             exports: [PrismaProvider]
         }
     }
@@ -34,6 +48,10 @@ export class DatabaseModule {
                 {
                     provide: DatabaseModuleOptionsKey,
                     useValue: options
+                },
+                {
+                    provide: APP_FILTER,
+                    useClass: PrismaClientExceptionFilter
                 }
             ],
             exports: [PrismaProvider, MongoProvider]
@@ -51,6 +69,10 @@ export class DatabaseModule {
                     provide: DatabaseModuleOptionsKey,
                     useFactory: options.useFactory,
                     inject: options.inject
+                },
+                {
+                    provide: APP_FILTER,
+                    useClass: PrismaClientExceptionFilter
                 }
             ],
             exports: [PrismaProvider, MongoProvider]

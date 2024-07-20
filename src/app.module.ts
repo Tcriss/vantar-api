@@ -1,4 +1,5 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ClassSerializerInterceptor, MiddlewareConsumer, Module, NestModule, ValidationPipe } from '@nestjs/common';
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
@@ -12,8 +13,24 @@ import { ProductModule } from './products/product.module';
 import { InvoiceModule } from './invoices/invoice.module';
 import { LoggerMiddleware } from './common/application/middlewares/logger/logger.middleware';
 import { EmailModule } from './email/email.module';
+import { JwtExceptionsFilter } from './auth/application/filters/jwt-exceptions.filter';
+import { validationOptions } from './common/application/config';
 
 @Module({
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: JwtExceptionsFilter,
+    },
+    {
+      provide: APP_PIPE,
+      useFactory: () => new ValidationPipe(validationOptions),
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor
+    },
+  ],
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule.forRoot({ isGlobal: true }),
