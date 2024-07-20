@@ -35,8 +35,7 @@ export const ApiCreateProduct = () => applyDecorators(
     ApiOperation({ summary: 'Create one product' }),
     ApiResponse({ status: HttpStatus.OK, description: 'Product created succesfully', type: ProductEntity, }),
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Validations error' }),
-    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' }),
-    ApiParam({ name: 'id', description: 'Product id', format: 'uuid', required: true })
+    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' })
 );
 
 export const ApiUpdateProduct = () => applyDecorators(
