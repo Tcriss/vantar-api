@@ -20,7 +20,8 @@ export const ApiGetProduct = () => applyDecorators(
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid id' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Not enough permissions' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' }),
-    ApiParam({ name: 'id', description: 'Product id', format: 'uuid', required: true })
+    ApiParam({ name: 'id', description: 'Product id', format: 'uuid', required: true }),
+    ApiQuery({ name: 'fields', required: false, description: 'fields you want to select from response' })
 );
 
 export const ApiCreateProducts = () => applyDecorators(

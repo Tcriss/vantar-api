@@ -17,7 +17,7 @@ export class ProductService {
         };
         const fields: SelectedFields = selected ? {
             id: true,
-            user_id: false,
+            user_id: true,
             name: selected.includes('name') ? true : false,
             price: selected.includes('price') ? true : false
         } : null;
@@ -28,7 +28,7 @@ export class ProductService {
     public async findOne(id: string, userId: string, selected?: string): Promise<Partial<ProductEntity>> {
         const fields: SelectedFields = selected ? {
             id: true,
-            user_id: false,
+            user_id: true,
             name: selected.includes('name') ? true : false,
             price: selected.includes('price') ? true : false
         } : null;

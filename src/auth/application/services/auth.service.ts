@@ -22,7 +22,7 @@ export class AuthService {
     public async login(credentials: Partial<UserEntity>): Promise<AuthEntity> {
         const { email, password } = credentials;
         const user: Partial<UserEntity> = await this.userRepository.findOne(null, email);
-
+        
         if (!user) return undefined;
 
         const isValid: boolean = await this.bcrypt.compare(password, user.password);
@@ -103,8 +103,8 @@ export class AuthService {
         if (!isMatch) return undefined;
 
         const res = await this.userRepository.update(user.id, {
-            refresh_token: null,
-            password
+            password: await this.bcrypt.hash(password),
+            refresh_token: null
         });
 
         return res ? 'Password reseted successfully' : null;
