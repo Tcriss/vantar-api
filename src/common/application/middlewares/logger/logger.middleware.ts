@@ -1,4 +1,5 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 
 @Injectable()
@@ -6,7 +7,7 @@ export class LoggerMiddleware implements NestMiddleware {
 
   private readonly logger = new Logger();
 
-  constructor() {}
+  constructor(private config: ConfigService) {}
 
   use(req: Request, res: Response, next: () => void) {
     const { url, method, ip } = req;
@@ -16,11 +17,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const { statusCode } = res;
       const contentLength = res.get('content-length' || '');
 
-      if (statusCode >= 400) {
-        this.logger.error(`${method} ${url} ${statusCode} ${contentLength} - ${userAgent} ${ip}`);
-      } else {
-        this.logger.log(`${method} ${url} ${statusCode} ${contentLength} - ${userAgent} ${ip}`);
-      }
+      if (this.config.get('NODE_ENV') === 'development') this.logger.warn(`${method} ${url} ${statusCode} ${contentLength} - ${userAgent} ${ip}`)
     });
 
     next();
