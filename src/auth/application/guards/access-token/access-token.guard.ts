@@ -21,13 +21,13 @@ export class AccessTokenGuard implements CanActivate {
     }
 
     private async isValid(req: Request): Promise<boolean> {
-        if (!req.headers) throw new HttpException('No headers provided', HttpStatus.BAD_REQUEST);
-        
         const token: string = await this.extractTokenFromHeader(req.headers);
         
         if (!token) throw new HttpException('Token missing in headers', HttpStatus.UNAUTHORIZED);
 
         const payload = await this.authService.verifyToken(token, 'SECRET');
+
+        if (!payload) return false;
 
         req['user'] = payload;
         return true;
