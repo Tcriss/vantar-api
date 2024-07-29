@@ -1,7 +1,8 @@
 import { ClassSerializerInterceptor, MiddlewareConsumer, Module, NestModule, ValidationPipe } from '@nestjs/common';
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { join } from 'path';
 
 import { DatabaseModule } from './database/database.module';
@@ -30,9 +31,26 @@ import { validationOptions } from './common/application/config';
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor
     },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard
+    }
   ],
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (config: ConfigService) => ({
+        throttlers: [
+          {
+            ttl: config.get<number>('THR_TIME') ?? 60000,
+            limit: config.get<number>('THR_LIMIT') ?? 60,
+          }
+        ],
+        errorMessage: 'Too many requests'
+      }),
+      inject: [ConfigService]
+    }),
     DatabaseModule.forRoot({ isGlobal: true }),
     EmailModule.registerAsync({
       isGlobal: true,
