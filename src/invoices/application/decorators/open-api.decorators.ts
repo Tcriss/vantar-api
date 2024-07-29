@@ -8,6 +8,7 @@ export const ApiGetInvoices = () => applyDecorators(
     ApiResponse({ status: HttpStatus.OK, type: InvoiceEntity, isArray: true }),
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'page param missing' }),
     ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized' }),
+    ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiQuery({ name: 'page', required: true, example: '0, 10', description: 'how many invoices you want to fetch' }),
     ApiQuery({ name: 'fields', required: false, description: 'fields you want to select from response' })
 );
@@ -19,6 +20,7 @@ export const ApiGetInvoice = () => applyDecorators(
     ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Not enough permissions' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Invoice not found' }),
+    ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiParam({ name: 'id', description: 'Invoice id', format: 'uuid', required: true }),
     ApiQuery({ name: 'fields', required: false, description: 'fields you want to select from response' })
 );
@@ -28,7 +30,8 @@ export const ApiCreateInvoice = () => applyDecorators(
     ApiResponse({ status: HttpStatus.CREATED, description: 'Invoice created succesfully', type: InvoiceEntity, }),
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Validations error' }),
     ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized' }),
-    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Invoice not found' })
+    ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Invoice not found' }),
+    ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
 );
 
 export const ApiUpdateInvoice = () => applyDecorators(
@@ -38,6 +41,7 @@ export const ApiUpdateInvoice = () => applyDecorators(
     ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Invoice not found' }),
+    ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiParam({ name: 'id', description: 'Invoice id', format: 'uuid', required: true })
 );
 
@@ -48,5 +52,6 @@ export const ApiDeleteInvoice = () => applyDecorators(
     ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Invoice not found' }),
+    ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiParam({ name: 'id', description: 'Invoice id', format: 'uuid', required: true })
 );
