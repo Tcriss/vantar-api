@@ -3,6 +3,7 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { CacheModule } from '@nestjs/cache-manager';
 import { join } from 'path';
 
 import { DatabaseModule } from './database/database.module';
@@ -16,6 +17,7 @@ import { LoggerMiddleware } from './common/application/middlewares/logger/logger
 import { EmailModule } from './email/email.module';
 import { JwtExceptionsFilter } from './auth/application/filters/jwt-exceptions.filter';
 import { validationOptions } from './common/application/config';
+import { rateLimitConfig } from './common/application/config/rate-limit.config';
 
 @Module({
   providers: [
@@ -38,20 +40,17 @@ import { validationOptions } from './common/application/config';
   ],
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    DatabaseModule.forRoot({ isGlobal: true }),
+    CacheModule.register({
+      isGlobal: true,
+      ttl: (60 ^ 2) * 1000
+    }),
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'public') }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        throttlers: [
-          {
-            ttl: config.get<number>('THR_TIME') ?? 60000,
-            limit: config.get<number>('THR_LIMIT') ?? 60,
-          }
-        ],
-        errorMessage: 'Too many requests'
-      }),
-      inject: [ConfigService]
+      inject: [ConfigService],
+      useFactory: rateLimitConfig
     }),
-    DatabaseModule.forRoot({ isGlobal: true }),
     EmailModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],
@@ -64,7 +63,6 @@ import { validationOptions } from './common/application/config';
         //deafultSenderEmail: config.get('DEFAULT_EMAIL')
       })
     }),
-    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'public'), }),
     AuthModule,
     UserModule,
     InventoryModule,

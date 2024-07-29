@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Cache } from '@nestjs/cache-manager';
 
 import { SelectedFields } from '../../domain/types';
 import { InvoiceEntity } from '../../domain/entities/invoice.entity';
@@ -7,13 +8,15 @@ import { Repository } from '../../../common/domain/entities';
 import { productListCreation } from '../../../common/application/utils';
 import { ProductList } from '../../../products/domain/types/product-list.type';
 import { ProductListRepository } from '../../../products/application/decotators';
+import { Cached } from '../../../common/application/decorators';
 
 @Injectable()
 export class InvoiceService {
 
     constructor(
         private invoiceRepository: Repository<InvoiceEntity>,
-        @ProductListRepository() private productListRepository: Repository<ProductList>
+        @ProductListRepository() private productListRepository: Repository<ProductList>,
+        @Cached() private cache: Cache
     ) {}
 
     public async findAllInvoices(userId: string, page: string, selected?: string): Promise<Partial<InvoiceEntity>[]> {
@@ -27,11 +30,27 @@ export class InvoiceService {
             date: selected.includes('date'),
             total: selected.includes('total'),
         } : null;
+        await Promise.all([
+            await this.cache.set('invoices-pagination', pagination),
+            await this.cache.set('invoices-fields', selectedFields)
+        ]);
+        const cachedPagination = await this.cache.get('invoices-pagination');
+        const cachedFields = await this.cache.get('invoices-fields');
+        const cachedInvoices: Partial<InvoiceEntity>[] = await this.cache.get('invoices');
 
-        return this.invoiceRepository.findAll(userId, pagination, selectedFields);
+        if (cachedInvoices && cachedFields == selectedFields && cachedPagination == pagination) return cachedInvoices;
+
+        const invoices = await this.invoiceRepository.findAll(userId, pagination, selectedFields);
+        await this.cache.set('invoices', invoices);
+
+        return invoices;
     }
 
     public async findOneInvoice(id: string, userId: string): Promise<Partial<InvoiceEntity>> {
+        const cachedInvoice: Partial<InvoiceEntity> = await this.cache.get('product');
+
+        if (cachedInvoice && cachedInvoice.id === id) return cachedInvoice;
+
         const invoice: Partial<InvoiceEntity> = await this.invoiceRepository.findOne(id);
 
         if (!invoice) return null;
@@ -40,6 +59,8 @@ export class InvoiceService {
         const list: Partial<ProductList> = await this.productListRepository.findOne(invoice.id);
         
         invoice.products = list ? list.products : [];
+        await this.cache.set('invoice', invoice);
+
         return invoice;
     }
     
@@ -93,6 +114,8 @@ export class InvoiceService {
         const res = await this.productListRepository.deleteDoc(id);
 
         if (!res) return null;
+
+        await this.cache.del('invoice');
         
         return this.invoiceRepository.delete(id);
     }

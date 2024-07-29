@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Cache } from '@nestjs/cache-manager';
 
 import { Pagination } from '../../../common/domain/types';
 import { SelectedFields } from '../../domain/types';
@@ -8,13 +9,15 @@ import { InventoryProductList } from '../../../inventories/domain/types/inventor
 import { productListCreation } from '../../../common/application/utils';
 import { ProductList } from '../../../products/domain/types/product-list.type';
 import { ProductListRepository } from '../../../products/application/decotators';
+import { Cached } from '../../../common/application/decorators';
 
 @Injectable()
 export class InventoryService {
 
     constructor(
         private inventoryRepository: Repository<InventoryEntity>,
-        @ProductListRepository() private productListRepository: Repository<ProductList>
+        @ProductListRepository() private productListRepository: Repository<ProductList>,
+        @Cached() private cache: Cache
     ) {}
 
     public async findAllInventories(userId: string, page: string, selected?: string): Promise<Partial<InventoryEntity>[]> {
@@ -30,8 +33,20 @@ export class InventoryService {
             total: selected.includes('total'),
             created_at: selected.includes('created_at')
         } : null;
+        await Promise.all([
+            await this.cache.set('inventories-pagination', pagination),
+            await this.cache.set('inventories-fields', fields)
+        ]);
+        const cachedPagination = await this.cache.get('inventories-pagination');
+        const cachedFields = await this.cache.get('inventories-fields');
+        const cachedInventories: Partial<InventoryEntity>[] = await this.cache.get('inventories');
 
-        return this.inventoryRepository.findAll(userId, pagination, fields);
+        if (cachedInventories && cachedFields == fields && cachedPagination == pagination) return cachedInventories;
+
+        const inventories = await this.inventoryRepository.findAll(userId, pagination, fields);
+        await this.cache.set('inventories', inventories);
+
+        return inventories;
     }
 
     public async findOneInventory(id: string, userId?: string, selected?: string): Promise<Partial<InventoryEntity>> {
@@ -43,6 +58,12 @@ export class InventoryService {
             total: selected.includes('total') ? true : false,
             created_at: selected.includes('created_at') ? true : false
         } : null;
+        await this.cache.set('fields', fields);
+        const cachedFields = await this.cache.get('inventory-fields');
+        const cachedInventory: Partial<InventoryEntity> = await this.cache.get('inventory');
+
+        if (cachedInventory && cachedInventory.id === id && cachedFields == fields) return cachedInventory;
+
         const inventory: Partial<InventoryEntity> = await this.inventoryRepository.findOne(id, fields);
 
         if (!inventory) return null;
@@ -50,6 +71,8 @@ export class InventoryService {
 
         const inventoryProductist = await this.productListRepository.findOne(inventory.id);
         inventory.products = inventoryProductist.products || [];
+
+        await this.cache.set('inventory', inventory);
 
         return inventory;
     }
@@ -125,6 +148,8 @@ export class InventoryService {
         const res = await this.productListRepository.deleteDoc(id);
 
         if (!res) return null;
+
+        await this.cache.reset();
         
         return this.inventoryRepository.delete(id);
     }
