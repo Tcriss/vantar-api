@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 
 import { ProductController } from './product.controller';
 import { ProductService } from '../../application/services/product.service';
@@ -210,6 +210,25 @@ describe('ProductController', () => {
       expect(res['message']).toBe('Product created successfully');
       expect(res['product']).toBe(productMock2);
     });
+
+    it('should throw an exception if name has numbers', async () => {
+      try {
+        const { price, user_id } = productMock2;
+        await controller.create({
+          user: {
+            id: user_id,
+            name: '',
+            email: '',
+            role: Roles.CUSTOMER
+          }
+        } as unknown as Request,
+        { name: 'Albert0 Rojas4', price });  
+      } catch (err) {
+        expect(err).toBeInstanceOf(BadRequestException);
+        expect(err.message).toBe(['name must not contain numbers']);
+        expect(err.status).toBe(HttpStatus.BAD_REQUEST);
+      }
+    });
   });
 
   describe('Update Product', () => {
@@ -251,23 +270,6 @@ describe('ProductController', () => {
       }
     });
 
-    // it('should throw an exception if id is invalid', async () => {
-    //   try {
-    //     const { name, price } = productMock2;
-    //     await controller.update('123', { name, price }, {
-    //       user: {
-    //         id: '113',
-    //         email: '',
-    //         name: '',
-    //         role: Role.CUSTOMER
-    //       }
-    //     });
-    //   } catch (err) {
-    //     expect(err).toBeInstanceOf(BadRequestException);
-    //     expect(err.message).toBe('Validation failed (uuid  is expected)');
-    //   }
-    // });
-
     it('should throw an exception if user is not owner', async () => {
       jest.spyOn(service, 'update').mockResolvedValue(undefined);
 
@@ -287,6 +289,25 @@ describe('ProductController', () => {
         expect(err.message).toBe('Not enough permissions');
       }
     });
+
+    // it('should throw an exception if name has numbers', async () => {
+    //   try {
+    //     const { user_id, id } = productMock2;
+    //     await controller.update(id, {
+    //       user: {
+    //         id: user_id,
+    //         name: '',
+    //         email: '',
+    //         role: Roles.CUSTOMER
+    //       }
+    //     } as unknown as Request,
+    //     { name: 'Albert0 Rojas4' });  
+    //   } catch (err) {
+    //     expect(err).toBeInstanceOf(BadRequestException);
+    //     expect(err.message).toBe(['name must not contain numbers']);
+    //     expect(err.status).toBe(HttpStatus.BAD_REQUEST);
+    //   }
+    // });
   });
 
   describe('Delete Product', () => {
@@ -323,22 +344,6 @@ describe('ProductController', () => {
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
       }
     });
-
-    // it('should throw an exception if id is invalid', async () => {
-    //   try {
-    //     await controller.delete('123', {
-    //       user: {
-    //         id: '113',
-    //         email: '',
-    //         name: '',
-    //         role: Role.CUSTOMER
-    //       }
-    //     });
-    //   } catch (err) {
-    //     expect(err).toBeInstanceOf(BadRequestException);
-    //     expect(err.message).toBe('Validation failed (uuid  is expected)');
-    //   }
-    // });
 
     it('should throw an exception if user is not owner', async () => {
       jest.spyOn(service, 'delete').mockResolvedValue(undefined);
