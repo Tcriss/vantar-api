@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { Cache } from '@nestjs/cache-manager';
 
 import { SelectedFields } from '../../domain/types';
 import { Pagination } from "../../../common/domain/types/pagination.type";
 import { ProductEntity } from '../../domain/entities/product.entity';
 import { Repository } from '../../../common/domain/entities';
+import { Cached } from '../../../common/application/decorators';
 
 @Injectable()
 export class ProductService {
 
-    constructor(private productRepository: Repository<ProductEntity>) { }
+    constructor(
+        @Cached() private cache: Cache,
+        private productRepository: Repository<ProductEntity>
+    ) { }
 
     public async findAll(page: string, userId: string, query?: string, selected?: string): Promise<Partial<ProductEntity>[]> {
         const pagination: Pagination = {
@@ -21,21 +26,41 @@ export class ProductService {
             name: selected.includes('name') ? true : false,
             price: selected.includes('price') ? true : false
         } : null;
+        await Promise.all([
+            await this.cache.set('products-pagination', pagination),
+            await this.cache.set('products-fields', fields)
+        ]);
+        const cachedPagination = await this.cache.get('products-pagination');
+        const cachedFields = await this.cache.get('products-fields');
+        const cachedProducts: Partial<ProductEntity>[] = await this.cache.get('products');
 
-        return this.productRepository.findAll(userId, pagination, fields, query);
+        if (cachedProducts && cachedFields == fields && cachedPagination == pagination) return cachedProducts;
+
+        const products = await this.productRepository.findAll(userId, pagination, fields, query);
+        await this.cache.set('products', products);
+
+        return products;
     }
 
     public async findOne(id: string, userId: string, selected?: string): Promise<Partial<ProductEntity>> {
         const fields: SelectedFields = selected ? {
             id: true,
             user_id: true,
-            name: selected.includes('name') ? true : false,
-            price: selected.includes('price') ? true : false
+            name: selected.includes('name'),
+            price: selected.includes('price')
         } : null;
+        await this.cache.set('product-fields', fields);
+        const cachedProduct: ProductEntity = await this.cache.get('product');
+        const cachedFields = await this.cache.get('product-fields');
+
+        if (cachedProduct && cachedProduct.id === id && cachedFields === fields) return cachedProduct;
+        
         const product: Partial<ProductEntity> = await this.productRepository.findOne(id, fields);
 
         if (!product) return null;
         if (!(product.user_id === userId)) return undefined;
+
+        await this.cache.set('product', product);
 
         return product;
     }
@@ -58,7 +83,7 @@ export class ProductService {
         const originalProduct: Partial<ProductEntity> = await this.findOne(id, userId);
         
         if (!originalProduct) return null;
-        if (!(originalProduct.user_id === userId)) return undefined;
+        if (originalProduct.user_id !== userId) return undefined;
         
         return this.productRepository.update(id, product);
     }
@@ -67,7 +92,12 @@ export class ProductService {
         const product: Partial<ProductEntity> = await this.findOne(id, userId);
         
         if (!product) return null;
-        if ((product.user_id === userId) === false) return undefined;
+        if (product.user_id !== userId) return undefined;
+
+        await Promise.all([
+            await this.cache.del('product-fields'),
+            await this.cache.del('product')
+        ]);
         
         return this.productRepository.delete(id);
     }

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Cache } from '@nestjs/cache-manager';
 
 import { UserEntity } from '../../domain/entities/user.entity';
 import { UpdateUserDto } from '../../domain/dtos';
@@ -8,6 +9,7 @@ import { Roles } from '../../../common/domain/enums';
 import { Repository } from '../../../common/domain/entities';
 import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { EmailService } from '../../../email/application/email.service';
+import { Cached } from '../../../common/application/decorators';
 
 @Injectable()
 export class UserService {
@@ -15,6 +17,7 @@ export class UserService {
     private logger = new Logger(UserService.name);
 
     constructor(
+        @Cached() private cache: Cache,
         private repository: Repository<UserEntity>,
         private emailService: EmailService,
         private bcrypt: BcryptProvider,
@@ -33,9 +36,15 @@ export class UserService {
     public async findOneUser(id?: string, email?: string): Promise<UserEntity> {
         if (!id && !email) return null;
 
+        const cachedUser: UserEntity = await this.cache.get('user');
+
+        if (cachedUser) return cachedUser;
+
         const user: Partial<UserEntity> = await this.repository.findOne(id, email);
 
         if (!user) return undefined;
+
+        await this.cache.set('user', user);
 
         return new UserEntity(user);
     }
@@ -51,6 +60,8 @@ export class UserService {
         const emailResponse = await this.emailService.sendWelcomeEmail(newUser, activationToken);
         
         if (!emailResponse) this.logger.log('error: ', emailResponse);
+
+        await this.cache.set('user', newUser);
 
         return newUser;
     }
@@ -72,7 +83,10 @@ export class UserService {
         const { newPassword, ...userUpdate } = user
         const res: UserEntity = await this.repository.update(id, userUpdate);
 
-        return res ?? undefined;
+        if (!res) return undefined;
+
+        await this.cache.set('user', res);
+        return res;
     }
 
     public async deleteUser(id: string): Promise<string> {
@@ -81,7 +95,8 @@ export class UserService {
         if (!user) return null;
         
         const res: UserEntity = await this.repository.delete(id);
-
+        await this.cache.del('user');
+        
         return res ? 'User deleted' : undefined;
     }
 }

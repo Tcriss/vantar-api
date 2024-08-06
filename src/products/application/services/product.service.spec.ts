@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { CacheModule } from '@nestjs/cache-manager';
 
 import { ProductService } from './product.service';
 import { ProductEntity } from '../../domain/entities/product.entity';
@@ -20,6 +21,7 @@ describe('ProductService', () => {
           useValue: mockProductRepository
         }
       ],
+      imports: [CacheModule.register({ ttl: (60 ^ 2) * 1000 })]
     }).compile();
 
     service = module.get<ProductService>(ProductService);
@@ -150,7 +152,7 @@ describe('ProductService', () => {
     });
 
     it('should return null if product was not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(service, 'findOne').mockResolvedValue(null);
       //jest.spyOn(repository, 'updateProduct').mockResolvedValue(null);
 
       const { name, price } = productMock2;
@@ -164,7 +166,7 @@ describe('ProductService', () => {
     const { id, user_id } = productMock1;
 
     it('should delete product', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(productMock6);
+      jest.spyOn(service, 'findOne').mockResolvedValue(productMock6);
       jest.spyOn(repository,'delete').mockResolvedValue(productMock6);
 
       const res: ProductEntity = await service.delete(id, user_id);
@@ -173,6 +175,7 @@ describe('ProductService', () => {
     });
 
     it('should return undefined if not the owner', async () => {
+      jest.spyOn(service, 'findOne').mockResolvedValue(productMock1);
       jest.spyOn(repository, 'delete').mockResolvedValue(undefined);
       //jest.spyOn(repository, 'deleteProduct').mockResolvedValue(undefined);
 
@@ -182,6 +185,7 @@ describe('ProductService', () => {
     });
 
     it('should return null if product was not found', async () => {
+      jest.spyOn(service, 'findOne').mockResolvedValue(null);
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       //jest.spyOn(repository, 'deleteProduct').mockResolvedValue(null);
 

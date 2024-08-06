@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
+import { CacheModule } from '@nestjs/cache-manager';
 import { JwtModule } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 
@@ -35,6 +36,7 @@ describe('UserService', () => {
       ],
       imports: [
         JwtModule.register({ secret: 'JWT-SECRET' }),
+        CacheModule.register({ ttl: (60 ^ 2) * 1000 }),
       ]
     }).compile();
 
@@ -77,13 +79,12 @@ describe('UserService', () => {
     });
 
     it('should find user by email', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(userMock2);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(userMock3);
 
-      const email: string = 'bob.johnson@example.com';
-      const res: UserEntity = await service.findOneUser(null, email);
+      const res: UserEntity = await service.findOneUser(null, userMock3.email);
 
-      expect(res).toEqual(userMock2);
-      expect(res.email).toBe(email);
+      expect(res).toEqual(userMock3);
+      expect(res.email).toBe(userMock3.email);
     });
 
     it('should return undefined if user was not found', async () => {

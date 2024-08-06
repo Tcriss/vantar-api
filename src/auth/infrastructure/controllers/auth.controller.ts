@@ -1,4 +1,5 @@
 import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ApiTags } from '@nestjs/swagger';
 
 import { AuthEntity } from '../../domain/entities/auth.entity';
@@ -10,6 +11,7 @@ import { PublicAccess } from '../../../common/application/decorators';
 
 @ApiTags('Authentication')
 @PublicAccess()
+@Throttle({ default: { ttl: 3000, limit: 3 }})
 @Controller('auth')
 export class AuthController {
 

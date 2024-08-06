@@ -10,6 +10,7 @@ export const ApiGetUsers = () => applyDecorators(
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Credentials missing' }),
     ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
+    ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Server error' }),
     ApiQuery({ name: 'page', required: true, example: '0, 10', description: 'pagination settings, first value is skip, and second is take' }),
     ApiQuery({ name: 'q', required: false, description: 'search param to filter results' })
@@ -23,6 +24,7 @@ export const ApiGetUser = () => applyDecorators(
     ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' }),
+    ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Server error' }),
     ApiParam({ name: 'id', description: 'User id', format: 'uuid', required: true })
 );
@@ -32,6 +34,7 @@ export const ApiCreateUser = () => applyDecorators(
     ApiResponse({ status: HttpStatus.CREATED, description: 'User created succesfully' }),
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Validations error' }),
     ApiResponse({ status: HttpStatus.NOT_ACCEPTABLE, description: 'User already exist or you are already logged, method not allowed' }),
+    ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Internal server error' })
 );
 
@@ -43,6 +46,7 @@ export const ApiUpdateUser = () => applyDecorators(
     ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' }),
+    ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Internal server error' }),
     ApiParam({ name: 'id', description: 'User id', format: 'uuid', required: true })
 );
@@ -55,6 +59,7 @@ export const ApiDeleteUser = () => applyDecorators(
     ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' }),
+    ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Internal server error' }),
     ApiParam({ name: 'id', description: 'User id', format: 'uuid', required: true })
 );
