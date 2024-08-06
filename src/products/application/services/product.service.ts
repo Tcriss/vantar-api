@@ -83,7 +83,7 @@ export class ProductService {
         const originalProduct: Partial<ProductEntity> = await this.findOne(id, userId);
         
         if (!originalProduct) return null;
-        if (!(originalProduct.user_id === userId)) return undefined;
+        if (originalProduct.user_id !== userId) return undefined;
         
         return this.productRepository.update(id, product);
     }
@@ -92,7 +92,7 @@ export class ProductService {
         const product: Partial<ProductEntity> = await this.findOne(id, userId);
         
         if (!product) return null;
-        if ((product.user_id === userId) === false) return undefined;
+        if (product.user_id !== userId) return undefined;
 
         await Promise.all([
             await this.cache.del('product-fields'),

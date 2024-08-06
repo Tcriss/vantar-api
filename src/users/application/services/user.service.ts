@@ -82,9 +82,11 @@ export class UserService {
 
         const { newPassword, ...userUpdate } = user
         const res: UserEntity = await this.repository.update(id, userUpdate);
-        await this.cache.set('user', res);
 
-        return res ?? undefined;
+        if (!res) return undefined;
+
+        await this.cache.set('user', res);
+        return res;
     }
 
     public async deleteUser(id: string): Promise<string> {
