@@ -1,9 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString, Matches } from "class-validator";
+
+import { nameRegex } from "../../../common/application/constants";
 
 export class CreateProductDto {
     @ApiProperty({ example: 'Suavizante' })
     @IsString()
+    @Matches(nameRegex, '', { message: 'name must not contain numbers' })
     @IsNotEmpty()
     name: string;
 

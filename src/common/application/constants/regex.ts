@@ -1,0 +1,1 @@
+export const nameRegex: string = '^[A-Za-zñÑ ]+$';
