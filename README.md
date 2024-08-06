@@ -41,7 +41,7 @@ Set env files
 NODE_ENV = development
 PORT = 2000
 HOST = # app HOST
-CLIENTS = # clients allowed by cors configuration
+CLIENT = # clients allowed by cors
 
 # db variables
 DB_PASSWORD = #db password
@@ -74,7 +74,7 @@ RESET_SECRET = # Secret for reset token validation
 NODE_ENV = development
 PORT = 2000
 HOST = # app HOST
-CLIENTS = # clients allowed by cors configuration
+CLIENT = # clients allowed by cors
 
 # db variables
 DB_PASSWORD = # postgres password
