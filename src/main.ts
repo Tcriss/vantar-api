@@ -9,10 +9,15 @@ import { appConfig, swaggerOptions, helmetConfig } from './common/application/co
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, appConfig);
   const document = SwaggerModule.createDocument(app, swaggerOptions);
-  const configService = app.get<ConfigService>(ConfigService);
+  const config = app.get<ConfigService>(ConfigService);
+
   SwaggerModule.setup('api', app, document, { swaggerOptions: { tagsSorter: 'alpha' } });
   app.use(helmet(helmetConfig));
-  await app.listen(configService.get<number>('PORT') || 2020, '0.0.0.0');
+  app.enableCors({
+    origin: config.get<string>('CLIENT'),
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  });
+  await app.listen(config.get<number>('PORT') || 2020, '0.0.0.0');
   console.log(`Application running on: ${await app.getUrl()}`);
 }
 
