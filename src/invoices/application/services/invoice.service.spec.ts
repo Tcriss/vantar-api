@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { CacheModule } from '@nestjs/cache-manager';
 import { ObjectId } from 'mongodb';
 
 import { InvoiceService } from './invoice.service';
@@ -28,6 +29,7 @@ describe('InvoiceService', () => {
           useValue: mockProductListRepository
         }
       ],
+      imports: [CacheModule.register({ ttl: (60 ^ 2) * 1000 })]
     }).compile();
 
     service = module.get<InvoiceService>(InvoiceService);
