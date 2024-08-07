@@ -40,6 +40,8 @@ Set env files
 # .env
 NODE_ENV = development
 PORT = 2000
+HOST = # app HOST
+CLIENTS = # clients allowed by cors configuration
 
 # db variables
 DB_PASSWORD = #db password
@@ -48,20 +50,55 @@ DB_NAME = #db name
 
 ## connection
 DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@localhost:5434/${DB_NAME}?schema=public
+MONGO_URI = # mongo ulr
+MONGO_DB_NAME = # mongo db database
+
+# Email config
+EMAIL_KEY = # RESEND API KEY
+DEAFULT_EMAIL = # YOUR OWN EMAIL SERVER REGISTERED ON RESEND
+AUTH_URL = ${HOST}/auth # URL used for account activation endpoint
+
+# Tokens & security
+AT_TIME = # Access_token expiry time
+RT_TIME = # Refresh_token expiry time
+HASH = # Rounds salts for bcrypt
+SECRET = # Secret to sign access_tokens
+RT_SECRET = # Refresh_token secret to sign them
+ACTIVATION_SECRET = # Activation for activation token
+RESET_SECRET = # Secret for reset token validation
+
 ```
 
 ```dosini
 # .env.docker
 NODE_ENV = development
 PORT = 2000
+HOST = # app HOST
+CLIENTS = # clients allowed by cors configuration
 
 # db variables
-DB_PASSWORD = #db password
-DB_USER = #db user
-DB_NAME = #db name
+DB_PASSWORD = # postgres password
+DB_USER = # postgres user
+DB_NAME = # postgres name
 
 # replace connection variable where host name is localhost and port
 DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?schema=public
+MONGO_URI = # mongo database url
+MONGO_DB_NAME = # mongoDB name
+
+# Email config
+EMAIL_KEY = # RESEND API KEY
+DEAFULT_EMAIL = # YOUR OWN EMAIL SERVER REGISTERED ON RESEND
+AUTH_URL = ${HOST}/auth # URL used for account activation endpoint
+
+# Tokens & security
+AT_TIME = # Access_token expiry time
+RT_TIME = # Refresh_token expiry time
+HASH = # Rounds salts for bcrypt
+SECRET = # Secret to sign access_tokens
+RT_SECRET = # Refresh_token secret to sign them
+ACTIVATION_SECRET = # Activation for activation token
+RESET_SECRET = # Secret for reset token validation
 ```
 ### 🔄️ Restore dependencies
 
@@ -83,10 +120,11 @@ $ pnpm run start:prod
 ```
 
 Using docker
+
 ```bash
 docker compose --env-file .env.docker up --build -d
 ```
-> Note: --env-file flag is to tell docker that use .env.docker file in build time, if is not set docker will use default .env instead and it'll use the default configuration where localhost is set, instead of database service set in compose.yml file.
+> Note: --env-file flag is to tell docker that use a diferent .env file in runtime. This example has two environments: local dev & docker dev, if you will only use docker you can remove --env-file flag.
 
 ## Test
 

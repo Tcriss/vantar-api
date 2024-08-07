@@ -1,73 +1,104 @@
 import { Injectable } from '@nestjs/common';
+import { Cache } from '@nestjs/cache-manager';
 
-import { ProductRepository } from '../repositories/product.repository';
 import { SelectedFields } from '../../domain/types';
 import { Pagination } from "../../../common/domain/types/pagination.type";
-import { SearchTerms } from '../../domain/types/search-terms.type';
 import { ProductEntity } from '../../domain/entities/product.entity';
+import { Repository } from '../../../common/domain/entities';
+import { Cached } from '../../../common/application/decorators';
 
 @Injectable()
 export class ProductService {
 
-    constructor(private repository: ProductRepository) { }
+    constructor(
+        @Cached() private cache: Cache,
+        private productRepository: Repository<ProductEntity>
+    ) { }
 
-    public async findAllProducts(page: string, inventoryId?: string, query?: SearchTerms, selected?: string): Promise<Partial<ProductEntity>[]> {
+    public async findAll(page: string, userId: string, query?: string, selected?: string): Promise<Partial<ProductEntity>[]> {
         const pagination: Pagination = {
             skip: +page.split(',')[0],
             take: +page.split(',')[1]
         };
         const fields: SelectedFields = selected ? {
             id: true,
-            inventory_id: selected.includes('inventory_id') ? true : false,
+            user_id: true,
             name: selected.includes('name') ? true : false,
-            stock: selected.includes('stock') ? true : false,
-            price: selected.includes('price') ? true : false,
-            unit_measure: selected.includes('unit_measure') ? true : false,
-            category_name: selected.includes('category_name') ? true : false,
-            created_at: selected.includes('created_at') ? true : false,
-            expiration: selected.includes('expiration') ? true : false,
+            price: selected.includes('price') ? true : false
         } : null;
+        await Promise.all([
+            await this.cache.set('products-pagination', pagination),
+            await this.cache.set('products-fields', fields)
+        ]);
+        const cachedPagination = await this.cache.get('products-pagination');
+        const cachedFields = await this.cache.get('products-fields');
+        const cachedProducts: Partial<ProductEntity>[] = await this.cache.get('products');
 
-        return this.repository.findAllProducts(pagination, inventoryId, fields, query);
+        if (cachedProducts && cachedFields == fields && cachedPagination == pagination) return cachedProducts;
+
+        const products = await this.productRepository.findAll(userId, pagination, fields, query);
+        await this.cache.set('products', products);
+
+        return products;
     }
 
-    public async findOneProduct(id: string, selected?: string): Promise<Partial<ProductEntity>> {
+    public async findOne(id: string, userId: string, selected?: string): Promise<Partial<ProductEntity>> {
         const fields: SelectedFields = selected ? {
             id: true,
-            inventory_id: selected.includes('inventory_id') ? true : false,
-            name: selected.includes('name') ? true : false,
-            stock: selected.includes('stock') ? true : false,
-            price: selected.includes('price') ? true : false,
-            unit_measure: selected.includes('unit_measure') ? true : false,
-            category_name: selected.includes('category_name') ? true : false,
-            created_at: selected.includes('created_at') ? true : false,
-            expiration: selected.includes('expiration') ? true : false,
+            user_id: true,
+            name: selected.includes('name'),
+            price: selected.includes('price')
         } : null;
+        await this.cache.set('product-fields', fields);
+        const cachedProduct: ProductEntity = await this.cache.get('product');
+        const cachedFields = await this.cache.get('product-fields');
 
-        const product: Partial<ProductEntity> = await this.repository.findOneProduct(id, fields);
+        if (cachedProduct && cachedProduct.id === id && cachedFields === fields) return cachedProduct;
+        
+        const product: Partial<ProductEntity> = await this.productRepository.findOne(id, fields);
 
-        if (!product) return undefined;
+        if (!product) return null;
+        if (!(product.user_id === userId)) return undefined;
+
+        await this.cache.set('product', product);
 
         return product;
     }
 
-    public async createProduct(product: Partial<ProductEntity>): Promise<ProductEntity> {
-        return this.repository.createProduct(product);
+    public async createMany(userId: string, products: Partial<ProductEntity>[]): Promise<number> {
+        products.map(product => product.user_id = userId);
+        const res = await this.productRepository.createMany(products);
+
+        return res['count'];
     }
 
-    public async updateProduct(id: string, product: Partial<ProductEntity>): Promise<ProductEntity> {
-        const isExist: boolean = await this.findOneProduct(id) ? true : false;
+    public async create(userId: string, product: Partial<ProductEntity>): Promise<ProductEntity> {
+        product.user_id = userId;
+        const res = await this.productRepository.create(product);
 
-        if (!isExist) return null;
-        
-        return this.repository.updateProduct(id, product);
+        return res as ProductEntity;
     }
 
-    public async deleteProduct(id: string): Promise<ProductEntity> {
-        const isExist: boolean = await this.findOneProduct(id) ? true : false;
-
-        if (!isExist) return null;
+    public async update(id: string, userId: string, product: Partial<ProductEntity>): Promise<ProductEntity> {
+        const originalProduct: Partial<ProductEntity> = await this.findOne(id, userId);
         
-        return this.repository.deleteProduct(id);
+        if (!originalProduct) return null;
+        if (originalProduct.user_id !== userId) return undefined;
+        
+        return this.productRepository.update(id, product);
+    }
+
+    public async delete(id: string, userId: string): Promise<ProductEntity> {
+        const product: Partial<ProductEntity> = await this.findOne(id, userId);
+        
+        if (!product) return null;
+        if (product.user_id !== userId) return undefined;
+
+        await Promise.all([
+            await this.cache.del('product-fields'),
+            await this.cache.del('product')
+        ]);
+        
+        return this.productRepository.delete(id);
     }
 }

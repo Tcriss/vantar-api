@@ -35,10 +35,14 @@ jobs:
     - name: 'Install dependencies 📦'
       run: pnpm install
 
+    - name: 'Prisma client'
+      run: pnpm dlx prisma generate
+
     - name: 'build'
       run: pnpm run build
 
     - name: 'Test 🧪'
       env: 
         HASH: ${{ secrets.HASH }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
       run: pnpm run test

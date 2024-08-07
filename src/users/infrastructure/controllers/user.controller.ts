@@ -1,13 +1,16 @@
-import { Body, Controller, Delete, Get, Headers, HttpException, HttpStatus, Patch, Post, Req } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { User } from '@prisma/client';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
-import { UserService } from '../../application/services/user.service';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import { UpdateUserDto } from '../dtos/update-user.dto';
+import { CreateUserDto, UpdateUserDto } from '../../domain/dtos';
+import { UserQueries } from '../../domain/types';
 import { UserEntity } from '../../domain/entities/user.entity';
-import { ReqUser } from '../../domain/types/req-user.type';
-import { PublicAccess } from '../../../common/application/decorators/public.decorator';
+import { UserService } from '../../application/services/user.service';
+import { PublicAccess, Role } from '../../../common/application/decorators';
+import { ApiCreateUser, ApiDeleteUser, ApiGetUser, ApiGetUsers, ApiUpdateUser } from '../../application/decorators';
+import { UserGuard } from '../../application/guards/user.guard';
+import { UserFieldsInterceptor } from '../../application/interceptors/user-fields.interceptor';
+import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
+import { Roles } from '../../../common/domain/enums';
 
 @ApiTags('Users')
 @Controller('users')
@@ -15,15 +18,24 @@ export class UserController {
 
     constructor(private service: UserService) { }
 
-    @ApiBearerAuth()
-    @ApiOperation({ summary: 'Gets a user' })
-    @ApiResponse({ type: UserEntity })
-    @ApiResponse({ status: 400, description: 'Invalid id' })
-    @ApiResponse({ status: 404, description: 'User not found' })
-    @ApiResponse({ status: 500, description: 'Server error' })
+    @ApiGetUsers()
+    @Role(Roles.ADMIN)
+    @UseGuards(RoleGuard)
+    @UseInterceptors(UserFieldsInterceptor)
     @Get()
-    public async find(@Req() req: ReqUser): Promise<UserEntity> {
-        const user: UserEntity = await this.service.findUser(req.user.id);
+    public async findAll(@Req() req: Request, @Query() queries?: UserQueries): Promise<UserEntity[] | Partial<UserEntity>[]> {
+        if (!req['user']) throw new HttpException('credentials missing', HttpStatus.BAD_REQUEST);
+
+        return this.service.findAllUsers(queries.page, queries.q);
+    }
+
+    @ApiGetUser()
+    @Role(Roles.ADMIN, Roles.CUSTOMER)
+    @UseGuards(RoleGuard, UserGuard)
+    @UseInterceptors(UserFieldsInterceptor)
+    @Get(':id')
+    public async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<UserEntity> {
+        const user: UserEntity = await this.service.findOneUser(id);
 
         if (user === null) throw new HttpException('User not found, invalid id', HttpStatus.BAD_REQUEST);
         if (user === undefined) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -31,19 +43,13 @@ export class UserController {
         return user;
     }
     
+    @ApiCreateUser()
     @PublicAccess()
-    @ApiOperation({ summary: 'Creates a user' })
-    @ApiResponse({ status: 201, description: 'User created succesfully' })
-    @ApiResponse({ status: 400, description: 'Validations error' })
-    @ApiResponse({ status: 409, description: 'User already exist or you are already logged, method not allowed' })
-    @ApiResponse({ status: 500, description: 'Internal server error' })
-    @ApiParam({ name: 'Authorization', required: false })
+    @UseInterceptors(UserFieldsInterceptor)
     @Post()
-    public async create(@Body() body: CreateUserDto, @Headers('Authorization') token?: string): Promise<UserEntity> {
-        const isLogged: boolean = token ? true : false;
-        const isExist: Boolean = await this.service.findUser(null, body.email) ? true : false;
+    public async create(@Body() body: CreateUserDto): Promise<UserEntity> {
+        const isExist: Boolean = await this.service.findOneUser(null, body.email) ? true : false;
 
-        if (isLogged) throw new HttpException('You are already authenticated', HttpStatus.NOT_ACCEPTABLE);
         if (isExist) throw new HttpException('This user already exists', HttpStatus.NOT_ACCEPTABLE);
 
         const user: UserEntity = await this.service.createUser(body);
@@ -51,36 +57,30 @@ export class UserController {
         return user;
     }
 
-    @ApiBearerAuth()
-    @ApiOperation({ summary: 'Updates a user' })
-    @ApiResponse({ status: 200, description: 'User created succesfully' })
-    @ApiResponse({ status: 400, description: 'Validations error' })
-    @ApiResponse({ status: 404, description: 'User not found' })
-    @ApiResponse({ status: 500, description: 'Internal server error' })
-    @Patch()
-    public async update(@Req() req: ReqUser, @Body() body: UpdateUserDto): Promise<UserEntity> {
-        const user: User = await this.service.updateUser(req.user.id, body);
+    @ApiUpdateUser()
+    @Role(Roles.ADMIN, Roles.CUSTOMER)
+    @UseGuards(RoleGuard, UserGuard)
+    @UseInterceptors(UserFieldsInterceptor)
+    @Patch(':id')
+    public async update(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: Request, @Body() body: UpdateUserDto): Promise<UserEntity> {
+        const user: UserEntity = await this.service.updateUser(id, body, req['user']['role']);
 
-        if (user === null) throw new HttpException('User not found, invalid id', HttpStatus.BAD_REQUEST);
+        if (user === null) throw new HttpException('Wrong credentials', HttpStatus.NOT_ACCEPTABLE);
         if (user === undefined) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         if (!user) throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
 
         return user;
     }
 
-    @ApiBearerAuth()
-    @ApiOperation({ summary: 'Deletes a user' })
-    @ApiResponse({ status: 200, description: 'User deleted succesfully' })
-    @ApiResponse({ status: 400, description: 'Validations error' })
-    @ApiResponse({ status: 404, description: 'User not found' })
-    @ApiResponse({ status: 500, description: 'Internal server error' })
-    @Delete()
-    public async delete(@Req() req: ReqUser): Promise<string> {
-        const res: string = await this.service.deleteUser(req.user.id);
+    @ApiDeleteUser()
+    @Role(Roles.ADMIN, Roles.CUSTOMER)
+    @UseGuards(RoleGuard, UserGuard)
+    @Delete(':id')
+    public async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<unknown> {
+        const res: string = await this.service.deleteUser(id);
 
-        if (res === null) throw new HttpException('User not found, invalid id', HttpStatus.BAD_REQUEST);
-        if (res === undefined) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        if (!res) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
-        return res;
+        return { message: res };
     }
 }

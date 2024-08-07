@@ -1,4 +1,10 @@
 export const mockAuthService = {
-    logIn: jest.fn(),
-    getToken: jest.fn()
+    login: jest.fn(),
+    refreshTokens: jest.fn(),
+    logOut: jest.fn(),
+    getTokens: jest.fn(),
+    updateRefreshToken: jest.fn(),
+    forgotPassword: jest.fn(),
+    activateAccount: jest.fn(),
+    resetPassword: jest.fn()
 };

@@ -1,2 +1,1 @@
-export { Token } from './token.type';
-export { Payload } from './payload.type';
+export * from './payload.type';
