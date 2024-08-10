@@ -21,7 +21,7 @@ This API implements the latest features on security in the Node environment.
 Some of those features are:
 
 - Hashing and encryptation.
-- Inputs validations and sanitaztion.
+- Inputs validations and sanitization.
 - Rate limit.
 - Caching.
 - Role and Owner Based Access Control.
