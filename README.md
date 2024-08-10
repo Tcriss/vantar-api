@@ -1,27 +1,54 @@
 # Vantar API
 
-This is [Vantar Project's]('https://github.com/HaroldMart/Vantar-Frontend') API, is still in development so docs may be incomplete.
+This is [Vantar Project's]('https://github.com/HaroldMart/Vantar-Frontend') API, an API to manage your inventory.
+
+## Features
+
+### 🎯 Key Features
+
+- **Manage Inventory:** Create an inventory from using products from your product list.
+
+- **Manage Products:** Create your product list to use it when creating an invoice or an inventory.
+
+- **Manage Invoices:** You can create invoices to save information about the sells you have.
+
+- **Mailing:** When you login or forgot your password, an e-mail will be sent to you.
+
+### 🔐 Security
+
+This API implements the latest features on security in the Node environment.
+
+Some of those features are:
+
+- Hashing and encryptation.
+- Inputs validations and sanitaztion.
+- Rate limit.
+- Caching.
+- Role and Owner Based Access Control.
+- Secure headers.
 
 ## Technologies used
 
-This app is made in NestJS using Onion Arquitecture.
+[![Stack](https://skillicons.dev/icons?i=nestjs,prisma,postgres,mongo,jest)](https://skillicons.dev)
+
+This app is made in NestJS following Clean Arquitecture principles alongside with Postgres and MongoDB.
 
 ### 📦 Dependencies
 
+- swc
 - Prisma
-- Class Validator
-- Class Transformer
-- UUID
-- Jest
-- Supertest
-- Eslint
-- Prettier
+- Class-validator
+- Class-transformer
+- Bcrypt
+- Passport
+- Resend
+- Helmet
 
 ##  Setup
 
 ### 📃 Requirements
 
-- NodeJS 20.13.1 with pnpm enbled
+- NodeJS 20.16.0 with pnpm enbled
 ```bash 
 corepack enable pnpm
 ```
