@@ -1,7 +1,7 @@
 ####################
 # Development Stage
 
-FROM node:20.11-alpine as development
+FROM node:20.16.0-alpine as development
 
 ARG DATABASE_URL
 ARG DB_USER
@@ -24,7 +24,7 @@ USER node
 #####################
 # Build Stage
 
-FROM node:20.11-alpine as build
+FROM node:20.16.0-alpine as build
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -48,7 +48,7 @@ USER node
 #####################
 # Production Stage
 
-FROM node:20.11-alpine as production
+FROM node:20.16.0-alpine as production
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"

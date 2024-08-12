@@ -122,11 +122,25 @@ describe('UserController', () => {
 
       expect(user).toEqual(userMock2)
     });
+
+    it('should throw an exception if name has numbers', async () => {
+      jest.spyOn(service, 'findOneUser').mockResolvedValue(undefined);
+      jest.spyOn(service, 'createUser').mockResolvedValue(userMock2);
+
+      try {
+        const { email, password } = userMock2;
+        await controller.create({ name: 'Albert0 Rojas4', email, password, role: Roles.CUSTOMER });  
+      } catch (err) {
+        expect(err).toBeInstanceOf(BadRequestException);
+        expect(err.message).toBe(['name must not contain numbers']);
+        expect(err.status).toBe(HttpStatus.BAD_REQUEST);
+      }
+    });
   });
 
   describe('Update User', () => {
     it('should update user', async  () => {
-      jest.spyOn(service, 'findOneUser').mockResolvedValue(userMock2)
+      jest.spyOn(service, 'findOneUser').mockResolvedValue(userMock2);
       jest.spyOn(service, 'updateUser').mockResolvedValue(userMock3);
 
       const { name } = userMock2;
@@ -170,6 +184,25 @@ describe('UserController', () => {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.message).toBe('User not found');
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
+      }
+    });
+
+    it('should throw an exception if name has numbers', async () => {
+      jest.spyOn(service, 'findOneUser').mockResolvedValue(userMock);
+      jest.spyOn(service, 'updateUser').mockResolvedValue(userMock3);
+
+      try {
+        await controller.update(userMock.id, {
+          user: {
+            id: userMock.id,
+            email: '',
+            name: '',
+            role: Roles.CUSTOMER
+        }} as unknown as Request, { name: 'R0nal2 Torres' });
+      } catch (err) {
+        expect(err).toBeInstanceOf(BadRequestException);
+        expect(err.message).toBe(['name must not contain numbers']);
+        expect(err.status).toBe(HttpStatus.BAD_REQUEST);
       }
     });
   });
