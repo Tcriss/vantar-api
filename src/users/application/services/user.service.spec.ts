@@ -10,9 +10,9 @@ import { mockUserRepository } from '../../domain/mocks/user-providers.mock';
 import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { Repository } from '../../../common/domain/entities';
-import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { emailServiceMock } from '../../../email/domain/mocks/email-provider.mock';
 import { EmailService } from '../../../email/application/email.service';
+import { SecurityModule } from '../../../security/security.module';
 
 describe('UserService', () => {
   let service: UserService;
@@ -31,12 +31,12 @@ describe('UserService', () => {
           provide: EmailService,
           useValue: emailServiceMock
         },
-        BcryptProvider,
         ConfigService
       ],
       imports: [
         JwtModule.register({ secret: 'JWT-SECRET' }),
         CacheModule.register({ ttl: (60 ^ 2) * 1000 }),
+        SecurityModule.register({ saltRounds: 5 })
       ]
     }).compile();
 

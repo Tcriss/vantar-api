@@ -4,12 +4,11 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { AuthService } from './auth.service';
 import { mockUserRepository } from '../../../users/domain/mocks/user-providers.mock';
-import { userMock, userMock1, userMock2 } from '../../../users/domain/mocks/user.mocks';
-import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
+import { userMock1, userMock2 } from '../../../users/domain/mocks/user.mocks';
+import { BcryptProvider } from '../../../security/application/providers/bcrypt.provider';
 import { Repository } from '../../../common/domain/entities';
 import { UserEntity } from '../../../users/domain/entities/user.entity';
 import { EmailModule } from 'src/email/email.module';
-import { EmailService } from 'src/email/application/email.service';
 
 describe('AuthService', () => {
   let userRepository: Repository<UserEntity>;
