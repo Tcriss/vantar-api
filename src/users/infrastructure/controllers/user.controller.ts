@@ -52,8 +52,8 @@ export class UserController {
     public async create(@Body() body: CreateUserDto, @Req() req?: Request): Promise<UserEntity> {
         const isExist: Boolean = await this.service.findOneUser(null, body.email) ? true : false;
 
-        if (req['user'] && req['user']['role'] === Roles.CUSTOMER) throw new HttpException('Cannot register when logged in', HttpStatus.FORBIDDEN);
-        if (!req['user'] && body.role === Roles.ADMIN) throw new HttpException('Not enough permissions', HttpStatus.NOT_ACCEPTABLE);
+        if (req && req['user'] && req['user']['role'] === Roles.CUSTOMER) throw new HttpException('Cannot register when logged in', HttpStatus.FORBIDDEN);
+        if (req && !req['user'] && body.role === Roles.ADMIN) throw new HttpException('Not enough permissions', HttpStatus.FORBIDDEN);
         if (isExist) throw new HttpException('This user already exists', HttpStatus.NOT_ACCEPTABLE);
 
         const user: UserEntity = await this.service.createUser(body);
