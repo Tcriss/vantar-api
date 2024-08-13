@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '@prisma/client';
+import { JwtModule } from '@nestjs/jwt';
 import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 
 import { UserController } from './user.controller';
@@ -8,6 +9,7 @@ import { mockUserService } from '../../domain/mocks/user-providers.mock';
 import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
 import { Roles } from '../../../common/domain/enums';
 import { UserEntity } from '../../domain/entities/user.entity';
+import { ConfigModule } from '@nestjs/config';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -20,6 +22,10 @@ describe('UserController', () => {
         useValue: mockUserService
       }],
       controllers: [UserController],
+      imports: [
+        JwtModule.register({ secret: 'JWT-SECRET' }),
+        ConfigModule
+      ]
     }).compile();
 
     controller = module.get<UserController>(UserController);
@@ -123,6 +129,31 @@ describe('UserController', () => {
       expect(user).toEqual(userMock2)
     });
 
+    it('should create an admin user when admin is logged in', async  () => {
+      jest.spyOn(service, 'findOneUser').mockResolvedValue(undefined);
+      jest.spyOn(service, 'createUser').mockResolvedValue(userMock2);
+
+      const { name, email, password } = userMock2;
+      const user: User = await controller.create(
+        {
+          name,
+          email,
+          password,
+          role: Roles.ADMIN
+        },
+        {
+          user: {
+            id: userMock.id,
+            name: userMock.name,
+            email: userMock.email,
+            role: Roles.ADMIN
+          }
+        } as unknown as Request
+      );
+
+      expect(user).toEqual(userMock2)
+    });
+
     it('should throw an exception if name has numbers', async () => {
       jest.spyOn(service, 'findOneUser').mockResolvedValue(undefined);
       jest.spyOn(service, 'createUser').mockResolvedValue(userMock2);
@@ -134,6 +165,53 @@ describe('UserController', () => {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.message).toBe(['name must not contain numbers']);
         expect(err.status).toBe(HttpStatus.BAD_REQUEST);
+      }
+    });
+
+    it('should throw an exception is customer is logged in', async () => {
+      jest.spyOn(service, 'findOneUser').mockResolvedValue(undefined);
+      jest.spyOn(service, 'createUser').mockResolvedValue(userMock2);
+
+      try {
+        const { email, password } = userMock2;
+        await controller.create(
+          {
+            name: 'Albert0 Rojas4',
+            role: Roles.CUSTOMER,  
+            email,
+            password
+          },
+          {
+            user: {
+              id: userMock1.id,
+              name: userMock1.name,
+              email: userMock1.email,
+              role: Roles.CUSTOMER
+            }
+          } as unknown as Request
+        );
+      } catch (err) {
+        expect(err).toBeInstanceOf(HttpException);
+        expect(err.message).toBe('Cannot register when logged in');
+        expect(err.status).toBe(HttpStatus.FORBIDDEN);
+      }
+    });
+
+    it('should throw an exception when creating admin by a no admin', async () => {
+      jest.spyOn(service, 'findOneUser').mockResolvedValue(undefined);
+
+      try {
+        const { email, password } = userMock2;
+        await controller.create({
+          name: 'Albert0 Rojas4',
+          role: Roles.ADMIN,  
+          email,
+          password
+        });
+      } catch (err) {
+        expect(err).toBeInstanceOf(HttpException);
+        expect(err.message).toBe('Not enough permissions');
+        expect(err.status).toBe(HttpStatus.FORBIDDEN);
       }
     });
   });
