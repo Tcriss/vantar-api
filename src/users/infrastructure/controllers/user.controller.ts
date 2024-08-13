@@ -11,6 +11,7 @@ import { UserGuard } from '../../application/guards/user.guard';
 import { UserFieldsInterceptor } from '../../application/interceptors/user-fields.interceptor';
 import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
 import { Roles } from '../../../common/domain/enums';
+import { CreateUserGuard } from '../../application/guards/create-user.guard';
 
 @ApiTags('Users')
 @Controller('users')
@@ -45,11 +46,14 @@ export class UserController {
     
     @ApiCreateUser()
     @PublicAccess()
+    @UseGuards(CreateUserGuard)
     @UseInterceptors(UserFieldsInterceptor)
     @Post()
-    public async create(@Body() body: CreateUserDto): Promise<UserEntity> {
+    public async create(@Body() body: CreateUserDto, @Req() req?: Request): Promise<UserEntity> {
         const isExist: Boolean = await this.service.findOneUser(null, body.email) ? true : false;
 
+        if (req['user'] && req['user']['role'] === Roles.CUSTOMER) throw new HttpException('Cannot register when logged in', HttpStatus.FORBIDDEN);
+        if (!req['user'] && body.role === Roles.ADMIN) throw new HttpException('Not enough permissions', HttpStatus.NOT_ACCEPTABLE);
         if (isExist) throw new HttpException('This user already exists', HttpStatus.NOT_ACCEPTABLE);
 
         const user: UserEntity = await this.service.createUser(body);
