@@ -1,0 +1,1 @@
+export const SECURITY_OPTIONS_KEY = Symbol('SECURITY_OPTIONS_KEY');

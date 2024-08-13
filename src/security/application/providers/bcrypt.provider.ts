@@ -1,23 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
+import { genSalt, hash, compare } from 'bcrypt';
+
+import { SecurityOptions } from '../decorators';
+import { SecurityModuleOptions } from '../../doamin';
 
 @Injectable()
 export class BcryptProvider {
 
-    constructor(private config: ConfigService) {}
+    constructor(@SecurityOptions() private options: SecurityModuleOptions) {}
 
     public async compare(value: string, hashedValue: string): Promise<boolean> {
-        return bcrypt.compare(value, hashedValue);
+        return compare(value, hashedValue);
     }
 
     public async hash(value: string): Promise<string> {
         const salt: string = await this.generateSalt();
 
-        return bcrypt.hash(value, salt);
+        return hash(value, salt);
     }
 
     private async generateSalt(): Promise<string> {
-        return bcrypt.genSalt(+this.config.get<number>('HASH'));
+        return genSalt(+this.options.saltRounds);
     }
 }

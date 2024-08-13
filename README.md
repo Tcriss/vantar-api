@@ -94,6 +94,10 @@ RT_SECRET = # Refresh_token secret to sign them
 ACTIVATION_SECRET = # Activation for activation token
 RESET_SECRET = # Secret for reset token validation
 
+#Default ADMIN
+USER_NAME = #admin name
+USER_MAIL = #admin mail
+USER_PW = #admin password
 ```
 
 ```dosini
@@ -126,6 +130,11 @@ SECRET = # Secret to sign access_tokens
 RT_SECRET = # Refresh_token secret to sign them
 ACTIVATION_SECRET = # Activation for activation token
 RESET_SECRET = # Secret for reset token validation
+
+#Default ADMIN
+USER_NAME = #admin name
+USER_MAIL = #admin mail
+USER_PW = #admin password
 ```
 ### 🔄️ Restore dependencies
 

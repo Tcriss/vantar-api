@@ -6,8 +6,8 @@ import { UserRepository } from './infrastructure/repositories/user.repository';
 import { UserService } from './application/services/user.service';
 import { UserController } from './infrastructure/controllers/user.controller';
 import { UserEntity } from './domain/entities/user.entity';
-import { CommonModule } from '../common/common.module';
 import { Repository } from '../common/domain/entities';
+import { SecurityModule } from '../security/security.module';
 
 @Module({
     providers: [
@@ -19,14 +19,20 @@ import { Repository } from '../common/domain/entities';
     ],
     controllers: [UserController],
     imports: [
-        CommonModule, 
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (config: ConfigService) => ({
                 secret: config.get('ACTIVATION_SECRET')
             })
-        })
+        }),
+        SecurityModule.registerAsync({
+            imports: [ConfigModule],
+            Inject: [ConfigService],
+            useFactory: (config: ConfigService) => ({
+              saltRounds: +config.get('HASH')
+            })
+        }),
     ]
 })
 export class UserModule {
