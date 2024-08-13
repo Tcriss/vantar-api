@@ -29,6 +29,7 @@ services:
         DB_USER: ${DB_USER}
         DB_PASSWORD: ${DB_PASSWORD}
         DB_NAME: ${DB_NAME}
+        DIRECT_URL: ${DIRECT_URL}
     container_name: vantar_api
     networks: 
       - vantar_net

@@ -77,6 +77,7 @@ DB_NAME = #db name
 
 ## connection
 DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@localhost:5434/${DB_NAME}?schema=public
+DIRECT_URL = # only if using supabase
 MONGO_URI = # mongo ulr
 MONGO_DB_NAME = # mongo db database
 
@@ -95,9 +96,9 @@ ACTIVATION_SECRET = # Activation for activation token
 RESET_SECRET = # Secret for reset token validation
 
 #Default ADMIN
-USER_NAME = #admin name
-USER_MAIL = #admin mail
-USER_PW = #admin password
+USER_NAME = # admin name
+USER_MAIL = # admin mail
+USER_PW = # admin password
 ```
 
 ```dosini
@@ -114,6 +115,7 @@ DB_NAME = # postgres name
 
 # replace connection variable where host name is localhost and port
 DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?schema=public
+DIRECT_URL = # only if using supabase
 MONGO_URI = # mongo database url
 MONGO_DB_NAME = # mongoDB name
 
@@ -132,9 +134,9 @@ ACTIVATION_SECRET = # Activation for activation token
 RESET_SECRET = # Secret for reset token validation
 
 #Default ADMIN
-USER_NAME = #admin name
-USER_MAIL = #admin mail
-USER_PW = #admin password
+USER_NAME = # admin name
+USER_MAIL = # admin mail
+USER_PW = # admin password
 ```
 ### 🔄️ Restore dependencies
 
