@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsEnum, IsNotEmpty, IsString, IsStrongPassword, Matches, MaxLength, MinLength } from "class-validator";
 
 import { Roles } from "../../../common/domain/enums";
-import { nameRegex, pwRegex } from "../../../common/application/constants";
+import { nameRegex, pwRegex } from "../../../security/application/constants";
 
 export class CreateUserDto {
     @ApiProperty({ example: 'Haroldy Martinez', description: 'User name' })
@@ -20,7 +20,6 @@ export class CreateUserDto {
 
     @ApiProperty({ description: 'User Password' })
     @IsStrongPassword()
-    @Matches(pwRegex, '', { message: 'Invalid password' })
     @MinLength(6)
     @MaxLength(130)
     @IsNotEmpty()
