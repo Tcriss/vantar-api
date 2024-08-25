@@ -12,7 +12,6 @@ import { Roles } from '../../../common/domain/enums';
 describe('AuthController', () => {
   let service: AuthService;
   let controller: AuthController;
-  const mockReq = { user: { id: '123456' } } as unknown as Request;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

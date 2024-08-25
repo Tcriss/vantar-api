@@ -20,7 +20,7 @@ export class CreateUserGuard implements CanActivate {
   }
 
   private async isLoggedIn(req: Request): Promise<boolean> {
-    return req.headers['authorization'] ? true : false;
+    return !!req.headers['authorization'];
   }
 
   private async getUserInfo(req: Request): Promise<boolean> {

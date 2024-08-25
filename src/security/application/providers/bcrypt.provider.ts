@@ -16,6 +16,7 @@ export class BcryptProvider {
     public async hash(value: string): Promise<string> {
         const salt: string = await this.generateSalt();
 
+        // deepcode ignore WrongNumberOfArguments: hash function from bcrypt accepts to args, one is the value ti be hash, the other is the saltRounds
         return hash(value, salt);
     }
 

@@ -10,17 +10,9 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
   catch(exception: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost) {
     const ctx: HttpArgumentsHost = host.switchToHttp();
     const response: Response = ctx.getResponse<Response>();
-    const message: string = exception.message.replace(/\n/g, '');
 
     switch (exception.code) {
       case 'P1000':
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: exception.message,
-        });
-
-        break;
-      case 'P1001':
         response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
           message: exception.message,
