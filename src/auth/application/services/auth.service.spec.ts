@@ -8,7 +8,7 @@ import { userMock1, userMock2 } from '../../../users/domain/mocks/user.mocks';
 import { BcryptProvider } from '../../../security/application/providers/bcrypt.provider';
 import { Repository } from '../../../common/domain/entities';
 import { UserEntity } from '../../../users/domain/entities/user.entity';
-import { EmailModule } from 'src/email/email.module';
+import { EmailModule } from '../../../email/email.module';
 
 describe('AuthService', () => {
   let userRepository: Repository<UserEntity>;
@@ -140,7 +140,6 @@ describe('AuthService', () => {
   });
 
   describe('Forgot Password', () => {
-    const token: string = 'TOKEN';
     const hashedToken: string = 'HASHED_TOKEN';
 
     it('should pass', async () => {
