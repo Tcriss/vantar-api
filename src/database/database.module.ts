@@ -9,10 +9,10 @@ import { PrismaClientExceptionFilter } from './application/filters/prisma-client
 
 @Module({})
 export class DatabaseModule {
-    public static forRoot(options: { isGlobal: boolean }): DynamicModule {
+    public static forRoot(options: { isGlobal?: boolean }): DynamicModule {
         return {
             module: DatabaseModule,
-            global: options.isGlobal,
+            global: options.isGlobal || false,
             providers: [
                 PrismaProvider,
                 {
@@ -24,10 +24,10 @@ export class DatabaseModule {
         }
     }
 
-    public static forRootAsync(options: { isGlobal: boolean }): DynamicModule {
+    public static forRootAsync(options: { isGlobal?: boolean }): DynamicModule {
         return {
             module: DatabaseModule,
-            global: options.isGlobal,
+            global: options.isGlobal || false,
             providers: [
                 PrismaProvider,
                 {
