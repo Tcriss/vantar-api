@@ -1,1 +1,1 @@
-export * from './user-queries.type';
+export * from './user-params.type';

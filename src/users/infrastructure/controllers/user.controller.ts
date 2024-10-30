@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseU
 import { ApiTags } from '@nestjs/swagger';
 
 import { CreateUserDto, UpdateUserDto } from '../../domain/dtos';
-import { UserQueries } from '../../domain/types';
+import { UserParams } from '../../domain/types';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { UserService } from '../../application/services/user.service';
 import { PublicAccess, Role } from '../../../common/application/decorators';
@@ -17,17 +17,22 @@ import { CreateUserGuard } from '../../application/guards/create-user.guard';
 @Controller('users')
 export class UserController {
 
-    constructor(private service: UserService) { }
+    constructor(private readonly service: UserService) { }
 
     @ApiGetUsers()
     @Role(Roles.ADMIN)
     @UseGuards(RoleGuard)
     @UseInterceptors(UserFieldsInterceptor)
     @Get()
-    public async findAll(@Req() req: Request, @Query() queries?: UserQueries): Promise<UserEntity[] | Partial<UserEntity>[]> {
+    public async findAll(@Req() req: Request, @Query() queries?: UserParams): Promise<UserEntity[] | Partial<UserEntity>[]> {
         if (!req['user']) throw new HttpException('credentials missing', HttpStatus.BAD_REQUEST);
 
-        return this.service.findAllUsers(queries.page, queries.q);
+        const { page, limit, q } = queries;
+
+        return this.service.findAllUsers({
+            take: (page - 1) * limit,
+            skip: +limit || 10
+        }, q);
     }
 
     @ApiGetUser()
@@ -50,7 +55,7 @@ export class UserController {
     @UseInterceptors(UserFieldsInterceptor)
     @Post()
     public async create(@Body() body: CreateUserDto, @Req() req?: Request): Promise<UserEntity> {
-        const isExist: Boolean = await this.service.findOneUser(null, body.email) ? true : false;
+        const isExist: boolean = !!await this.service.findOneUser(null, body.email);
 
         if (req && req['user'] && req['user']['role'] === Roles.CUSTOMER) throw new HttpException('Cannot register when logged in', HttpStatus.FORBIDDEN);
         if (req && !req['user'] && body.role === Roles.ADMIN) throw new HttpException('Not enough permissions', HttpStatus.FORBIDDEN);

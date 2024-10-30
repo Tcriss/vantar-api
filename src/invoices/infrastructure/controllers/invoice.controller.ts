@@ -1,10 +1,11 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-import { InvoiceService } from '../../application/services/invoice.service';
-import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
+import { InvoiceQueries } from '../../domain/types';
 import { InvoiceEntity } from '../../domain/entities/invoice.entity';
 import { CreateInvoiceDto, UpdateInvoiceDto } from '../../domain/dtos';
+import { InvoiceService } from '../../application/services/invoice.service';
+import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
 import { ApiCreateInvoice, ApiDeleteInvoice, ApiGetInvoice, ApiGetInvoices, ApiUpdateInvoice } from '../../application/decorators';
 import { Roles } from '../../../common/domain/enums';
 import { Role } from '../../../common/application/decorators';
@@ -16,14 +17,16 @@ import { Role } from '../../../common/application/decorators';
 @Controller('invoices')
 export class InvoiceController {
 
-    constructor(private service: InvoiceService) {}
+    constructor(private readonly service: InvoiceService) {}
 
     @ApiGetInvoices()
     @Get()
-    public async findAll(@Req() req: Request, @Query() queries: {page: string, fields?: string}): Promise<Partial<InvoiceEntity>[]> {
+    public async findAll(@Req() req: Request, @Query() queries: InvoiceQueries): Promise<Partial<InvoiceEntity>[]> {
         if (!queries.page) throw new HttpException('page query param is missing', HttpStatus.BAD_REQUEST);
 
-        return this.service.findAllInvoices(req['user']['id'], queries.page, queries.fields);
+        const { page, limit, fields } = queries;
+
+        return this.service.findAllInvoices(req['user']['id'], { take: page || 1, skip: limit || 10 }, fields);
     }
 
     @ApiGetInvoice()

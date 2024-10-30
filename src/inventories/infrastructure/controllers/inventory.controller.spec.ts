@@ -44,7 +44,7 @@ describe('InventoryController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      } as unknown as Request, {page: '0,3'});
+      } as unknown as Request, { page: 1, limit: 10 });
 
       expect(res.length).toBe(2);
       expect(res).toStrictEqual([ mockInventory1, mockInventory3 ]);
@@ -60,7 +60,7 @@ describe('InventoryController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      } as unknown as Request, {page: '0,3', fields: 'name, contact, userId' });
+      } as unknown as Request, { page: 1, limit: 10, fields: 'name, contact, userId' });
 
       expect(res.length).toBe(2);
       expect(res).toStrictEqual([ mockPartialInventory1, mockPartialInventory3 ]);

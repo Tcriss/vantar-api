@@ -13,6 +13,7 @@ import { Repository } from '../../../common/domain/entities';
 import { emailServiceMock } from '../../../email/domain/mocks/email-provider.mock';
 import { EmailService } from '../../../email/application/email.service';
 import { SecurityModule } from '../../../security/security.module';
+import { Pagination } from 'src/common/domain/types';
 
 describe('UserService', () => {
   let service: UserService;
@@ -53,7 +54,7 @@ describe('UserService', () => {
     it('should fetch all users', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([ userMock, userMock1, userMock2, userMock3 ]);
 
-      const res: Partial<UserEntity>[] = await service.findAllUsers(userMock1.role, '0,10');
+      const res: Partial<UserEntity>[] = await service.findAllUsers({ take: 10, skip: 0 }, '0,10');
 
       expect(res).toEqual([ userMock, userMock1, userMock2, userMock3 ]);
     });
@@ -62,7 +63,7 @@ describe('UserService', () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([ userMock, userMock1 ]);
 
       const q: string = 'A'
-      const res: Partial<UserEntity>[] = await service.findAllUsers('0,10', q);
+      const res: Partial<UserEntity>[] = await service.findAllUsers({ take: 10, skip: 0 }, q);
 
       expect(res).toEqual([ userMock, userMock1 ]);
       expect(res[0].name.includes(q) && res[1].name.includes(q)).toBeTruthy();

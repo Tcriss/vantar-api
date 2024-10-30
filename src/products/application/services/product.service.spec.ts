@@ -38,7 +38,7 @@ describe('ProductService', () => {
     it('should fetch all products', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([productMock1, productMock2, productMock3]);
 
-      const res: Partial<ProductEntity>[] = await service.findAll('0,10', user_id);
+      const res: Partial<ProductEntity>[] = await service.findAll({ take: 10, skip: 0 }, user_id);
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([productMock1, productMock2, productMock3]);
@@ -47,7 +47,7 @@ describe('ProductService', () => {
     it('should fetch all products from pagination', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([productMock2]);
 
-      const res: Partial<ProductEntity>[] = await service.findAll('1,1', user_id);
+      const res: Partial<ProductEntity>[] = await service.findAll({ take: 10, skip: 0 }, user_id);
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([productMock2]);
@@ -56,7 +56,7 @@ describe('ProductService', () => {
     it('should fetch all products with some fields', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([partialProductMock1, partialProductMock2]);
 
-      const res: Partial<ProductEntity>[] = await service.findAll('1,1', 'name, inventory_id');
+      const res: Partial<ProductEntity>[] = await service.findAll({ take: 10, skip: 0 }, 'name, inventory_id');
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([partialProductMock1, partialProductMock2]);

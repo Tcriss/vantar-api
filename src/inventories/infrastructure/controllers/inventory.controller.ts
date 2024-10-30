@@ -25,7 +25,9 @@ export class InventoryController {
     public async findAll(@Req() req: Request, @Query() queries: InventoryQueries): Promise<Partial<InventoryEntity>[]> {
         if (!queries.page || !queries) throw new HttpException('page query param is missing in url', HttpStatus.BAD_REQUEST);
 
-        return this.service.findAllInventories(req['user']['id'], queries.page, queries.fields);
+        const { page, limit, q, fields } = queries;
+
+        return this.service.findAllInventories(req['user']['id'], { take: (page - 1) * limit, skip: limit || 10}, fields);
     }
 
     @ApiGetInventory()

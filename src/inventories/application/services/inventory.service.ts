@@ -15,16 +15,12 @@ import { Cached } from '../../../common/application/decorators';
 export class InventoryService {
 
     constructor(
-        private inventoryRepository: Repository<InventoryEntity>,
-        @ProductListRepository() private productListRepository: Repository<ProductList>,
-        @Cached() private cache: Cache
+        private readonly inventoryRepository: Repository<InventoryEntity>,
+        @ProductListRepository() private readonly productListRepository: Repository<ProductList>,
+        @Cached() private readonly cache: Cache
     ) {}
 
-    public async findAllInventories(userId: string, page: string, selected?: string): Promise<Partial<InventoryEntity>[]> {
-        const pagination: Pagination = {
-            skip: +page.split(',')[0],
-            take: +page.split(',')[1]
-        };
+    public async findAllInventories(userId: string, page: Pagination, selected?: string): Promise<Partial<InventoryEntity>[]> {
         const fields: SelectedFields = selected ? {
             id: true,
             user_id: true,
@@ -34,16 +30,16 @@ export class InventoryService {
             created_at: selected.includes('created_at')
         } : null;
         await Promise.all([
-            await this.cache.set('inventories-pagination', pagination),
+            await this.cache.set('inventories-pagination', page),
             await this.cache.set('inventories-fields', fields)
         ]);
-        const cachedPagination = await this.cache.get('inventories-pagination');
+        const cachedPagination: Pagination = await this.cache.get('inventories-pagination');
         const cachedFields = await this.cache.get('inventories-fields');
         const cachedInventories: Partial<InventoryEntity>[] = await this.cache.get('inventories');
 
-        if (cachedInventories && cachedFields == fields && cachedPagination == pagination) return cachedInventories;
+        if (cachedInventories && cachedFields == fields && cachedPagination == page) return cachedInventories;
 
-        const inventories = await this.inventoryRepository.findAll(userId, pagination, fields);
+        const inventories = await this.inventoryRepository.findAll(userId, page, fields);
         await this.cache.set('inventories', inventories);
 
         return inventories;

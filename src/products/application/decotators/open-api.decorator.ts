@@ -11,7 +11,8 @@ export const ApiGetProducts = () => applyDecorators(
     ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized' }),
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Not enough permissions' }),
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
-    ApiQuery({ name: 'page', required: true, example: '0, 10' }),
+    ApiQuery({ name: 'page', required: true, example: 10, description: 'The page of result you want to fetch' }),
+    ApiQuery({ name: 'limit', required: false, example: 2, description: 'How many products will be fetch per page' }),
     ApiQuery({ name: 'q', required: false, description: 'search param to filter results' }),
     ApiQuery({ name: 'selected', required: false, description: 'fields you want to select from response' })
 );

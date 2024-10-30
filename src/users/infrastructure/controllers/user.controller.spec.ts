@@ -46,7 +46,7 @@ describe('UserController', () => {
           email: userMock.email,
           name: userMock.name,
           role: Roles.ADMIN
-      }} as unknown as Request, { page: '0,10' })
+      }} as unknown as Request, { page: 1, limit: 10 })
 
       expect(users).toStrictEqual([ userMock, userMock1, userMock2, userMock3 ]);
     });
@@ -62,8 +62,7 @@ describe('UserController', () => {
           name: userMock.name,
           role: Roles.ADMIN
       }} as unknown as Request, {
-        page: '0,10',
-        q: q
+        page: 1, limit: 10, q: q
       });
 
       expect(users).toStrictEqual([ userMock, userMock1 ]);
@@ -78,7 +77,7 @@ describe('UserController', () => {
             email: userMock.email,
             name: userMock.name,
             role: Roles.ADMIN
-        }} as unknown as Request, { page: '0,10' })
+        }} as unknown as Request, { page: 1, limit: 10 })
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);

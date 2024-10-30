@@ -44,7 +44,7 @@ describe('InvoiceController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      } as unknown as Request, { page: '0,10' });
+      } as unknown as Request, { page: 1, limit: 10 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([invoiceMock, invoiceMock1]);
@@ -60,7 +60,7 @@ describe('InvoiceController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      } as unknown as Request, { page: '1,1' });
+      } as unknown as Request, { page: 1, limit: 10 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([invoiceMock1]);
@@ -80,7 +80,7 @@ describe('InvoiceController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      } as unknown as Request, { page: '0,10', fields: 'id, user_id' });
+      } as unknown as Request, { page: 1, limit: 10 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([

@@ -14,16 +14,12 @@ import { Cached } from '../../../common/application/decorators';
 export class InvoiceService {
 
     constructor(
-        private invoiceRepository: Repository<InvoiceEntity>,
-        @ProductListRepository() private productListRepository: Repository<ProductList>,
-        @Cached() private cache: Cache
+        private readonly invoiceRepository: Repository<InvoiceEntity>,
+        @ProductListRepository() private readonly productListRepository: Repository<ProductList>,
+        @Cached() private readonly cache: Cache
     ) {}
 
-    public async findAllInvoices(userId: string, page: string, selected?: string): Promise<Partial<InvoiceEntity>[]> {
-        const pagination: Pagination = {
-            skip: +page.split(',')[0],
-            take: +page.split(',')[1]
-        };
+    public async findAllInvoices(userId: string, page: Pagination, selected?: string): Promise<Partial<InvoiceEntity>[]> {
         const selectedFields: SelectedFields = selected ? {
             id: true,
             user_id: true,
@@ -31,16 +27,16 @@ export class InvoiceService {
             total: selected.includes('total'),
         } : null;
         await Promise.all([
-            await this.cache.set('invoices-pagination', pagination),
+            await this.cache.set('invoices-pagination', page),
             await this.cache.set('invoices-fields', selectedFields)
         ]);
-        const cachedPagination = await this.cache.get('invoices-pagination');
+        const cachedPagination: Pagination = await this.cache.get('invoices-pagination');
         const cachedFields = await this.cache.get('invoices-fields');
         const cachedInvoices: Partial<InvoiceEntity>[] = await this.cache.get('invoices');
 
-        if (cachedInvoices && cachedFields == selectedFields && cachedPagination == pagination) return cachedInvoices;
+        if (cachedInvoices && cachedFields == selectedFields && cachedPagination == page) return cachedInvoices;
 
-        const invoices = await this.invoiceRepository.findAll(userId, pagination, selectedFields);
+        const invoices = await this.invoiceRepository.findAll(userId, page, selectedFields);
         await this.cache.set('invoices', invoices);
 
         return invoices;

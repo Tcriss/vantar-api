@@ -1,6 +1,5 @@
-export type InventoryQueries = {
+export type InvoiceQueries = {
     page?: number,
     limit?: number,
-    q?: string,
     fields?: string
 }

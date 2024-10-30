@@ -14,22 +14,17 @@ import { Cached } from '../../../common/application/decorators';
 @Injectable()
 export class UserService {
 
-    private logger = new Logger(UserService.name);
+    private readonly logger = new Logger(UserService.name);
 
     constructor(
-        @Cached() private cache: Cache,
-        private repository: Repository<UserEntity>,
-        private emailService: EmailService,
-        private bcrypt: BcryptProvider,
-        private jwt: JwtService
+        @Cached() private readonly cache: Cache,
+        private readonly repository: Repository<UserEntity>,
+        private readonly emailService: EmailService,
+        private readonly bcrypt: BcryptProvider,
+        private readonly jwt: JwtService
     ) {}
 
-    public async findAllUsers(page: string, query?: string): Promise<UserEntity[] | Partial<UserEntity>[]> {
-        const pagination: Pagination = {
-            skip: +page.split(',')[0],
-            take: +page.split(',')[1]
-        };
-        
+    public async findAllUsers(pagination: Pagination, query?: string): Promise<UserEntity[] | Partial<UserEntity>[]> {
         return this.repository.findAll(pagination, query);
     }
 

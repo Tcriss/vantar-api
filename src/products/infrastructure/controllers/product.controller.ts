@@ -17,14 +17,24 @@ import { Roles } from '../../../common/domain/enums';
 @Controller('products')
 export class ProductController {
 
-    constructor(private productService: ProductService) { }
+    constructor(private readonly productService: ProductService) { }
 
     @ApiGetProducts()
     @Get()
     public async findAll(@Req() req: Request, @Query() queries: ProductQueries): Promise<Partial<ProductEntity>[]> {
         if (!queries.page) throw new HttpException('page query param is missing', HttpStatus.BAD_REQUEST);
 
-        return this.productService.findAll(queries.page, req['user']['id'], queries.q, queries.selected);
+        const { page, limit, selected, q } = queries;
+
+        return this.productService.findAll(
+            {
+                take: page || 1,
+                skip: limit || 10
+            }, 
+            req['user']['id'],
+            q,
+            selected
+        );
     }
 
     @ApiGetProduct()    

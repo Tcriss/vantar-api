@@ -47,7 +47,7 @@ describe('InvoiceService', () => {
     it('should fetch all invoices', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([invoiceMock, invoiceMock1, invoiceMock2]);
 
-      const res: Partial<InvoiceEntity>[] = await service.findAllInvoices('0,10', user_id);
+      const res: Partial<InvoiceEntity>[] = await service.findAllInvoices(user_id, { take: 10, skip: 0 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([invoiceMock, invoiceMock1, invoiceMock2]);
@@ -56,7 +56,7 @@ describe('InvoiceService', () => {
     it('should fetch all invoices from pagination', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([invoiceMock2]);
 
-      const res: Partial<InvoiceEntity>[] = await service.findAllInvoices(user_id, '1,1');
+      const res: Partial<InvoiceEntity>[] = await service.findAllInvoices(user_id, { take: 10, skip: 0 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([invoiceMock2]);
@@ -65,7 +65,7 @@ describe('InvoiceService', () => {
     it('should fetch all invoices with some fields', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([partialInvoiceMock, partialInvoiceMock1]);
 
-      const res: Partial<InvoiceEntity>[] = await service.findAllInvoices(user_id, '1,1', 'name, inventory_id');
+      const res: Partial<InvoiceEntity>[] = await service.findAllInvoices(user_id, { take: 10, skip: 0 }, 'name, inventory_id');
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([partialInvoiceMock, partialInvoiceMock1]);

@@ -10,7 +10,8 @@ export const ApiGetInventories = () => applyDecorators(
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Page param missing' }),
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
-    ApiQuery({ name: 'page', example: '0, 10', required: true, description: 'Field that let you paginate the data, take 10 (inventories), skip 1 (skip only one inventory)' }),
+    ApiQuery({ name: 'page', required: true, example: 10, description: 'The page of result you eant to fetch' }),
+    ApiQuery({ name: 'limit', required: false, example: 2, description: 'How many inventories will be fetch per page' }),
     ApiQuery({ name: 'fields', required: false, description: 'Fields you want to fetch in your response' }),
     //ApiQuery({ name: 'q', required: false, description: 'Query earch term' })
 );

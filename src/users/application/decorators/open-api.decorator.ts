@@ -12,7 +12,8 @@ export const ApiGetUsers = () => applyDecorators(
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Server error' }),
-    ApiQuery({ name: 'page', required: true, example: '0, 10', description: 'pagination settings, first value is skip, and second is take' }),
+    ApiQuery({ name: 'page', required: true, example: 10, description: 'The page of result you want to fetch' }),
+    ApiQuery({ name: 'limit', required: false, example: 2, description: 'How many users will be fetch per page' }),
     ApiQuery({ name: 'q', required: false, description: 'search param to filter results' })
 );
 

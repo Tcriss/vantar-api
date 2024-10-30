@@ -38,7 +38,7 @@ describe('ProductController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      } as unknown as Request, { page: '0,10' });
+      } as unknown as Request, { page: 1, limit: 10 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([productMock1, productMock6]);
@@ -54,7 +54,7 @@ describe('ProductController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      } as unknown as Request, { page: '1,1' });
+      } as unknown as Request, { page: 1, limit: 10 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([productMock2]);
@@ -70,7 +70,7 @@ describe('ProductController', () => {
           email: '',
           role: Roles.CUSTOMER
         }
-      } as unknown as Request, { page: '0,10', selected: 'name, user_id' });
+      } as unknown as Request, { page: 1, limit: 10, selected: 'name, user_id' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([partialProductMock1, partialProductMock2]);
