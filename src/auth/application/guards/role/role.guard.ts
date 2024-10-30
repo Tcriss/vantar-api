@@ -7,7 +7,7 @@ import { Roles } from '../../../../common/domain/enums';
 @Injectable()
 export class RoleGuard implements CanActivate {
 
-  constructor(private reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: Request = context.switchToHttp().getRequest();

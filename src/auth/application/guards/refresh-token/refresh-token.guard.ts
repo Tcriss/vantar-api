@@ -5,7 +5,7 @@ import { AuthService } from '../../services/auth.service';
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
 
-    constructor(private authService: AuthService) {}
+    constructor(private readonly authService: AuthService) {}
 
     public async canActivate(context: ExecutionContext, ): Promise<boolean> {
         const req: Request = context.switchToHttp().getRequest();

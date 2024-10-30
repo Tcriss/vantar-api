@@ -7,7 +7,7 @@ import { SecurityModuleOptions } from '../../doamin';
 @Injectable()
 export class BcryptProvider {
 
-    constructor(@SecurityOptions() private options: SecurityModuleOptions) {}
+    constructor(@SecurityOptions() private readonly options: SecurityModuleOptions) {}
 
     public async compare(value: string, hashedValue: string): Promise<boolean> {
         return compare(value, hashedValue);

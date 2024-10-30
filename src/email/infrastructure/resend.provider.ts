@@ -6,7 +6,7 @@ import { EmailOptions } from '../application/decorators/email-options.decorator'
 
 @Injectable()
 export class ResendProvider extends ResendProviderEntity {
-    constructor(@EmailOptions() public options: EmailModuleOptions) {
+    constructor(@EmailOptions() public readonly options: EmailModuleOptions) {
         super(options.apiKey)
     }
 }

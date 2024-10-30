@@ -12,11 +12,11 @@ import { EmailService } from '../../../email/application/email.service';
 export class AuthService {
 
     constructor(
-        private userRepository: Repository<UserEntity>,
-        private emailService: EmailService,
-        private config: ConfigService,
-        private bcrypt: BcryptProvider,
-        private jwt: JwtService
+        private readonly userRepository: Repository<UserEntity>,
+        private readonly emailService: EmailService,
+        private readonly config: ConfigService,
+        private readonly bcrypt: BcryptProvider,
+        private readonly jwt: JwtService
     ) {}
 
     public async login(credentials: Partial<UserEntity>): Promise<AuthEntity> {

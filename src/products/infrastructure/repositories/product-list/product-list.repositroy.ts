@@ -11,7 +11,7 @@ export class ProductListRepository implements Partial<Repository<ProductList>> {
 
     collection: Collection<ProductList>;
 
-    constructor(private mongo: MongoProvider<ProductList>) {
+    constructor(private readonly mongo: MongoProvider<ProductList>) {
         this.collection = this.mongo.database();
     }
  

@@ -7,7 +7,10 @@ import { AuthService } from '../../services/auth.service';
 @Injectable()
 export class AccessTokenGuard implements CanActivate { 
 
-    constructor(private reflector: Reflector, private authService: AuthService) {}
+    constructor(
+        private readonly reflector: Reflector,
+        private readonly authService: AuthService
+    ) {}
 
     public async canActivate(context: ExecutionContext): Promise<boolean> {
         const isPublic: boolean = this.reflector.getAllAndOverride<boolean>(PUBLIC_KEY, [

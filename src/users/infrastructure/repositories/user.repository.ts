@@ -8,7 +8,7 @@ import { Repository } from "../../../common/domain/entities";
 @Injectable()
 export class UserRepository implements Partial<Repository<UserEntity>> {
 
-    constructor(private prisma: PrismaProvider) { }
+    constructor(private readonly prisma: PrismaProvider) { }
 
     public async findAll(page: Pagination, query?: string): Promise<UserEntity[]> {
         return this.prisma.user.findMany({

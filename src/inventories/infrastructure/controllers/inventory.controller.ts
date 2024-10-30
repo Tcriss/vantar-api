@@ -18,12 +18,12 @@ import { Roles } from '../../../common/domain/enums';
 @Controller('inventories')
 export class InventoryController {
 
-    constructor(private service: InventoryService) { }
+    constructor(private readonly service: InventoryService) { }
 
     @ApiGetInventories()
     @Get()
     public async findAll(@Req() req: Request, @Query() queries: InventoryQueries): Promise<Partial<InventoryEntity>[]> {
-        if (!queries.page || !queries) throw new HttpException('page query param is missing in url', HttpStatus.BAD_REQUEST);
+        if (!queries.limit || !queries.page) throw new HttpException("'page' or 'limit' param missing", HttpStatus.BAD_REQUEST);
 
         const { page, limit, q, fields } = queries;
 

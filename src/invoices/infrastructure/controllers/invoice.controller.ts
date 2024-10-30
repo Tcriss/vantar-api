@@ -22,11 +22,11 @@ export class InvoiceController {
     @ApiGetInvoices()
     @Get()
     public async findAll(@Req() req: Request, @Query() queries: InvoiceQueries): Promise<Partial<InvoiceEntity>[]> {
-        if (!queries.page) throw new HttpException('page query param is missing', HttpStatus.BAD_REQUEST);
+        if (!queries.limit || !queries.page) throw new HttpException("'page' or 'limit' param missing", HttpStatus.BAD_REQUEST);
 
         const { page, limit, fields } = queries;
 
-        return this.service.findAllInvoices(req['user']['id'], { take: page || 1, skip: limit || 10 }, fields);
+        return this.service.findAllInvoices(req['user']['id'], { take: (page - 1) * limit, skip: limit }, fields);
     }
 
     @ApiGetInvoice()

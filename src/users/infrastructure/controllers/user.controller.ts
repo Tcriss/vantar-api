@@ -26,12 +26,13 @@ export class UserController {
     @Get()
     public async findAll(@Req() req: Request, @Query() queries?: UserParams): Promise<UserEntity[] | Partial<UserEntity>[]> {
         if (!req['user']) throw new HttpException('credentials missing', HttpStatus.BAD_REQUEST);
+        if (!queries.limit || !queries.page) throw new HttpException("'page' or 'limit' param missing", HttpStatus.BAD_REQUEST);
 
         const { page, limit, q } = queries;
 
         return this.service.findAllUsers({
-            take: (page - 1) * limit,
-            skip: +limit || 10
+            skip: (page - 1) * limit,
+            take: limit ? +limit : 10
         }, q);
     }
 

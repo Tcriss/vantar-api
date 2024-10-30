@@ -15,7 +15,7 @@ import { PublicAccess } from '../../../common/application/decorators';
 @Controller('auth')
 export class AuthController {
 
-    constructor(private authService: AuthService) {}
+    constructor(private readonly authService: AuthService) {}
 
     @ApiLogin()
     @HttpCode(HttpStatus.OK)

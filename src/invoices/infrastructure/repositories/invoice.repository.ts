@@ -9,7 +9,7 @@ import { Repository } from '../../../common/domain/entities';
 @Injectable()
 export class InvoiceRepository implements Partial<Repository<InvoiceEntity>> {
 
-    constructor(private prisma: PrismaProvider) {}
+    constructor(private readonly prisma: PrismaProvider) {}
 
     public async findAll(userId: string, page: Pagination, fields?: SelectedFields, q?: string): Promise<Partial<InvoiceEntity>[]> {
         return this.prisma.invoice.findMany({

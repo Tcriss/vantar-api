@@ -12,8 +12,8 @@ import { UserEntity } from '../../users/domain/entities/user.entity';
 export class EmailService {
 
     constructor(
-        @EmailOptions() private options: EmailModuleOptions,
-        private resend: ResendProviderEntity
+        @EmailOptions() private readonly options: EmailModuleOptions,
+        private readonly resend: ResendProviderEntity
     ) {}
 
     public async sendWelcomeEmail(user: Partial<UserEntity>, token: string): Promise<unknown> {

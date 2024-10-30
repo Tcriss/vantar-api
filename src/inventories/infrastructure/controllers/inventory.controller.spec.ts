@@ -90,7 +90,7 @@ describe('InventoryController', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.BAD_REQUEST);
-        expect(err.message).toBe('page query param is missing in url');
+        expect(err.message).toBe("'page' or 'limit' param missing");
       }
     });
   });
