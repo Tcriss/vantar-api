@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 
@@ -16,8 +16,11 @@ export class UserGuard implements CanActivate {
       context.getHandler(),
       context.getClass()
     ]);
+    const isOwner: boolean = await this.isOwner(req, role);
 
-    return this.isOwner(req, role);
+    if (!isOwner) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+    return true;
   }
 
   private async isOwner(req: Request, role: Roles): Promise<boolean> {

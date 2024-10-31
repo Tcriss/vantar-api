@@ -160,8 +160,8 @@ describe('ProductController', () => {
         } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Not enough permissions');
+        expect(err.status).toBe(HttpStatus.NOT_FOUND);
+        expect(err.message).toBe('Product not found');
       }
     });
   });
@@ -285,8 +285,8 @@ describe('ProductController', () => {
         } as unknown as Request, { name, price });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Not enough permissions');
+        expect(err.status).toBe(HttpStatus.NOT_FOUND);
+        expect(err.message).toBe('Product not found');
       }
     });
 
@@ -359,8 +359,8 @@ describe('ProductController', () => {
         } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Not enough permissions');
+        expect(err.status).toBe(HttpStatus.NOT_FOUND);
+        expect(err.message).toBe('Product not found');
       }
     });
   });

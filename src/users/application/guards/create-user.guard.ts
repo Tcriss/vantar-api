@@ -5,7 +5,10 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class CreateUserGuard implements CanActivate {
 
-  constructor(private readonly jwt: JwtService, private readonly config: ConfigService) {}
+  constructor(
+    private readonly jwt: JwtService,
+    private readonly config: ConfigService
+  ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: Request = context.switchToHttp().getRequest();

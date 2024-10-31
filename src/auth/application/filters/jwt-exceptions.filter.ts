@@ -13,7 +13,7 @@ export class JwtExceptionsFilter implements ExceptionFilter {
         res.status(HttpStatus.UNAUTHORIZED).json({
           statusCode: HttpStatus.UNAUTHORIZED,
           message: 'Invalid token',
-          cause: 'Token expired'
+          cause: 'Session expired'
         });
 
         break;

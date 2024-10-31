@@ -1,4 +1,4 @@
-import { ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, HttpStatus, NotFoundException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 import { RoleGuard } from './role.guard';
@@ -45,8 +45,14 @@ describe('RoleGuard', () => {
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([Roles.ADMIN]);
 
     const context = mockExecutionContext(Roles.CUSTOMER, [Roles.ADMIN]);
-    const result = await guard.canActivate(context);
-
-    expect(result).toBe(false);
+    
+    try {
+      await guard.canActivate(context);
+    } catch (err) {
+      console.log(err)
+      expect(err).toBeInstanceOf(NotFoundException);
+      expect(err.message).toBe('Resource not found');
+      expect(err.status).toBe(HttpStatus.NOT_FOUND);
+    }
   });
 });

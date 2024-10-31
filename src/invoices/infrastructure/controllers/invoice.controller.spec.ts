@@ -158,8 +158,8 @@ describe('InvoiceController', () => {
         } as unknown as Request, invoiceMock2.id);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Forbidden resource');
+        expect(err.status).toBe(HttpStatus.NOT_FOUND);
+        expect(err.message).toBe('Invoice not found');
       }
     });
   });
@@ -248,8 +248,8 @@ describe('InvoiceController', () => {
         }, '123');
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Forbidden resource');
+        expect(err.status).toBe(HttpStatus.NOT_FOUND);
+        expect(err.message).toBe('Invoice not found');
       }
     });
   });
@@ -303,8 +303,8 @@ describe('InvoiceController', () => {
         } as unknown as Request, invoiceMock.user_id);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Forbidden resource');
+        expect(err.status).toBe(HttpStatus.NOT_FOUND);
+        expect(err.message).toBe('Invoice not found');
       }
     });
   });

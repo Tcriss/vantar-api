@@ -160,8 +160,8 @@ describe('InventoryController', () => {
         } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Forbidden resource');
+        expect(err.status).toBe(HttpStatus.NOT_FOUND);
+        expect(err.message).toBe('Inventory not found');
       }
     });
 
@@ -334,8 +334,8 @@ describe('InventoryController', () => {
         } as unknown as Request);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Forbidden resource');
+        expect(err.status).toBe(HttpStatus.NOT_FOUND);
+        expect(err.message).toBe('Inventory not found');
       }
     });
   });

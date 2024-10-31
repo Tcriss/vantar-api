@@ -46,8 +46,7 @@ export class ProductController {
     ): Promise<Partial<ProductEntity>> {
         const product: Partial<ProductEntity> = await this.productService.findOne(id, req['user']['id'], selected);
 
-        if (product === undefined) throw new HttpException('Not enough permissions', HttpStatus.FORBIDDEN);
-        if (product === null) throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+        if (!product) throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
 
         return product;
     }
@@ -84,8 +83,7 @@ export class ProductController {
     ): Promise<unknown> {
         const res: ProductEntity = await this.productService.update(id, req['user']['id'], product);
 
-        if (res === undefined) throw new HttpException('Not enough permissions', HttpStatus.FORBIDDEN);
-        if (res === null) throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+        if (!res) throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
 
         return {
             message: 'Product updated successfully',
@@ -98,8 +96,7 @@ export class ProductController {
     public async delete(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: Request): Promise<unknown> {
         const res: ProductEntity = await this.productService.delete(id, req['user']['id']);
 
-        if (res === undefined) throw new HttpException('Not enough permissions', HttpStatus.FORBIDDEN);
-        if (res === null) throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+        if (!res) throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
 
         return { message: 'Product deleted' };
     }

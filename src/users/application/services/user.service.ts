@@ -25,7 +25,6 @@ export class UserService {
     ) {}
 
     public async findAllUsers(pagination: Pagination, query?: string): Promise<UserEntity[] | Partial<UserEntity>[]> {
-        console.info(pagination)
         return this.repository.findAll(pagination, query);
     }
 

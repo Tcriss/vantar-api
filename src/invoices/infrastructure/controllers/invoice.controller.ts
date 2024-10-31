@@ -38,8 +38,7 @@ export class InvoiceController {
     ): Promise<Partial<InvoiceEntity>> {
         const res = await this.service.findOneInvoice(id, req['user']['id']);
 
-        if (res === undefined) throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
-        if (res === null) throw new HttpException('Invoice not found', HttpStatus.NOT_FOUND);
+        if (!res) throw new HttpException('Invoice not found', HttpStatus.NOT_FOUND);
 
         return res;
     }
@@ -66,8 +65,7 @@ export class InvoiceController {
     ): Promise<unknown> {
         const res = await this.service.updateInvoice(id, req['user']['id'], invoice);
 
-        if (res === undefined) throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
-        if (res === null) throw new HttpException('Invoice not found', HttpStatus.NOT_FOUND);
+        if (!res) throw new HttpException('Invoice not found', HttpStatus.NOT_FOUND);
 
         return {
             message: 'Invoice updated successfully',
@@ -80,8 +78,7 @@ export class InvoiceController {
     public async delete(@Req() req: Request, @Param('id', new ParseUUIDPipe()) id: string): Promise<unknown> {
         const res = await this.service.deleteInvoice(id, req['user']['id']);
 
-        if (res === undefined) throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
-        if (res === null) throw new HttpException('Invoice not found', HttpStatus.NOT_FOUND);
+        if (!res) throw new HttpException('Invoice not found', HttpStatus.NOT_FOUND);
 
         return { message: 'Invoice deleted' };
     }

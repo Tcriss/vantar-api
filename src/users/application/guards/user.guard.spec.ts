@@ -1,4 +1,4 @@
-import { ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserGuard } from './user.guard';
@@ -73,12 +73,16 @@ describe('UserGuard', () => {
     mockReflector.getAllAndOverride.mockReturnValue(null);
     mockRequest.user.id = '33';
 
-    const result: boolean = await guard.canActivate(mockExecutionContext as ExecutionContext);
-    
-    expect(result).toBe(false);
-    expect(reflector.getAllAndOverride).toHaveBeenCalledWith(ROLE_KEY, [
-      mockExecutionContext.getHandler(),
-      mockExecutionContext.getClass(),
-    ]);
+    try {
+      await guard.canActivate(mockExecutionContext as ExecutionContext);
+    } catch(err) {
+      expect(err).toBeInstanceOf(HttpException);
+      expect(err.message).toBe('User not found');
+      expect(err.status).toBe(HttpStatus.NOT_FOUND);
+      expect(reflector.getAllAndOverride).toHaveBeenCalledWith(ROLE_KEY, [
+        mockExecutionContext.getHandler(),
+        mockExecutionContext.getClass(),
+      ]);
+    }
   });
 });

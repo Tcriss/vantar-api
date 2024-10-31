@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, NotFoundException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 import { ROLE_KEY } from '../../../../common/application/decorators';
@@ -18,7 +18,11 @@ export class RoleGuard implements CanActivate {
 
     if (!roles) return true;
 
-    return this.isValid(req, roles);
+    const isValid: boolean = await this.isValid(req, roles);
+
+    if (!isValid) throw new NotFoundException('Resource not found');
+
+    return true;
   }
 
   private async isValid(req: Request, roles: Roles[]): Promise<boolean> {

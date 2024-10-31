@@ -44,8 +44,7 @@ export class UserController {
     public async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<UserEntity> {
         const user: UserEntity = await this.service.findOneUser(id);
 
-        if (user === null) throw new HttpException('User not found, invalid id', HttpStatus.BAD_REQUEST);
-        if (user === undefined) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
         return user;
     }
@@ -60,7 +59,7 @@ export class UserController {
 
         if (req && req['user'] && req['user']['role'] === Roles.CUSTOMER) throw new HttpException('Cannot register when logged in', HttpStatus.FORBIDDEN);
         if (req && !req['user'] && body.role === Roles.ADMIN) throw new HttpException('Not enough permissions', HttpStatus.FORBIDDEN);
-        if (isExist) throw new HttpException('This user already exists', HttpStatus.NOT_ACCEPTABLE);
+        if (isExist) throw new HttpException('This user already exists', HttpStatus.FORBIDDEN);
 
         const user: UserEntity = await this.service.createUser(body);
 
