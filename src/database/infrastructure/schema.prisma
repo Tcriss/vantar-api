@@ -27,7 +27,7 @@ model Shop {
   created_at        DateTime       @db.Timestamp() @default(now())
   user_id           String         @db.Uuid
   user              User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  name              String         @db.Uuid
+  name              String         @db.VarChar(50)
   products          Product[]
   Invoices          Invoice[]
   inventories       Inventory[]
