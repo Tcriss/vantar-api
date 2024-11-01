@@ -18,6 +18,7 @@ import { EmailModule } from './email/email.module';
 import { JwtExceptionsFilter } from './auth/application/filters/jwt-exceptions.filter';
 import { validationOptions } from './common/application/config';
 import { rateLimitConfig } from './common/application/config/rate-limit.config';
+import { ShopModule } from './shops/shop.module';
 
 @Module({
   providers: [
@@ -67,7 +68,8 @@ import { rateLimitConfig } from './common/application/config/rate-limit.config';
     UserModule,
     InventoryModule,
     ProductModule,
-    InvoiceModule
+    InvoiceModule,
+    ShopModule
   ],
 })
 export class AppModule implements NestModule {

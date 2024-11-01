@@ -8,7 +8,7 @@ import { Pagination } from "../../../../common/domain/types";
 import { Repository } from "../../../../common/domain/entities";
 
 @Injectable()
-export class ProductRepository implements   Partial<Repository<ProductEntity>> {
+export class ProductRepository implements Partial<Repository<ProductEntity>> {
 
     constructor(private readonly prisma: PrismaProvider) { }
 

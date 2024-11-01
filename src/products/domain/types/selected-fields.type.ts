@@ -3,4 +3,4 @@ export type SelectedFields = {
     user_id: boolean,
     name: boolean,
     price: boolean
-}; 
+};

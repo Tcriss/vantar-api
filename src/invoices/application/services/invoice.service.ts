@@ -22,7 +22,7 @@ export class InvoiceService {
     public async findAllInvoices(page: Pagination, selected?: string): Promise<Partial<InvoiceEntity>[]> {
         const selectedFields: SelectedFields = selected ? {
             id: true,
-            user_id: true,
+            shop_id: true,
             date: selected.includes('date'),
             total: selected.includes('total'),
         } : null;
