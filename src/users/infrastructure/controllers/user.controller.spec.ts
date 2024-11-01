@@ -2,14 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '@prisma/client';
 import { JwtModule } from '@nestjs/jwt';
 import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { UserController } from './user.controller';
 import { UserService } from '../../application/services/user.service';
 import { mockUserService } from '../../domain/mocks/user-providers.mock';
 import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
 import { Roles } from '../../../common/domain/enums';
-import { UserEntity } from '../../domain/entities/user.entity';
-import { ConfigModule } from '@nestjs/config';
+import { UserEntity } from '../../domain/entities';
 
 describe('UserController', () => {
   let controller: UserController;

@@ -12,10 +12,9 @@ export class ProductRepository implements   Partial<Repository<ProductEntity>> {
 
     constructor(private readonly prisma: PrismaProvider) { }
 
-    public async findAll(userId: string, page: Pagination, fields?: SelectedFields, query?: string): Promise<Partial<ProductEntity>[]> {
+    public async findAll(page: Pagination, fields?: SelectedFields, query?: string): Promise<Partial<ProductEntity>[]> {
         return this.prisma.product.findMany({
             where: {
-                user_id: userId,
                 name: { contains: query }
             },
             orderBy: { name: 'asc' },
@@ -41,7 +40,7 @@ export class ProductRepository implements   Partial<Repository<ProductEntity>> {
     public async create(product: Partial<ProductEntity>): Promise<ProductEntity> {
         return this.prisma.product.create({
             data: {
-                user_id: product.user_id,
+                shop_id: product.shop_id,
                 name: product.name,
                 price: product.price,
             }

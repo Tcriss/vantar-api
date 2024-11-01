@@ -8,7 +8,7 @@ export class InventoryEntity implements Inventory {
     id: string;
 
     @ApiProperty({ format: 'uuid' })
-    user_id: string;
+    shop_id: string;
     
     @ApiProperty()
     cost: number;
@@ -19,7 +19,7 @@ export class InventoryEntity implements Inventory {
     @ApiProperty()
     subtotal: number;
 
-    @ApiProperty()
+    @ApiProperty({ format: 'date' })
     created_at: Date;
 
     @ApiProperty({ type: ProductEntityList, isArray: true })

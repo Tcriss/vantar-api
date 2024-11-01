@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseU
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { InvoiceQueries } from '../../domain/types';
-import { InvoiceEntity } from '../../domain/entities/invoice.entity';
+import { InvoiceEntity } from '../../domain/entities';
 import { CreateInvoiceDto, UpdateInvoiceDto } from '../../domain/dtos';
 import { InvoiceService } from '../../application/services/invoice.service';
 import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
@@ -21,22 +21,21 @@ export class InvoiceController {
 
     @ApiGetInvoices()
     @Get()
-    public async findAll(@Req() req: Request, @Query() queries: InvoiceQueries): Promise<Partial<InvoiceEntity>[]> {
+    public async findAll(@Query() queries: InvoiceQueries): Promise<Partial<InvoiceEntity>[]> {
         if (!queries.limit || !queries.page) throw new HttpException("'page' or 'limit' param missing", HttpStatus.BAD_REQUEST);
 
         const { page, limit, fields } = queries;
 
-        return this.service.findAllInvoices(req['user']['id'], { take: (page - 1) * limit, skip: limit }, fields);
+        return this.service.findAllInvoices({ 
+            take: (page - 1) * limit,
+            skip: limit
+        }, fields);
     }
 
     @ApiGetInvoice()
     @Get(':id')
-    public async findOne(
-        @Req() req: Request,
-        @Param('id', new ParseUUIDPipe()) id: string,
-        @Query('fields') fields?: string
-    ): Promise<Partial<InvoiceEntity>> {
-        const res = await this.service.findOneInvoice(id, req['user']['id']);
+    public async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Query('fields') fields?: string): Promise<Partial<InvoiceEntity>> {
+        const res = await this.service.findOneInvoice(id);
 
         if (!res) throw new HttpException('Invoice not found', HttpStatus.NOT_FOUND);
 
@@ -45,8 +44,8 @@ export class InvoiceController {
 
     @ApiCreateInvoice()
     @Post()
-    public async create(@Req() req: Request, @Body() invoice: CreateInvoiceDto): Promise<unknown> {
-        const res = await this.service.createInvoice(req['user']['id'], invoice);
+    public async create(@Body() invoice: CreateInvoiceDto): Promise<unknown> {
+        const res = await this.service.createInvoice(invoice);
 
         if (res == null) throw new HttpException('Products from invoice not created', HttpStatus.BAD_REQUEST);
 
@@ -58,12 +57,8 @@ export class InvoiceController {
 
     @ApiUpdateInvoice()
     @Patch(':id')
-    public async update(
-        @Req() req: Request,
-        @Body() invoice: UpdateInvoiceDto,
-        @Param('id', new ParseUUIDPipe()) id: string
-    ): Promise<unknown> {
-        const res = await this.service.updateInvoice(id, req['user']['id'], invoice);
+    public async update(@Body() invoice: UpdateInvoiceDto, @Param('id', new ParseUUIDPipe()) id: string): Promise<unknown> {
+        const res = await this.service.updateInvoice(id, invoice);
 
         if (!res) throw new HttpException('Invoice not found', HttpStatus.NOT_FOUND);
 
@@ -75,8 +70,8 @@ export class InvoiceController {
 
     @ApiDeleteInvoice()
     @Delete(':id')
-    public async delete(@Req() req: Request, @Param('id', new ParseUUIDPipe()) id: string): Promise<unknown> {
-        const res = await this.service.deleteInvoice(id, req['user']['id']);
+    public async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<unknown> {
+        const res = await this.service.deleteInvoice(id);
 
         if (!res) throw new HttpException('Invoice not found', HttpStatus.NOT_FOUND);
 

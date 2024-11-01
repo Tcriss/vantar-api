@@ -3,8 +3,8 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { ObjectId } from 'mongodb';
 
 import { InvoiceService } from './invoice.service';
-import { invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock, partialInvoiceMock1 } from '../../domain/mocks/invoice..mock';
-import { InvoiceEntity } from '../../domain/entities/invoice.entity';
+import { invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock, partialInvoiceMock1 } from '../../domain/mocks/invoice.mock';
+import { InvoiceEntity } from '../../domain/entities';
 import { mockInvoiceRepository } from '../../domain/mocks/invoice-providers.mock';
 import { mockProductListRepository } from '../../../products/domain/mocks/product-providers.mock';
 import { Repository } from '../../../common/domain/entities';
@@ -43,11 +43,10 @@ describe('InvoiceService', () => {
   });
 
   describe('Find All Invoices', () => {
-    const { user_id } = invoiceMock;
     it('should fetch all invoices', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([invoiceMock, invoiceMock1, invoiceMock2]);
 
-      const res: Partial<InvoiceEntity>[] = await service.findAllInvoices(user_id, { take: 10, skip: 0 });
+      const res: Partial<InvoiceEntity>[] = await service.findAllInvoices({ take: 10, skip: 0 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([invoiceMock, invoiceMock1, invoiceMock2]);
@@ -56,7 +55,7 @@ describe('InvoiceService', () => {
     it('should fetch all invoices from pagination', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([invoiceMock2]);
 
-      const res: Partial<InvoiceEntity>[] = await service.findAllInvoices(user_id, { take: 10, skip: 0 });
+      const res: Partial<InvoiceEntity>[] = await service.findAllInvoices({ take: 10, skip: 0 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([invoiceMock2]);
@@ -65,7 +64,7 @@ describe('InvoiceService', () => {
     it('should fetch all invoices with some fields', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([partialInvoiceMock, partialInvoiceMock1]);
 
-      const res: Partial<InvoiceEntity>[] = await service.findAllInvoices(user_id, { take: 10, skip: 0 }, 'name, inventory_id');
+      const res: Partial<InvoiceEntity>[] = await service.findAllInvoices({ take: 10, skip: 0 }, 'name, inventory_id');
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([partialInvoiceMock, partialInvoiceMock1]);
@@ -76,7 +75,7 @@ describe('InvoiceService', () => {
     it('should find one invoices', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(invoiceMock1);
 
-      const res: Partial<InvoiceEntity> = await service.findOneInvoice(invoiceMock1.id, invoiceMock1.user_id);
+      const res: Partial<InvoiceEntity> = await service.findOneInvoice(invoiceMock1.id);
 
       expect(res).toBe(invoiceMock1);
     });
@@ -84,23 +83,15 @@ describe('InvoiceService', () => {
     it('should find one invoices with some fields', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(partialInvoiceMock1);
 
-      const res: Partial<InvoiceEntity> = await service.findOneInvoice(invoiceMock1.id, invoiceMock1.user_id);
+      const res: Partial<InvoiceEntity> = await service.findOneInvoice(invoiceMock1.id);
 
       expect(res).toBe(partialInvoiceMock1);
-    });
-
-    it('should return undefined if not the owner', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(invoiceMock1);
-
-      const res: Partial<InvoiceEntity> = await service.findOneInvoice(invoiceMock2.id, invoiceMock2.user_id);
-
-      expect(res).toBeUndefined();
     });
 
     it('should return null if product was not found', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      const res: Partial<InvoiceEntity> = await service.findOneInvoice(invoiceMock.id, invoiceMock.user_id);
+      const res: Partial<InvoiceEntity> = await service.findOneInvoice(invoiceMock.id);
 
       expect(res).toBeNull();
     });
@@ -114,8 +105,8 @@ describe('InvoiceService', () => {
       });
       jest.spyOn(repository, 'create').mockResolvedValue(invoiceMock2);
 
-      const { user_id } = invoiceMock2;
-      const res: InvoiceEntity = await service.createInvoice(user_id, {
+      const res: InvoiceEntity = await service.createInvoice({
+        shop_id: invoiceMock2.shop_id,
         products: [
           {
             id: '1',
@@ -143,8 +134,9 @@ describe('InvoiceService', () => {
       })
       jest.spyOn(repository,'update').mockResolvedValue(invoiceMock1);
 
-      const { id, user_id } = invoiceMock1
-      const res: InvoiceEntity = await service.updateInvoice(id, user_id, {
+      const { id, shop_id } = invoiceMock1
+      const res: InvoiceEntity = await service.updateInvoice(id, {
+        shop_id,
         products: [
           {
             id: '1',
@@ -159,52 +151,34 @@ describe('InvoiceService', () => {
       expect(res).toBe(invoiceMock1);
     });
 
-    it('should return undefined if not the owner', async () => {;
-      jest.spyOn(service, 'findOneInvoice').mockResolvedValue(invoiceMock1);
-
-      const { total, user_id } = invoiceMock;
-      const res: Partial<InvoiceEntity> = await service.updateInvoice(invoiceMock1.id, user_id, { total });
-
-      expect(res).toBeUndefined();
-    });
-
     it('should return null if product was not found', async () => {
       jest.spyOn(service, 'findOneInvoice').mockResolvedValue(null);
 
       const { total } = invoiceMock;
-      const res: InvoiceEntity = await service.updateInvoice(invoiceMock1.id, invoiceMock1.user_id, { total });
+      const res: InvoiceEntity = await service.updateInvoice(invoiceMock1.id, { total });
 
       expect(res).toBeNull()
     });
   });
 
   describe('Delete Invoice', () => {
-    const { id, user_id } = invoiceMock1;
+    const { id } = invoiceMock1;
 
     it('should delete invoice', async () => {
       jest.spyOn(service, 'findOneInvoice').mockResolvedValue(invoiceMock1);
       jest.spyOn(productListRepository, 'deleteDoc').mockResolvedValue({acknowledged: true, deletedCount: 1})
       jest.spyOn(repository,'delete').mockResolvedValue(invoiceMock1);
 
-      const res: InvoiceEntity = await service.deleteInvoice(id, user_id);
+      const res: InvoiceEntity = await service.deleteInvoice(id);
 
       expect(res).toBe(invoiceMock1);
-    });
-
-    it('should return undefined if not the owner', async () => {
-      jest.spyOn(service, 'findOneInvoice').mockResolvedValue(invoiceMock1);
-      jest.spyOn(repository, 'delete').mockResolvedValue(undefined);
-
-      const res: Partial<InvoiceEntity> = await service.deleteInvoice(invoiceMock.id, user_id);
-
-      expect(res).toBeUndefined();
     });
 
     it('should return null if product was not found', async () => {
       jest.spyOn(service, 'findOneInvoice').mockResolvedValue(null);
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      const res: InvoiceEntity = await service.deleteInvoice(id, user_id);
+      const res: InvoiceEntity = await service.deleteInvoice(id);
 
       expect(res).toBeNull();
     });

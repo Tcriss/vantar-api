@@ -20,7 +20,7 @@ export class InventoryService {
         @Cached() private readonly cache: Cache
     ) {}
 
-    public async findAllInventories(userId: string, page: Pagination, selected?: string): Promise<Partial<InventoryEntity>[]> {
+    public async findAllInventories(page: Pagination, selected?: string): Promise<Partial<InventoryEntity>[]> {
         const fields: SelectedFields = selected ? {
             id: true,
             user_id: true,
@@ -39,13 +39,13 @@ export class InventoryService {
 
         if (cachedInventories && cachedFields == fields && cachedPagination == page) return cachedInventories;
 
-        const inventories = await this.inventoryRepository.findAll(userId, page, fields);
+        const inventories = await this.inventoryRepository.findAll(page, fields);
         await this.cache.set('inventories', inventories);
 
         return inventories;
     }
 
-    public async findOneInventory(id: string, userId?: string, selected?: string): Promise<Partial<InventoryEntity>> {
+    public async findOneInventory(id: string, selected?: string): Promise<Partial<InventoryEntity>> {
         const fields: SelectedFields = selected ? {
             id: true,
             user_id: true,
@@ -63,7 +63,6 @@ export class InventoryService {
         const inventory: Partial<InventoryEntity> = await this.inventoryRepository.findOne(id, fields);
 
         if (!inventory) return null;
-        if (userId && inventory.user_id !== userId) return undefined;
 
         const inventoryProductist = await this.productListRepository.findOne(inventory.id);
         inventory.products = inventoryProductist.products || [];
@@ -89,7 +88,7 @@ export class InventoryService {
         });
 
         if (!productsResult) {
-            await this.deleteInventory(newInventory.id, newInventory.user_id);
+            await this.deleteInventory(newInventory.id);
 
             return undefined;
         };
@@ -99,12 +98,11 @@ export class InventoryService {
         return newInventory;
     }
 
-    public async updateInventory(id: string, inventory: Partial<InventoryEntity>, userId: string): Promise<InventoryEntity> {
+    public async updateInventory(id: string, inventory: Partial<InventoryEntity>): Promise<InventoryEntity> {
         const resource: Partial<InventoryEntity> = await this.findOneInventory(id);
         const resourceList: Partial<InventoryProductList> = await this.productListRepository.findOne(id);
 
         if (!resource || !resourceList) return null;
-        if (resource.user_id !== userId) return undefined;
         if (!inventory.products) {
             const updatedInventory = await this.inventoryRepository.update(id, {
                 cost: inventory.cost,
@@ -135,11 +133,10 @@ export class InventoryService {
         return updatedInventory;
     }
 
-    public async deleteInventory(id: string, userId: string): Promise<InventoryEntity> {
+    public async deleteInventory(id: string): Promise<InventoryEntity> {
         const resource: Partial<InventoryEntity> = await this.findOneInventory(id);
 
         if (!resource) return null;
-        if (resource.user_id !== userId) return undefined;
 
         const res = await this.productListRepository.deleteDoc(id);
 

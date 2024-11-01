@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { CreateUserDto, UpdateUserDto } from '../../domain/dtos';
 import { UserParams } from '../../domain/types';
-import { UserEntity } from '../../domain/entities/user.entity';
+import { UserEntity } from '../../domain/entities';
 import { UserService } from '../../application/services/user.service';
 import { PublicAccess, Role } from '../../../common/application/decorators';
 import { ApiCreateUser, ApiDeleteUser, ApiGetUser, ApiGetUsers, ApiUpdateUser } from '../../application/decorators';

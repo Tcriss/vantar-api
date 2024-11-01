@@ -11,4 +11,8 @@ export class CreateInvoiceDto {
     @ValidateNested({ each: true })
     @Type(() => CreateProductListDto)
     products: CreateProductListDto[];
+
+    @ApiProperty({ type: 'uuid' })
+    @IsNotEmpty()
+    shop_id: string;
 };

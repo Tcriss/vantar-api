@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Cache } from '@nestjs/cache-manager';
 
-import { UserEntity } from '../../domain/entities/user.entity';
+import { UserEntity } from '../../domain/entities';
 import { UpdateUserDto } from '../../domain/dtos';
 import { Pagination } from '../../../common/domain/types';
 import { Roles } from '../../../common/domain/enums';

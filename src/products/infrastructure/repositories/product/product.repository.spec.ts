@@ -35,7 +35,7 @@ describe('Customer', () => {
         jest.spyOn(prisma.product, 'findMany').mockResolvedValue([ productMock1, productMock2, productMock3 ]);
 
         const id: string = 'b5c2d3e4-5678-901a-bcde-fghij2345678';
-        const res: Partial<ProductEntity>[] = await repository.findAll(id, { take: 10, skip: 0 });
+        const res: Partial<ProductEntity>[] = await repository.findAll({ take: 10, skip: 0 });
 
         expect(res).toBeInstanceOf(Array);
         expect(res).toEqual([ productMock1, productMock2, productMock3 ]);
@@ -45,7 +45,7 @@ describe('Customer', () => {
         jest.spyOn(prisma.product, 'findMany').mockResolvedValue([ productMock1, productMock4, productMock5 ]);
 
         const id: string = '1d3e9bfc-6a2c-4a7b-8c3d-2c4e9f4b3b2a';
-        const res: Partial<ProductEntity>[] = await repository.findAll(id, { take: 10, skip: 0 });
+        const res: Partial<ProductEntity>[] = await repository.findAll({ take: 10, skip: 0 });
 
         expect(res).toEqual([ productMock1, productMock4, productMock5 ]);
       });
@@ -54,7 +54,7 @@ describe('Customer', () => {
         jest.spyOn(prisma.product, 'findMany').mockResolvedValue([ productMock3 ]);
 
         const id: string = 'b5c2d3e4-5678-901a-bcde-fghij2345678';
-        const res: Partial<ProductEntity>[] = await repository.findAll(id, { take: 1, skip: 2 });
+        const res: Partial<ProductEntity>[] = await repository.findAll({ take: 1, skip: 2 });
 
         expect(res).toHaveLength(1);
         expect(res).toEqual([ productMock3 ]);
@@ -77,14 +77,16 @@ describe('Customer', () => {
 
         const res: Prisma.BatchPayload = await repository.createMany([
           {
-            id:null,
-            user_id: productMock1.user_id,
+            id: null,
+            created_at: productMock1.created_at,
+            shop_id: productMock1.shop_id,
             name: productMock1.name,
             price: productMock1.price,
           },
           {
-            id:null,
-            user_id: productMock2.user_id,
+            id: null,
+            created_at: productMock1.created_at,
+            shop_id: productMock2.shop_id,
             name: productMock2.name,
             price: productMock2.price,
           }
@@ -98,8 +100,8 @@ describe('Customer', () => {
       it('should create a product', async () => {
         jest.spyOn(prisma.product,'create').mockResolvedValue(productMock1);
 
-        const { user_id, name, price } = productMock1;
-        const res: ProductEntity = await repository.create({ user_id, name, price });
+        const { name, price } = productMock1;
+        const res: ProductEntity = await repository.create({ name, price });
 
         expect(res).toBe(productMock1);
       });
@@ -109,8 +111,8 @@ describe('Customer', () => {
       it('should update a prodcut', async () => {
         jest.spyOn(prisma.product,'update').mockResolvedValue(productMock6);
 
-        const { user_id, name, price } = productMock2;
-        const res: ProductEntity = await repository.update(productMock1.id, { user_id, name, price });
+        const { name, price } = productMock2;
+        const res: ProductEntity = await repository.update(productMock1.id, { name, price });
 
         expect(res).toBe(productMock6);
       });

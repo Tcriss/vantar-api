@@ -11,10 +11,9 @@ export class InventoryRepository implements Partial<Repository<InventoryEntity>>
 
     constructor(private readonly prisma: PrismaProvider) { }
 
-    public async findAll(customerId: string, page: Pagination, fields?: SelectedFields): Promise<Partial<InventoryEntity>[]> {
+    public async findAll(page: Pagination, fields?: SelectedFields): Promise<Partial<InventoryEntity>[]> {
         return this.prisma.inventory.findMany({
             orderBy: { created_at: 'asc' },
-            where: { user_id: customerId },
             select: fields,
             skip: page.skip,
             take: page.take
@@ -31,7 +30,7 @@ export class InventoryRepository implements Partial<Repository<InventoryEntity>>
     public async create(newInventory: Partial<InventoryEntity>): Promise<InventoryEntity> {
         return this.prisma.inventory.create({
             data: {
-                user_id: newInventory.user_id,
+                shop_id: newInventory.shop_id,
                 cost: newInventory.cost,
                 total: newInventory.total,
                 subtotal: newInventory.subtotal,

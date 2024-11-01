@@ -21,7 +21,7 @@ export class ProductController {
 
     @ApiGetProducts()
     @Get()
-    public async findAll(@Req() req: Request, @Query() queries: ProductQueries): Promise<Partial<ProductEntity>[]> {
+    public async findAll(@Query() queries: ProductQueries): Promise<Partial<ProductEntity>[]> {
         if (!queries.limit || !queries.page) throw new HttpException("'page' or 'limit' param missing", HttpStatus.BAD_REQUEST);
 
         const { page, limit, selected, q } = queries;
@@ -30,8 +30,7 @@ export class ProductController {
             {
                 take: (page - 1) * limit,
                 skip: +limit
-            }, 
-            req['user']['id'],
+            },
             q,
             selected
         );
@@ -41,10 +40,9 @@ export class ProductController {
     @Get(':id')
     public async findOne(
         @Param('id', new ParseUUIDPipe()) id: string,
-        @Req() req: Request,
         @Query('fields') selected?: string
     ): Promise<Partial<ProductEntity>> {
-        const product: Partial<ProductEntity> = await this.productService.findOne(id, req['user']['id'], selected);
+        const product: Partial<ProductEntity> = await this.productService.findOne(id, selected);
 
         if (!product) throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
 
@@ -53,8 +51,8 @@ export class ProductController {
 
     @ApiCreateProducts()
     @Post('many')
-    public async createMany(@Req() req: Request, @Body() products: CreateProductDto[]): Promise<unknown> {
-        const res: number = await this.productService.createMany(req['user']['id'], products);
+    public async createMany(@Body() products: CreateProductDto[]): Promise<unknown> {
+        const res: number = await this.productService.createMany(products);
 
         return {
             message: 'Products created successfully',
@@ -64,8 +62,8 @@ export class ProductController {
 
     @ApiCreateProduct()
     @Post()
-    public async create(@Req() req: Request, @Body() product: CreateProductDto): Promise<unknown> {
-        const res: ProductEntity = await this.productService.create(req['user']['id'], product);
+    public async create(@Body() product: CreateProductDto): Promise<unknown> {
+        const res: ProductEntity = await this.productService.create(product);
 
         return {
             message: 'Product created successfully',
@@ -78,10 +76,9 @@ export class ProductController {
     @Patch(':id')
     public async update(
         @Param('id', new ParseUUIDPipe()) id: string,
-        @Req() req: Request,
         @Body() product: UpdateProductDto,
     ): Promise<unknown> {
-        const res: ProductEntity = await this.productService.update(id, req['user']['id'], product);
+        const res: ProductEntity = await this.productService.update(id, product);
 
         if (!res) throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
 
@@ -93,8 +90,8 @@ export class ProductController {
 
     @ApiDeleteProduct()
     @Delete(':id')
-    public async delete(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: Request): Promise<unknown> {
-        const res: ProductEntity = await this.productService.delete(id, req['user']['id']);
+    public async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<unknown> {
+        const res: ProductEntity = await this.productService.delete(id);
 
         if (!res) throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
 
