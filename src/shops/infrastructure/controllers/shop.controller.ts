@@ -21,14 +21,19 @@ export class ShopController {
 
     @ApiGetShops()
     @Get()
-    public async findAll(@Query() queries: ShopParams): Promise<Partial<ShopEntity>[]> {
+    public async findAll(@Req() request: Request, @Query() queries: ShopParams): Promise<Partial<ShopEntity>[]> {
         if (!queries.limit || !queries.page) throw new HttpException("'page' or 'limit' param missing", HttpStatus.BAD_REQUEST);
 
+        const userId: string = request['user']['id'];
         const { page, limit, fields } = queries;
-        const res = await this.service.findAll({
-            take: (page - 1) * limit,
-            skip: +limit
-        }, fields);
+        const res = await this.service.findAll(
+            userId,
+            {
+                skip: (page - 1) * limit,
+                take: +limit
+            },
+            fields
+        );
 
         return res;
     }

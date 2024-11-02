@@ -16,25 +16,25 @@ export class ShopService {
         @Cached() private readonly cache: Cache
     ) {}
 
-    public async findAll(page: Pagination, selected?: string): Promise<Partial<ShopEntity>[]> {
+    public async findAll(userId: string, page: Pagination, selected?: string): Promise<Partial<ShopEntity>[]> {
         const selectedFields: SelectedFields = selected ? {
             products: selected.includes('products'),
             invoices: selected.includes('invoices'),
             inventories: selected.includes('inventories')
         } : null;
 
-        await Promise.all([
-            await this.cache.set('invoices-pagination', page),
-            await this.cache.set('invoices-fields', selectedFields)
-        ]);
-
         const cachedPagination: Pagination = await this.cache.get('shops-pagination');
         const cachedFields = await this.cache.get('shops-fields');
         const cachedShop: Partial<ShopEntity>[] = await this.cache.get('shops');
 
         if (cachedShop && cachedFields == selectedFields && cachedPagination == page) return cachedShop;
+        
+        await Promise.all([
+            await this.cache.set('shops-pagination', page),
+            await this.cache.set('shops-fields', selectedFields)
+        ]);
 
-        const shops: Partial<ShopEntity>[] = await this.repository.findAll(page, selected);
+        const shops: Partial<ShopEntity>[] = await this.repository.findAll(userId, page, selected);
         await this.cache.set('shops', shops);
 
         return shops;
@@ -65,6 +65,8 @@ export class ShopService {
 
         if (!newShop) return null;
 
+        await this.cache.reset();
+
         return newShop;
     }
 
@@ -77,6 +79,8 @@ export class ShopService {
 
         if (!updatedShop) return null;
 
+        await this.cache.reset();
+
         return updatedShop;
     }
 
@@ -84,6 +88,8 @@ export class ShopService {
         const shop: Partial<ShopEntity> = await this.findOne(id);
 
         if (!shop) return null;
+
+        await this.cache.reset();
 
         return this.repository.delete(id);
     }

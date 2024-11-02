@@ -35,11 +35,13 @@ describe('ShopController', () => {
       jest.spyOn(service, 'findAll').mockResolvedValue(shopMocks);
 
       const params: ShopParams = { page: 1, limit: 10, fields: '' };
-      const result = await controller.findAll(params);
+      const req: Request = { user: { id: '123' } } as any as Request;
+      const result = await controller.findAll(req, params);
 
       expect(result).toStrictEqual(shopMocks);
       expect(service.findAll).toHaveBeenCalledWith(
-        { take: 0, skip: 10 },
+        '123',
+        { take: 10, skip: 0 },
         params.fields
       );
     });

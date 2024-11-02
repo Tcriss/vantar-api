@@ -32,7 +32,7 @@ describe('Respotories', () => {
     it('should fetch all shops', async () => {
       jest.spyOn(prisma.shop, 'findMany').mockResolvedValue(shopMocks);
 
-      const res: Partial<ShopEntity>[] = await repository.findAll({ take: 10, skip: 0 });
+      const res: Partial<ShopEntity>[] = await repository.findAll(shopMocks[0].user_id, { take: 10, skip: 0 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual(shopMocks);
@@ -41,7 +41,7 @@ describe('Respotories', () => {
     it('should fetch what pagination indicates', async () => {
       jest.spyOn(prisma.shop, 'findMany').mockResolvedValue([ shopMocks[2] ]);
 
-      const res: Partial<ShopEntity>[] = await repository.findAll({ take: 1, skip: 2 });
+      const res: Partial<ShopEntity>[] = await repository.findAll(shopMocks[0].user_id, { take: 1, skip: 2 });
 
       expect(res).toHaveLength(1);
       expect(res).toEqual([ shopMocks[2] ]);

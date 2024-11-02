@@ -29,7 +29,7 @@ model Shop {
   user              User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
   name              String         @db.VarChar(50)
   products          Product[]
-  Invoices          Invoice[]
+  invoices          Invoice[]
   inventories       Inventory[]
 }
 

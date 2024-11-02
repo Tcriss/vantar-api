@@ -11,14 +11,13 @@ export class ShopRepository implements Partial<Repository<ShopEntity>> {
 
     constructor(private readonly prisma: PrismaProvider) {}
 
-    public async findAll(pagination: Pagination, fields?: SelectedFields): Promise<Partial<ShopEntity>[]> {
-        const { take, skip } = pagination;
-
+    public async findAll(userId: string, pagination: Pagination, fields?: SelectedFields): Promise<Partial<ShopEntity>[]> {
         return this.prisma.shop.findMany({
+            where: { user_id: userId },
             orderBy: { created_at: 'asc' },
             include: fields,
-            take,
-            skip
+            take: pagination.take,
+            skip: pagination.skip
         });
     }
 

@@ -43,7 +43,7 @@ describe('ShopService', () => {
       jest.spyOn(cache, 'get').mockResolvedValue(null);
       jest.spyOn(repository, 'findAll').mockResolvedValue(shopMocks);
 
-      const res: Partial<ShopEntity>[] = await service.findAll({ take: 10, skip: 0 });
+      const res: Partial<ShopEntity>[] = await service.findAll(shopMocks[0].user_id, { take: 10, skip: 0 });
 
       expect(res).toStrictEqual(shopMocks);
     });
