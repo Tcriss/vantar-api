@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { genSalt, hash, compare } from 'bcrypt';
 
 import { SecurityOptions } from '../decorators';
-import { SecurityModuleOptions } from '../../doamin';
+import { CommonModuleOptions } from '../../domain/interfaces';
 
 @Injectable()
 export class BcryptProvider {
 
-    constructor(@SecurityOptions() private readonly options: SecurityModuleOptions) {}
+    constructor(@SecurityOptions() private readonly options: CommonModuleOptions) {}
 
     public async compare(value: string, hashedValue: string): Promise<boolean> {
         return compare(value, hashedValue);

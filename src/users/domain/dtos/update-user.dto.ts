@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsOptional, IsString, IsStrongPassword, Matches, MaxLength, MinLength } from "class-validator";
 
-import { nameRegex, pwRegex } from "../../../security/application/constants";
+import { nameRegex, pwRegex } from "../../../common/constants";
 
 export class UpdateUserDto {
     @ApiProperty({ example: 'Haroldy Martinez', description: 'User name' })

@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { AuthEntity } from '../../domain/entities/auth.entity';
 import { UserEntity } from '../../../users/domain/entities/user.entity';
-import { BcryptProvider } from '../../../security/application/providers/bcrypt.provider';
+import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { Repository } from '../../../common/domain/entities';
 import { EmailService } from '../../../email/application/email.service';
 

@@ -7,7 +7,7 @@ import { UpdateUserDto } from '../../domain/dtos';
 import { Pagination } from '../../../common/domain/types';
 import { Roles } from '../../../common/domain/enums';
 import { Repository } from '../../../common/domain/entities';
-import { BcryptProvider } from '../../../security/application/providers/bcrypt.provider';
+import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
 import { EmailService } from '../../../email/application/email.service';
 import { Cached } from '../../../common/application/decorators';
 

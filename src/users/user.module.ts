@@ -7,7 +7,7 @@ import { UserService } from './application/services/user.service';
 import { UserController } from './infrastructure/controllers/user.controller';
 import { UserEntity } from './domain/entities/user.entity';
 import { Repository } from '../common/domain/entities';
-import { SecurityModule } from '../security/security.module';
+import { CommonModule } from '../common/common.module';
 
 @Module({
     providers: [
@@ -26,7 +26,7 @@ import { SecurityModule } from '../security/security.module';
                 secret: config.get('ACTIVATION_SECRET')
             })
         }),
-        SecurityModule.registerAsync({
+        CommonModule.registerAsync({
             imports: [ConfigModule],
             Inject: [ConfigService],
             useFactory: (config: ConfigService) => ({

@@ -12,7 +12,7 @@ import { UserEntity } from '../../domain/entities';
 import { Repository } from '../../../common/domain/entities';
 import { emailServiceMock } from '../../../email/domain/mocks/email-provider.mock';
 import { EmailService } from '../../../email/application/email.service';
-import { SecurityModule } from '../../../security/security.module';
+import { CommonModule } from '../../../common/common.module';
 
 describe('UserService', () => {
   let service: UserService;
@@ -36,7 +36,7 @@ describe('UserService', () => {
       imports: [
         JwtModule.register({ secret: 'JWT-SECRET' }),
         CacheModule.register({ ttl: (60 ^ 2) * 1000 }),
-        SecurityModule.register({ saltRounds: 5 })
+        CommonModule.register({ saltRounds: 5 })
       ]
     }).compile();
 

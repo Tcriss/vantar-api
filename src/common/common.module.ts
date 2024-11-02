@@ -1,15 +1,15 @@
 import { DynamicModule, Module } from '@nestjs/common';
 
 import { BcryptProvider } from './application/providers/bcrypt.provider';
-import { SecurityModuleAsyncOptions, SecurityModuleOptions } from './doamin';
-import { SECURITY_OPTIONS_KEY } from './application/constants';
-import { SecurityModuleOptionsForRoot } from './doamin/security-module-forroot-async.options';
+import { CommonModuleAsyncOptions, CommonModuleOptions } from './domain/interfaces';
+import { SECURITY_OPTIONS_KEY } from './constants';
+import { CommonModuleOptionsForRoot } from './domain/interfaces/security-module-forroot-async.options';
 
 @Module({})
-export class SecurityModule {
-    public static register(options: SecurityModuleOptions): DynamicModule {
+export class CommonModule {
+    public static register(options: CommonModuleOptions): DynamicModule {
         return {
-            module: SecurityModule,
+            module: CommonModule,
             providers: [
                 BcryptProvider,
                 {
@@ -21,9 +21,9 @@ export class SecurityModule {
         };
     };
 
-    public static registerAsync(options: SecurityModuleAsyncOptions): DynamicModule {
+    public static registerAsync(options: CommonModuleAsyncOptions): DynamicModule {
         return {
-            module: SecurityModule,
+            module: CommonModule,
             providers: [
                 BcryptProvider,
                 {
@@ -36,10 +36,10 @@ export class SecurityModule {
         };
     }
 
-    public static forRootAsync(options: SecurityModuleOptionsForRoot): DynamicModule {
+    public static forRootAsync(options: CommonModuleOptionsForRoot): DynamicModule {
         return {
             global: options.isGlobal || false,
-            module: SecurityModule,
+            module: CommonModule,
             providers: [
                 BcryptProvider,
                 {

@@ -2,12 +2,12 @@ import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Query
 import { Throttle } from '@nestjs/throttler';
 import { ApiTags } from '@nestjs/swagger';
 
-import { AuthEntity } from '../../domain/entities/auth.entity';
-import { LoginUserDto, RefreshTokenDto, ForgotPasswordDto, ResetPasswordDto } from '../../domain/dtos';
-import { AuthService } from '../../application/services/auth.service';
-import { RefreshTokenGuard } from '../../application/guards/refresh-token/refresh-token.guard';
-import { ApiActivateAccount, ApiForgotPassword, ApiLogin, ApiLogout, ApiRefresh, ApiResetPassword } from '../../application/decorators';
-import { PublicAccess } from '../../../common/application/decorators';
+import { AuthEntity } from '../domain/entities/auth.entity';
+import { LoginUserDto, RefreshTokenDto, ForgotPasswordDto, ResetPasswordDto } from '../domain/dtos';
+import { AuthService } from '../application/services/auth.service';
+import { RefreshTokenGuard } from '../application/guards/refresh-token/refresh-token.guard';
+import { ApiActivateAccount, ApiForgotPassword, ApiLogin, ApiLogout, ApiRefresh, ApiResetPassword } from '../application/decorators';
+import { PublicAccess } from '../../common/application/decorators';
 
 @ApiTags('Authentication')
 @PublicAccess()

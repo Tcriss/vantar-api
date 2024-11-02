@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { BcryptProvider } from './bcrypt.provider';
-import { ConfigService } from '@nestjs/config';
-import { SECURITY_OPTIONS_KEY } from '../constants';
+import { SECURITY_OPTIONS_KEY } from '../../constants';
 
 describe('BcryptProvider', () => {
   let service: BcryptProvider;
