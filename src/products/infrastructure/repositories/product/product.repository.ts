@@ -12,9 +12,10 @@ export class ProductRepository implements Partial<Repository<ProductEntity>> {
 
     constructor(private readonly prisma: PrismaProvider) { }
 
-    public async findAll(page: Pagination, fields?: SelectedFields, query?: string): Promise<Partial<ProductEntity>[]> {
+    public async findAll(shopId: string, page: Pagination, fields?: SelectedFields, query?: string): Promise<Partial<ProductEntity>[]> {
         return this.prisma.product.findMany({
             where: {
+                shop_id: shopId,
                 name: { contains: query }
             },
             orderBy: { name: 'asc' },

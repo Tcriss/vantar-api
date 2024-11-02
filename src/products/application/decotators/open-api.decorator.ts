@@ -13,6 +13,7 @@ export const ApiGetProducts = () => applyDecorators(
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiQuery({ name: 'page', required: true, example: 1, description: 'The page of result you want to fetch' }),
     ApiQuery({ name: 'limit', required: true, example: 10, description: 'How many products will be fetch per page' }),
+    ApiQuery({ name: 'shop', required: true, description: 'shop id param to verify you have access to the products' }),
     ApiQuery({ name: 'q', required: false, description: 'search param to filter results' }),
     ApiQuery({ name: 'selected', required: false, description: 'fields you want to select from response' })
 );
@@ -26,6 +27,7 @@ export const ApiGetProduct = () => applyDecorators(
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' }),
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiParam({ name: 'id', description: 'Product id', format: 'uuid', required: true }),
+    ApiQuery({ name: 'shop', required: true, description: 'shop id param to verify you have access to the product' }),
     ApiQuery({ name: 'fields', required: false, description: 'fields you want to select from response' })
 );
 
@@ -56,7 +58,8 @@ export const ApiUpdateProduct = () => applyDecorators(
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Not enough permissions' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' }),
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
-    ApiParam({ name: 'id', description: 'Product id', format: 'uuid', required: true })
+    ApiParam({ name: 'id', description: 'Product id', format: 'uuid', required: true }),
+    ApiQuery({ name: 'shop', required: true, description: 'shop id param to verify you have permissions' })
 );
 
 export const ApiDeleteProduct = () => applyDecorators(
@@ -67,5 +70,6 @@ export const ApiDeleteProduct = () => applyDecorators(
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Not enough permissions' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' }),
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
-    ApiParam({ name: 'id', description: 'Product id', format: 'uuid', required: true })
+    ApiParam({ name: 'id', description: 'Product id', format: 'uuid', required: true }),
+    ApiQuery({ name: 'shop', required: true, description: 'shop id param to verify you have permissions' })
 );

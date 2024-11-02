@@ -27,8 +27,8 @@ export class InvoiceController {
         const { page, limit, fields } = queries;
 
         return this.service.findAllInvoices({ 
-            take: (page - 1) * limit,
-            skip: limit
+            skip: (page - 1) * limit,
+            take: limit
         }, fields);
     }
 

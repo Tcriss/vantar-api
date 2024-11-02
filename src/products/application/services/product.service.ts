@@ -15,7 +15,7 @@ export class ProductService {
         private readonly productRepository: Repository<ProductEntity>
     ) { }
 
-    public async findAll(page: Pagination, query?: string, selected?: string): Promise<Partial<ProductEntity>[]> {
+    public async findAll(shopId: string, page: Pagination, query?: string, selected?: string): Promise<Partial<ProductEntity>[]> {
         const { take, skip } = page;
         const fields: SelectedFields = selected ? {
             id: true,
@@ -33,7 +33,7 @@ export class ProductService {
 
         if (cachedProducts && cachedFields == fields && cachedPagination == page) return cachedProducts;
 
-        const products = await this.productRepository.findAll({ take, skip }, fields, query);
+        const products = await this.productRepository.findAll(shopId, { take, skip }, fields, query);
         await this.cache.set('products', products);
 
         return products;

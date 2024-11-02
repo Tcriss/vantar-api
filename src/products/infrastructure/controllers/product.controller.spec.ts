@@ -6,7 +6,8 @@ import { ProductService } from '../../application/services/product.service';
 import { mockProductService } from '../../domain/mocks/product-providers.mock';
 import { partialProductMock1, partialProductMock2, productMock1, productMock2, productMock6 } from '../../domain/mocks/product.mock';
 import { ProductEntity } from '../../domain/entities/product.entity';
-import { Roles } from '../../../common/domain/enums';
+import { PrismaProvider } from '../../../database/infrastructure/providers/prisma/prisma.provider';
+import { prismaMock } from '../../../shops/domain/mocks';
 
 describe('ProductController', () => {
   let controller: ProductController;
@@ -14,7 +15,16 @@ describe('ProductController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [{ provide: ProductService, useValue: mockProductService}],
+      providers: [
+        {
+          provide: ProductService,
+          useValue: mockProductService
+        },
+        {
+          provide: PrismaProvider,
+          useValue: prismaMock
+        }
+      ],
       controllers: [ProductController],
     }).compile();
 
@@ -31,7 +41,7 @@ describe('ProductController', () => {
     it('should find all products', async () => {
       jest.spyOn(service, 'findAll').mockResolvedValue([productMock1, productMock6]);
 
-      const res: Partial<ProductEntity>[] = await controller.findAll({ page: 1, limit: 10 });
+      const res: Partial<ProductEntity>[] = await controller.findAll({ page: 1, limit: 10, shop: '123' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([productMock1, productMock6]);
@@ -40,7 +50,7 @@ describe('ProductController', () => {
     it('should find all products from pagination', async () => {
       jest.spyOn(service, 'findAll').mockResolvedValue([productMock2]);
 
-      const res: Partial<ProductEntity>[] = await controller.findAll({ page: 1, limit: 10 });
+      const res: Partial<ProductEntity>[] = await controller.findAll({ page: 1, limit: 10, shop: '123' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([productMock2]);
@@ -49,7 +59,7 @@ describe('ProductController', () => {
     it('should find all products with some fields', async () => {
       jest.spyOn(service, 'findAll').mockResolvedValue([partialProductMock1, partialProductMock2]);
 
-      const res: Partial<ProductEntity>[] = await controller.findAll({ page: 1, limit: 10, selected: 'name, user_id' });
+      const res: Partial<ProductEntity>[] = await controller.findAll({ page: 1, limit: 10, shop: '123' , selected: 'name, user_id' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([partialProductMock1, partialProductMock2]);
@@ -59,7 +69,7 @@ describe('ProductController', () => {
       jest.spyOn(service, 'findAll').mockResolvedValue([partialProductMock1, partialProductMock2]);
 
       try {
-        await controller.findAll({ page: null });
+        await controller.findAll({ page: null, limit: null, shop: '123' });
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.BAD_REQUEST);
@@ -116,10 +126,12 @@ describe('ProductController', () => {
 
       const res = await controller.createMany([
         {
+          shop_id: '123',
           name: productMock1.name,
           price: productMock1.price
         },
         {
+          shop_id: '123',
           name: productMock2.name,
           price: productMock2.price
         }
@@ -134,8 +146,8 @@ describe('ProductController', () => {
     it('should create a product', async () => {
       jest.spyOn(service, 'create').mockResolvedValue(productMock2);
 
-      const { name, price } = productMock2;
-      const res = await controller.create({ name, price });
+      const { name, price, shop_id } = productMock2;
+      const res = await controller.create({ name, price , shop_id});
 
       expect(res['message']).toBe('Product created successfully');
       expect(res['product']).toBe(productMock2);
@@ -143,8 +155,8 @@ describe('ProductController', () => {
 
     it('should throw an exception if name has numbers', async () => {
       try {
-        const { price } = productMock2;
-        await controller.create({ name: 'Albert0 Rojas4', price });  
+        const { price, shop_id } = productMock2;
+        await controller.create({ name: 'Albert0 Rojas4', price, shop_id });  
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.message).toBe(['name must not contain numbers']);

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { ProductService } from '../../application/services/product.service';
@@ -9,6 +9,7 @@ import { CreateProductDto, UpdateProductDto } from '../../domain/dtos';
 import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
 import { Role } from '../../../common/application/decorators';
 import { Roles } from '../../../common/domain/enums';
+import { OwnerGuard } from '../../../auth/application/guards/owner/owner.guard';
 
 @ApiBearerAuth()
 @ApiTags('Products')
@@ -20,16 +21,18 @@ export class ProductController {
     constructor(private readonly productService: ProductService) { }
 
     @ApiGetProducts()
+    @UseGuards(OwnerGuard)
     @Get()
     public async findAll(@Query() queries: ProductQueries): Promise<Partial<ProductEntity>[]> {
         if (!queries.limit || !queries.page) throw new HttpException("'page' or 'limit' param missing", HttpStatus.BAD_REQUEST);
 
-        const { page, limit, selected, q } = queries;
+        const { page, limit, selected, q, shop } = queries;
 
         return this.productService.findAll(
+            shop,
             {
-                take: (page - 1) * limit,
-                skip: +limit
+                skip: (page - 1) * limit,
+                take: +limit
             },
             q,
             selected
@@ -37,11 +40,9 @@ export class ProductController {
     }
 
     @ApiGetProduct()    
+    @UseGuards(OwnerGuard)
     @Get(':id')
-    public async findOne(
-        @Param('id', new ParseUUIDPipe()) id: string,
-        @Query('fields') selected?: string
-    ): Promise<Partial<ProductEntity>> {
+    public async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Query('fields') selected?: string): Promise<Partial<ProductEntity>> {
         const product: Partial<ProductEntity> = await this.productService.findOne(id, selected);
 
         if (!product) throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
@@ -73,11 +74,9 @@ export class ProductController {
     }
 
     @ApiUpdateProduct()
+    @UseGuards(OwnerGuard)
     @Patch(':id')
-    public async update(
-        @Param('id', new ParseUUIDPipe()) id: string,
-        @Body() product: UpdateProductDto,
-    ): Promise<unknown> {
+    public async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() product: UpdateProductDto): Promise<unknown> {
         const res: ProductEntity = await this.productService.update(id, product);
 
         if (!res) throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
@@ -89,6 +88,7 @@ export class ProductController {
     }
 
     @ApiDeleteProduct()
+    @UseGuards(OwnerGuard)
     @Delete(':id')
     public async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<unknown> {
         const res: ProductEntity = await this.productService.delete(id);

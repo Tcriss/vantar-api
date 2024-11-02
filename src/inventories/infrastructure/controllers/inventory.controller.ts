@@ -28,8 +28,8 @@ export class InventoryController {
         const { page, limit, q, fields } = queries;
 
         return this.service.findAllInventories({
-            take: (page - 1) * limit,
-            skip: limit || 10
+            skip: (page - 1) * limit,
+            take: limit || 10
         }, fields);
     }
 
