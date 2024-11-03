@@ -2,11 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CacheModule } from '@nestjs/cache-manager';
 
 import { ProductService } from './product.service';
-import { ProductEntity } from '../../domain/entities/product.entity';
-import { partialProductMock1, partialProductMock2, productMock1, productMock2, productMock3, productMock6 } from '../../domain/mocks/product.mock';
-import { mockProductRepository } from '../../domain/mocks/product-providers.mock';
-import { Repository } from '../../../common/domain/entities';
-import { InvoiceProductList } from '../../../invoices/domain/types';
+import { ProductEntity } from '@products/domain/entities';
+import { partialProductMock1, partialProductMock2, productMock1, productMock2, productMock3, productMock6, mockProductRepository } from '@products/domain/mocks';
+import { Repository } from '@common/domain/entities';
+import { InvoiceProductList } from '@invoices/domain/types';
 
 describe('ProductService', () => {
   let service: ProductService;

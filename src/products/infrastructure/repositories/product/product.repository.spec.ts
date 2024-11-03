@@ -2,10 +2,9 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { Prisma } from "@prisma/client";
 
 import { ProductRepository } from "./product.repository";
-import { PrismaProvider } from "../../../../database/infrastructure/providers/prisma/prisma.provider";
-import { prismaMock } from "../../../domain/mocks/product-providers.mock";
-import { ProductEntity } from "../../../domain/entities/product.entity";
-import { productMock1, productMock2, productMock3, productMock4, productMock5, productMock6 } from "../../../domain/mocks/product.mock";
+import { PrismaProvider } from "@database/infrastructure/providers";
+import { ProductEntity } from "@products/domain/entities";
+import { productMock1, productMock2, productMock3, productMock4, productMock5, productMock6, prismaMock } from "@products/domain/mocks";
 
 describe('Customer', () => {
     let repository: ProductRepository;
@@ -34,7 +33,6 @@ describe('Customer', () => {
       it('should fetch all products', async () => {
         jest.spyOn(prisma.product, 'findMany').mockResolvedValue([ productMock1, productMock2, productMock3 ]);
 
-        const id: string = 'b5c2d3e4-5678-901a-bcde-fghij2345678';
         const res: Partial<ProductEntity>[] = await repository.findAll('123', { take: 10, skip: 0 });
 
         expect(res).toBeInstanceOf(Array);
@@ -44,7 +42,6 @@ describe('Customer', () => {
       it('should fetch inventory products', async () => {
         jest.spyOn(prisma.product, 'findMany').mockResolvedValue([ productMock1, productMock4, productMock5 ]);
 
-        const id: string = '1d3e9bfc-6a2c-4a7b-8c3d-2c4e9f4b3b2a';
         const res: Partial<ProductEntity>[] = await repository.findAll('123', { take: 10, skip: 0 });
 
         expect(res).toEqual([ productMock1, productMock4, productMock5 ]);
@@ -53,7 +50,6 @@ describe('Customer', () => {
       it('should fetch what pagination indicates', async () => {
         jest.spyOn(prisma.product, 'findMany').mockResolvedValue([ productMock3 ]);
 
-        const id: string = 'b5c2d3e4-5678-901a-bcde-fghij2345678';
         const res: Partial<ProductEntity>[] = await repository.findAll('123', { take: 1, skip: 2 });
 
         expect(res).toHaveLength(1);

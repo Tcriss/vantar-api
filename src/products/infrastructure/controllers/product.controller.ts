@@ -1,15 +1,14 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-import { ProductService } from '../../application/services/product.service';
-import { ProductEntity } from '../../domain/entities/product.entity';
-import { ProductQueries } from '../../domain/types/product-queries.type';
-import { ApiCreateProduct, ApiCreateProducts, ApiDeleteProduct, ApiGetProduct, ApiGetProducts, ApiUpdateProduct } from '../../application/decotators';
-import { CreateProductDto, UpdateProductDto } from '../../domain/dtos';
-import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
-import { Role } from '../../../common/application/decorators';
-import { Roles } from '../../../common/domain/enums';
-import { OwnerGuard } from '../../../auth/application/guards/owner/owner.guard';
+import { ProductEntity } from '@products/domain/entities';
+import { ProductService } from '@products/application/services';
+import { ProductQueries } from '@products/domain/types';
+import { CreateProductDto, UpdateProductDto } from '@products/domain/dtos';
+import { ApiCreateProduct, ApiCreateProducts, ApiDeleteProduct, ApiGetProduct, ApiGetProducts, ApiUpdateProduct } from '@products/application/decotators';
+import { Role } from '@common/application/decorators';
+import { Roles } from '@common/domain/enums';
+import { RoleGuard, OwnerGuard } from '@auth/application/guards';
 
 @ApiBearerAuth()
 @ApiTags('Products')

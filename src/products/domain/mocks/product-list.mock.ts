@@ -1,4 +1,4 @@
-import { ProductEntityList } from '../entities/product-list.entity';
+import { ProductEntityList } from '@products/domain/entities';
 
 export const productListMock: ProductEntityList = {
   id: '1',

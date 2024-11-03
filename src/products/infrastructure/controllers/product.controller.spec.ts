@@ -2,12 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 
 import { ProductController } from './product.controller';
-import { ProductService } from '../../application/services/product.service';
-import { mockProductService } from '../../domain/mocks/product-providers.mock';
-import { partialProductMock1, partialProductMock2, productMock1, productMock2, productMock6 } from '../../domain/mocks/product.mock';
-import { ProductEntity } from '../../domain/entities/product.entity';
-import { PrismaProvider } from '../../../database/infrastructure/providers/prisma/prisma.provider';
-import { prismaMock } from '../../../shops/domain/mocks';
+import { ProductEntity } from '@products/domain/entities';
+import { mockProductService, partialProductMock1, partialProductMock2, productMock1, productMock2, productMock6 } from '@products/domain/mocks';
+import { ProductService } from '@products/application/services';
+import { PrismaProvider } from '@database/infrastructure/providers';
+import { prismaMock } from '@shops/domain/mocks';
 
 describe('ProductController', () => {
   let controller: ProductController;

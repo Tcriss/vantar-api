@@ -1,8 +1,8 @@
 import { HttpStatus, applyDecorators } from "@nestjs/common";
 import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse } from "@nestjs/swagger";
 
-import { ProductEntity } from "../../domain/entities/product.entity";
-import { CreateProductDto } from "../../domain/dtos";
+import { ProductEntity } from "@products/domain/entities";
+import { CreateProductDto } from "@products/domain/dtos";
 
 export const ApiGetProducts = () => applyDecorators(
     ApiOperation({ summary: 'Get all products' }),
