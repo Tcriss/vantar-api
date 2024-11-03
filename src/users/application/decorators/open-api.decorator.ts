@@ -1,7 +1,7 @@
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger';
 
-import { UserEntity } from '../../domain/entities/user.entity';
+import { UserEntity } from '@users/domain/entities';
 
 export const ApiGetUsers = () => applyDecorators(
     ApiBearerAuth(),

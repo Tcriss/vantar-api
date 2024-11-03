@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 
-import { PrismaProvider } from "../../../database/infrastructure/providers/prisma/prisma.provider";
-import { UserEntity } from "../../domain/entities";
-import { Pagination } from "../../../common/domain/types";
-import { Repository } from "../../../common/domain/entities";
+import { UserEntity } from "@users/domain/entities";
+import { Pagination } from "@common/domain/types";
+import { Repository } from "@common/domain/entities";
+import { PrismaProvider } from "@database/infrastructure/providers";
 
 @Injectable()
 export class UserRepository implements Partial<Repository<UserEntity>> {

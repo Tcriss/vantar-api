@@ -2,14 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Cache } from '@nestjs/cache-manager';
 
-import { UserEntity } from '../../domain/entities';
-import { UpdateUserDto } from '../../domain/dtos';
-import { Pagination } from '../../../common/domain/types';
-import { Roles } from '../../../common/domain/enums';
-import { Repository } from '../../../common/domain/entities';
-import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
-import { EmailService } from '../../../email/application/email.service';
-import { Cached } from '../../../common/application/decorators';
+import { UserEntity } from '@users/domain/entities';
+import { UpdateUserDto } from '@users/domain/dtos';
+import { Pagination } from '@common/domain/types';
+import { Roles } from '@common/domain/enums';
+import { Repository } from '@common/domain/entities';
+import { BcryptProvider } from '@common/application/providers';
+import { Cached } from '@common/application/decorators';
+import { EmailService } from '@email/application/email.service';
 
 @Injectable()
 export class UserService {

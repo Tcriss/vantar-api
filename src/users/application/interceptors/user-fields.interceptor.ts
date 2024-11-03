@@ -1,7 +1,7 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
 
-import { UserEntity } from '../../domain/entities/user.entity';
+import { UserEntity } from '@users/domain/entities';
 
 @Injectable()
 export class UserFieldsInterceptor implements NestInterceptor {

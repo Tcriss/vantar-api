@@ -5,14 +5,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 
 import { UserService } from './user.service';
-import { Roles } from '../../../common/domain/enums';
-import { mockUserRepository } from '../../domain/mocks/user-providers.mock';
-import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
-import { UserEntity } from '../../domain/entities';
-import { Repository } from '../../../common/domain/entities';
-import { emailServiceMock } from '../../../email/domain/mocks/email-provider.mock';
-import { EmailService } from '../../../email/application/email.service';
-import { CommonModule } from '../../../common/common.module';
+import { mockUserRepository, userMock, userMock1, userMock2, userMock3 } from '@users/domain/mocks';
+import { UserEntity } from '@users/domain/entities';
+import { emailServiceMock } from '@email/domain/mocks/email-provider.mock';
+import { EmailService } from '@email/application/email.service';
+import { Roles } from '@common/domain/enums';
+import { Repository } from '@common/domain/entities';
+import { CommonModule } from '@common/common.module';
 
 describe('UserService', () => {
   let service: UserService;

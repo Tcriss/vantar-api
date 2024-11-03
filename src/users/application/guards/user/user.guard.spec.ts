@@ -1,10 +1,10 @@
 import { ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserGuard } from './user.guard';
 
-import { Roles } from '../../../common/domain/enums';
-import { ROLE_KEY } from '../../../common/application/decorators';
+import { UserGuard } from './user.guard';
+import { Roles } from '@common/domain/enums';
+import { ROLE_KEY } from '@common/application/decorators';
 
 describe('UserGuard', () => {
   let guard: UserGuard;

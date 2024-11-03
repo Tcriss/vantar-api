@@ -2,11 +2,10 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { User } from "@prisma/client";
 import { randomUUID } from "crypto";
 
-import { PrismaProvider } from "../../../database/infrastructure/providers/prisma/prisma.provider";
 import { UserRepository } from "./user.repository";
-import { prismaMock } from "../../domain/mocks/user-providers.mock";
-import { userMock, userMock1, userMock2 } from "../../domain/mocks/user.mocks";
-import { UserEntity } from "../../domain/entities";
+import { prismaMock, userMock, userMock1, userMock2 } from "@users/domain/mocks";
+import { UserEntity } from "@users/domain/entities";
+import { PrismaProvider } from "@database/infrastructure/providers";
 
 describe('User Repository', () => {
     let repository: UserRepository;

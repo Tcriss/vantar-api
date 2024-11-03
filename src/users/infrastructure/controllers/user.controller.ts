@@ -1,17 +1,16 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { CreateUserDto, UpdateUserDto } from '../../domain/dtos';
-import { UserParams } from '../../domain/types';
-import { UserEntity } from '../../domain/entities';
-import { UserService } from '../../application/services/user.service';
-import { PublicAccess, Role } from '../../../common/application/decorators';
-import { ApiCreateUser, ApiDeleteUser, ApiGetUser, ApiGetUsers, ApiUpdateUser } from '../../application/decorators';
-import { UserGuard } from '../../application/guards/user.guard';
-import { UserFieldsInterceptor } from '../../application/interceptors/user-fields.interceptor';
-import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
-import { Roles } from '../../../common/domain/enums';
-import { CreateUserGuard } from '../../application/guards/create-user.guard';
+import { CreateUserDto, UpdateUserDto } from '@users/domain/dtos';
+import { UserParams } from '@users/domain/types';
+import { UserEntity } from '@users/domain/entities';
+import { UserService } from '@users/application/services';
+import { ApiCreateUser, ApiDeleteUser, ApiGetUser, ApiGetUsers, ApiUpdateUser } from '@users/application/decorators';
+import { UserGuard, CreateUserGuard } from '@users/application/guards';
+import { UserFieldsInterceptor } from '@users/application/interceptors';
+import { Roles } from '@common/domain/enums';
+import { PublicAccess, Role } from '@common/application/decorators';
+import { RoleGuard } from '@auth/application/guards';
 
 @ApiTags('Users')
 @Controller('users')

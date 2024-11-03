@@ -2,8 +2,8 @@ import { ExecutionContext, CallHandler } from '@nestjs/common';
 import { of } from 'rxjs';
 
 import { UserFieldsInterceptor } from './user-fields.interceptor';
-import { userMock, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
-import { UserEntity } from '../../domain/entities/user.entity';
+import { userMock, userMock2, userMock3 } from '@users/domain/mocks';
+import { UserEntity } from '@users/domain/entities';
 
 describe('UserFieldsInterceptor', () => {
     let interceptor: UserFieldsInterceptor;

@@ -5,11 +5,10 @@ import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { UserController } from './user.controller';
-import { UserService } from '../../application/services/user.service';
-import { mockUserService } from '../../domain/mocks/user-providers.mock';
-import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
-import { Roles } from '../../../common/domain/enums';
-import { UserEntity } from '../../domain/entities';
+import { UserEntity } from '@users/domain/entities';
+import { Roles } from '@common/domain/enums';
+import { mockUserService, userMock, userMock1, userMock2, userMock3 } from '@users/domain/mocks';
+import { UserService } from '@users/application/services';
 
 describe('UserController', () => {
   let controller: UserController;

@@ -2,8 +2,8 @@ import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } 
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 
-import { ROLE_KEY } from '../../../common/application/decorators';
-import { Roles } from '../../../common/domain/enums';
+import { ROLE_KEY } from '@common/application/decorators';
+import { Roles } from '@common/domain/enums';
 
 @Injectable()
 export class UserGuard implements CanActivate {

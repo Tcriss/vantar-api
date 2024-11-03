@@ -2,12 +2,12 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { UserRepository } from './infrastructure/repositories/user.repository';
-import { UserService } from './application/services/user.service';
-import { UserController } from './infrastructure/controllers/user.controller';
-import { UserEntity } from './domain/entities/user.entity';
-import { Repository } from '../common/domain/entities';
-import { CommonModule } from '../common/common.module';
+import { UserEntity } from '@users/domain/entities';
+import { UserService } from '@users/application/services';
+import { UserRepository } from '@users/infrastructure/repositories';
+import { UserController } from '@users/infrastructure/controllers';
+import { Repository } from '@common/domain/entities';
+import { CommonModule } from '@common/common.module';
 
 @Module({
     providers: [
