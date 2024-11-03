@@ -2,12 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 import { InvoiceController } from './invoice.controller';
-import { mockInvoiceService } from '../../domain/mocks/invoice-providers.mock';
-import { InvoiceService } from '../../application/services/invoice.service';
-import { invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock, partialInvoiceMock1, partialInvoiceMock2 } from '../../domain/mocks/invoice.mock';
-import { InvoiceEntity } from '../../../invoices/domain/entities';
-import { productListMock } from '../../../products/domain/mocks/product-list.mock';
-import { CreateProductListDto } from '../../../products/domain/dtos';
+import { InvoiceEntity } from '@invoices/domain/entities';
+import { productListMock } from '@products/domain/mocks';
+import { mockInvoiceService, invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock, partialInvoiceMock1, partialInvoiceMock2 } from '@invoices/domain/mocks';
+import { prismaMock } from '@shops/domain/mocks';
+import { CreateProductListDto } from '@products/domain/dtos';
+import { InvoiceService } from '@invoices/application/services';
+import { PrismaProvider } from '@database/infrastructure/providers';
 
 describe('InvoiceController', () => {
   let controller: InvoiceController;
@@ -19,6 +20,10 @@ describe('InvoiceController', () => {
         {
           provide: InvoiceService,
           useValue: mockInvoiceService
+        },
+        {
+          provide: PrismaProvider,
+          useValue: prismaMock
         }
       ],
       controllers: [InvoiceController],

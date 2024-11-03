@@ -6,7 +6,7 @@ import { InvoiceQueries } from '@invoices/domain/types';
 import { CreateInvoiceDto, UpdateInvoiceDto } from '@invoices/domain/dtos';
 import { InvoiceService } from '@invoices/application/services';
 import { ApiCreateInvoice, ApiDeleteInvoice, ApiGetInvoice, ApiGetInvoices, ApiUpdateInvoice } from '@invoices/application/decorators';
-import { RoleGuard } from '@auth/application/guards';
+import { OwnerGuard, RoleGuard } from '@auth/application/guards';
 import { Roles } from '@common/domain/enums';
 import { Role } from '@common/application/decorators';
 
@@ -20,6 +20,7 @@ export class InvoiceController {
     constructor(private readonly service: InvoiceService) {}
 
     @ApiGetInvoices()
+    @UseGuards(OwnerGuard)
     @Get()
     public async findAll(@Query() queries: InvoiceQueries): Promise<Partial<InvoiceEntity>[]> {
         if (!queries.limit || !queries.page) throw new HttpException("'page' or 'limit' param missing", HttpStatus.BAD_REQUEST);
@@ -37,6 +38,7 @@ export class InvoiceController {
     }
 
     @ApiGetInvoice()
+    @UseGuards(OwnerGuard)
     @Get(':id')
     public async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Query('fields') fields?: string): Promise<Partial<InvoiceEntity>> {
         const res = await this.service.findOneInvoice(id);
@@ -60,6 +62,7 @@ export class InvoiceController {
     }
 
     @ApiUpdateInvoice()
+    @UseGuards(OwnerGuard)
     @Patch(':id')
     public async update(@Body() invoice: UpdateInvoiceDto, @Param('id', new ParseUUIDPipe()) id: string): Promise<unknown> {
         const res = await this.service.updateInvoice(id, invoice);
@@ -73,6 +76,7 @@ export class InvoiceController {
     }
 
     @ApiDeleteInvoice()
+    @UseGuards(OwnerGuard)
     @Delete(':id')
     public async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<unknown> {
         const res = await this.service.deleteInvoice(id);

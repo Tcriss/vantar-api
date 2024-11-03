@@ -11,6 +11,7 @@ export const ApiGetInvoices = () => applyDecorators(
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiQuery({ name: 'page', required: true, example: 1, description: 'The page of result you want to fetch' }),
     ApiQuery({ name: 'limit', required: true, example: 10, description: 'How many invoices will be fetch per page' }),
+    ApiQuery({ name: 'shop', required: true, description: 'shop id param to verify you have access to the invoices' }),
     ApiQuery({ name: 'fields', required: false, description: 'fields you want to select from response' })
 );
 
@@ -22,6 +23,7 @@ export const ApiGetInvoice = () => applyDecorators(
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Invoice not found' }),
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiParam({ name: 'id', description: 'Invoice id', format: 'uuid', required: true }),
+    ApiQuery({ name: 'shop', required: true, description: 'shop id param to verify you have access to the invoice' }),
     ApiQuery({ name: 'fields', required: false, description: 'fields you want to select from response' })
 );
 
@@ -41,6 +43,7 @@ export const ApiUpdateInvoice = () => applyDecorators(
     ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Invoice not found' }),
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
+    ApiQuery({ name: 'shop', required: true, description: 'shop id param to verify you have access to the invoice' }),
     ApiParam({ name: 'id', description: 'Invoice id', format: 'uuid', required: true })
 );
 
@@ -51,5 +54,6 @@ export const ApiDeleteInvoice = () => applyDecorators(
     ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Not authorized' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Invoice not found' }),
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
+    ApiQuery({ name: 'shop', required: true, description: 'shop id param to verify you have access to the invoice' }),
     ApiParam({ name: 'id', description: 'Invoice id', format: 'uuid', required: true })
 );
