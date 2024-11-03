@@ -1,6 +1,6 @@
 export type SelectedFields = {
     id: boolean,
-    user_id: boolean,
+    shop_id: boolean,
     total: boolean,
     date: boolean,
 }

@@ -1,17 +1,17 @@
 import { Collection, DeleteResult, InsertOneResult, UpdateResult } from "mongodb";
 import { Injectable } from "@nestjs/common";
 
-import { Repository } from "../../../../common/domain/entities";
-import { InvoiceProductList } from "../../../../invoices/domain/types";
-import { MongoProvider } from "../../../../database/infrastructure/providers/mongo-db/mongo.provider";
-import { ProductList } from "../../../domain/types/product-list.type";
+import { ProductList } from "@products/domain/types";
+import { Repository } from "@common/domain/entities";
+import { InvoiceProductList } from "@invoices/domain/types";
+import { MongoProvider } from "@database/infrastructure/providers";
 
 @Injectable()
 export class ProductListRepository implements Partial<Repository<ProductList>> {
 
     collection: Collection<ProductList>;
 
-    constructor(private mongo: MongoProvider<ProductList>) {
+    constructor(private readonly mongo: MongoProvider<ProductList>) {
         this.collection = this.mongo.database();
     }
  

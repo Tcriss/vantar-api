@@ -1,48 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { Cache } from '@nestjs/cache-manager';
 
-import { SelectedFields } from '../../domain/types';
-import { Pagination } from "../../../common/domain/types/pagination.type";
-import { ProductEntity } from '../../domain/entities/product.entity';
-import { Repository } from '../../../common/domain/entities';
-import { Cached } from '../../../common/application/decorators';
+import { SelectedFields } from '@products/domain/types';
+import { ProductEntity } from '@products/domain/entities';
+import { Pagination } from "@common/domain/types";
+import { Repository } from '@common/domain/entities';
+import { Cached } from '@common/application/decorators';
 
 @Injectable()
 export class ProductService {
 
     constructor(
-        @Cached() private cache: Cache,
-        private productRepository: Repository<ProductEntity>
+        @Cached() private readonly cache: Cache,
+        private readonly productRepository: Repository<ProductEntity>
     ) { }
 
-    public async findAll(page: string, userId: string, query?: string, selected?: string): Promise<Partial<ProductEntity>[]> {
-        const pagination: Pagination = {
-            skip: +page.split(',')[0],
-            take: +page.split(',')[1]
-        };
+    public async findAll(shopId: string, page: Pagination, query?: string, selected?: string): Promise<Partial<ProductEntity>[]> {
+        const { take, skip } = page;
         const fields: SelectedFields = selected ? {
             id: true,
             user_id: true,
-            name: selected.includes('name') ? true : false,
-            price: selected.includes('price') ? true : false
+            name: !!selected.includes('name'),
+            price: !!selected.includes('price')
         } : null;
         await Promise.all([
-            await this.cache.set('products-pagination', pagination),
+            await this.cache.set('products-pagination', page),
             await this.cache.set('products-fields', fields)
         ]);
-        const cachedPagination = await this.cache.get('products-pagination');
+        const cachedPagination: Pagination = await this.cache.get('products-pagination');
         const cachedFields = await this.cache.get('products-fields');
         const cachedProducts: Partial<ProductEntity>[] = await this.cache.get('products');
 
-        if (cachedProducts && cachedFields == fields && cachedPagination == pagination) return cachedProducts;
+        if (cachedProducts && cachedFields == fields && cachedPagination == page) return cachedProducts;
 
-        const products = await this.productRepository.findAll(userId, pagination, fields, query);
+        const products = await this.productRepository.findAll(shopId, { take, skip }, fields, query);
         await this.cache.set('products', products);
 
         return products;
     }
 
-    public async findOne(id: string, userId: string, selected?: string): Promise<Partial<ProductEntity>> {
+    public async findOne(id: string, selected?: string): Promise<Partial<ProductEntity>> {
         const fields: SelectedFields = selected ? {
             id: true,
             user_id: true,
@@ -58,41 +55,36 @@ export class ProductService {
         const product: Partial<ProductEntity> = await this.productRepository.findOne(id, fields);
 
         if (!product) return null;
-        if (!(product.user_id === userId)) return undefined;
 
         await this.cache.set('product', product);
 
         return product;
     }
 
-    public async createMany(userId: string, products: Partial<ProductEntity>[]): Promise<number> {
-        products.map(product => product.user_id = userId);
+    public async createMany(products: Partial<ProductEntity>[]): Promise<number> {
         const res = await this.productRepository.createMany(products);
 
         return res['count'];
     }
 
-    public async create(userId: string, product: Partial<ProductEntity>): Promise<ProductEntity> {
-        product.user_id = userId;
+    public async create(product: Partial<ProductEntity>): Promise<ProductEntity> {
         const res = await this.productRepository.create(product);
 
-        return res as ProductEntity;
+        return res;
     }
 
-    public async update(id: string, userId: string, product: Partial<ProductEntity>): Promise<ProductEntity> {
-        const originalProduct: Partial<ProductEntity> = await this.findOne(id, userId);
+    public async update(id: string, product: Partial<ProductEntity>): Promise<ProductEntity> {
+        const originalProduct: Partial<ProductEntity> = await this.findOne(id);
         
         if (!originalProduct) return null;
-        if (originalProduct.user_id !== userId) return undefined;
         
         return this.productRepository.update(id, product);
     }
 
-    public async delete(id: string, userId: string): Promise<ProductEntity> {
-        const product: Partial<ProductEntity> = await this.findOne(id, userId);
+    public async delete(id: string): Promise<ProductEntity> {
+        const product: Partial<ProductEntity> = await this.findOne(id);
         
         if (!product) return null;
-        if (product.user_id !== userId) return undefined;
 
         await Promise.all([
             await this.cache.del('product-fields'),

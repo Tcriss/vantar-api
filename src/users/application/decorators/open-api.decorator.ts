@@ -1,7 +1,7 @@
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger';
 
-import { UserEntity } from '../../domain/entities/user.entity';
+import { UserEntity } from '@users/domain/entities';
 
 export const ApiGetUsers = () => applyDecorators(
     ApiBearerAuth(),
@@ -12,7 +12,8 @@ export const ApiGetUsers = () => applyDecorators(
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Server error' }),
-    ApiQuery({ name: 'page', required: true, example: '0, 10', description: 'pagination settings, first value is skip, and second is take' }),
+    ApiQuery({ name: 'page', required: true, example: 1, description: 'The page of results you want to fetch' }),
+    ApiQuery({ name: 'limit', required: true, example: 10, description: 'How many users will be fetch per page' }),
     ApiQuery({ name: 'q', required: false, description: 'search param to filter results' })
 );
 

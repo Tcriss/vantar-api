@@ -1,4 +1,4 @@
-import { ProductEntityList } from "../../../products/domain/entities/product-list.entity";
+import { ProductEntityList } from "@products/domain/entities";
 
 export type InvoiceProductList = {
     id: string,

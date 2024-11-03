@@ -5,14 +5,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 
 import { UserService } from './user.service';
-import { Roles } from '../../../common/domain/enums';
-import { mockUserRepository } from '../../domain/mocks/user-providers.mock';
-import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
-import { UserEntity } from '../../domain/entities/user.entity';
-import { Repository } from '../../../common/domain/entities';
-import { emailServiceMock } from '../../../email/domain/mocks/email-provider.mock';
-import { EmailService } from '../../../email/application/email.service';
-import { SecurityModule } from '../../../security/security.module';
+import { mockUserRepository, userMock, userMock1, userMock2, userMock3 } from '@users/domain/mocks';
+import { UserEntity } from '@users/domain/entities';
+import { emailServiceMock } from '@email/domain/mocks/email-provider.mock';
+import { EmailService } from '@email/application/email.service';
+import { Roles } from '@common/domain/enums';
+import { Repository } from '@common/domain/entities';
+import { CommonModule } from '@common/common.module';
 
 describe('UserService', () => {
   let service: UserService;
@@ -36,7 +35,7 @@ describe('UserService', () => {
       imports: [
         JwtModule.register({ secret: 'JWT-SECRET' }),
         CacheModule.register({ ttl: (60 ^ 2) * 1000 }),
-        SecurityModule.register({ saltRounds: 5 })
+        CommonModule.register({ saltRounds: 5 })
       ]
     }).compile();
 
@@ -53,7 +52,7 @@ describe('UserService', () => {
     it('should fetch all users', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([ userMock, userMock1, userMock2, userMock3 ]);
 
-      const res: Partial<UserEntity>[] = await service.findAllUsers(userMock1.role, '0,10');
+      const res: Partial<UserEntity>[] = await service.findAllUsers({ take: 10, skip: 0 }, '0,10');
 
       expect(res).toEqual([ userMock, userMock1, userMock2, userMock3 ]);
     });
@@ -62,7 +61,7 @@ describe('UserService', () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([ userMock, userMock1 ]);
 
       const q: string = 'A'
-      const res: Partial<UserEntity>[] = await service.findAllUsers('0,10', q);
+      const res: Partial<UserEntity>[] = await service.findAllUsers({ take: 10, skip: 0 }, q);
 
       expect(res).toEqual([ userMock, userMock1 ]);
       expect(res[0].name.includes(q) && res[1].name.includes(q)).toBeTruthy();

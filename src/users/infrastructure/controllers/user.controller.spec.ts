@@ -2,14 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '@prisma/client';
 import { JwtModule } from '@nestjs/jwt';
 import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { UserController } from './user.controller';
-import { UserService } from '../../application/services/user.service';
-import { mockUserService } from '../../domain/mocks/user-providers.mock';
-import { userMock, userMock1, userMock2, userMock3 } from '../../domain/mocks/user.mocks';
-import { Roles } from '../../../common/domain/enums';
-import { UserEntity } from '../../domain/entities/user.entity';
-import { ConfigModule } from '@nestjs/config';
+import { UserEntity } from '@users/domain/entities';
+import { Roles } from '@common/domain/enums';
+import { mockUserService, userMock, userMock1, userMock2, userMock3 } from '@users/domain/mocks';
+import { UserService } from '@users/application/services';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -46,7 +45,7 @@ describe('UserController', () => {
           email: userMock.email,
           name: userMock.name,
           role: Roles.ADMIN
-      }} as unknown as Request, { page: '0,10' })
+      }} as unknown as Request, { page: 1, limit: 10 })
 
       expect(users).toStrictEqual([ userMock, userMock1, userMock2, userMock3 ]);
     });
@@ -62,8 +61,7 @@ describe('UserController', () => {
           name: userMock.name,
           role: Roles.ADMIN
       }} as unknown as Request, {
-        page: '0,10',
-        q: q
+        page: 1, limit: 10, q: q
       });
 
       expect(users).toStrictEqual([ userMock, userMock1 ]);
@@ -78,7 +76,7 @@ describe('UserController', () => {
             email: userMock.email,
             name: userMock.name,
             role: Roles.ADMIN
-        }} as unknown as Request, { page: '0,10' })
+        }} as unknown as Request, { page: 1, limit: 10 })
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);

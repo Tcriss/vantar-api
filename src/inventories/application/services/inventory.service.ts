@@ -1,30 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { Cache } from '@nestjs/cache-manager';
 
-import { Pagination } from '../../../common/domain/types';
-import { SelectedFields } from '../../domain/types';
-import { InventoryEntity } from '../../domain/entities/inventory.entity';
-import { Repository } from '../../../common/domain/entities';
-import { InventoryProductList } from '../../../inventories/domain/types/inventory-prodcut-list.type';
-import { productListCreation } from '../../../common/application/utils';
-import { ProductList } from '../../../products/domain/types/product-list.type';
-import { ProductListRepository } from '../../../products/application/decotators';
-import { Cached } from '../../../common/application/decorators';
+import { InventoryEntity } from '@inventories/domain/entities';
+import { SelectedFields, InventoryProductList } from '@inventories/domain/types';
+import { Pagination } from '@common/domain/types';
+import { Repository } from '@common/domain/entities';
+import { productListCreation } from '@common/application/utils';
+import { Cached } from '@common/application/decorators';
+import { ProductList } from '@products/domain/types';
+import { ProductListRepository } from '@products/application/decotators';
 
 @Injectable()
 export class InventoryService {
 
     constructor(
-        private inventoryRepository: Repository<InventoryEntity>,
-        @ProductListRepository() private productListRepository: Repository<ProductList>,
-        @Cached() private cache: Cache
+        private readonly inventoryRepository: Repository<InventoryEntity>,
+        @ProductListRepository() private readonly productListRepository: Repository<ProductList>,
+        @Cached() private readonly cache: Cache
     ) {}
 
-    public async findAllInventories(userId: string, page: string, selected?: string): Promise<Partial<InventoryEntity>[]> {
-        const pagination: Pagination = {
-            skip: +page.split(',')[0],
-            take: +page.split(',')[1]
-        };
+    public async findAllInventories(shopId: string, page: Pagination, selected?: string): Promise<Partial<InventoryEntity>[]> {
         const fields: SelectedFields = selected ? {
             id: true,
             user_id: true,
@@ -34,29 +29,29 @@ export class InventoryService {
             created_at: selected.includes('created_at')
         } : null;
         await Promise.all([
-            await this.cache.set('inventories-pagination', pagination),
+            await this.cache.set('inventories-pagination', page),
             await this.cache.set('inventories-fields', fields)
         ]);
-        const cachedPagination = await this.cache.get('inventories-pagination');
+        const cachedPagination: Pagination = await this.cache.get('inventories-pagination');
         const cachedFields = await this.cache.get('inventories-fields');
         const cachedInventories: Partial<InventoryEntity>[] = await this.cache.get('inventories');
 
-        if (cachedInventories && cachedFields == fields && cachedPagination == pagination) return cachedInventories;
+        if (cachedInventories && cachedFields == fields && cachedPagination == page) return cachedInventories;
 
-        const inventories = await this.inventoryRepository.findAll(userId, pagination, fields);
+        const inventories = await this.inventoryRepository.findAll(shopId, page, fields);
         await this.cache.set('inventories', inventories);
 
         return inventories;
     }
 
-    public async findOneInventory(id: string, userId?: string, selected?: string): Promise<Partial<InventoryEntity>> {
+    public async findOneInventory(id: string, selected?: string): Promise<Partial<InventoryEntity>> {
         const fields: SelectedFields = selected ? {
             id: true,
             user_id: true,
-            cost: selected.includes('cost') ? true : false,
-            subtotal: selected.includes('subtotal') ? true : false,
-            total: selected.includes('total') ? true : false,
-            created_at: selected.includes('created_at') ? true : false
+            cost: !!selected.includes('cost'),
+            subtotal: !!selected.includes('subtotal'),
+            total: !!selected.includes('total'),
+            created_at: !!selected.includes('created_at')
         } : null;
         await this.cache.set('fields', fields);
         const cachedFields = await this.cache.get('inventory-fields');
@@ -67,7 +62,6 @@ export class InventoryService {
         const inventory: Partial<InventoryEntity> = await this.inventoryRepository.findOne(id, fields);
 
         if (!inventory) return null;
-        if (userId && inventory.user_id !== userId) return undefined;
 
         const inventoryProductist = await this.productListRepository.findOne(inventory.id);
         inventory.products = inventoryProductist.products || [];
@@ -93,7 +87,7 @@ export class InventoryService {
         });
 
         if (!productsResult) {
-            await this.deleteInventory(newInventory.id, newInventory.user_id);
+            await this.deleteInventory(newInventory.id);
 
             return undefined;
         };
@@ -103,12 +97,11 @@ export class InventoryService {
         return newInventory;
     }
 
-    public async updateInventory(id: string, inventory: Partial<InventoryEntity>, userId: string): Promise<InventoryEntity> {
+    public async updateInventory(id: string, inventory: Partial<InventoryEntity>): Promise<InventoryEntity> {
         const resource: Partial<InventoryEntity> = await this.findOneInventory(id);
         const resourceList: Partial<InventoryProductList> = await this.productListRepository.findOne(id);
 
         if (!resource || !resourceList) return null;
-        if (resource.user_id !== userId) return undefined;
         if (!inventory.products) {
             const updatedInventory = await this.inventoryRepository.update(id, {
                 cost: inventory.cost,
@@ -139,11 +132,10 @@ export class InventoryService {
         return updatedInventory;
     }
 
-    public async deleteInventory(id: string, userId: string): Promise<InventoryEntity> {
+    public async deleteInventory(id: string): Promise<InventoryEntity> {
         const resource: Partial<InventoryEntity> = await this.findOneInventory(id);
 
         if (!resource) return null;
-        if (resource.user_id !== userId) return undefined;
 
         const res = await this.productListRepository.deleteDoc(id);
 

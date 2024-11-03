@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { MongoProvider } from './mongo.provider';
-import { DatabaseModuleOptionsKey } from '../../../application/constans/database=module-options.key';
+import { DatabaseModuleOptionsKey } from '@database/application/constans';
 
 describe('MongoDb', () => {
   let provider: MongoProvider<unknown>;

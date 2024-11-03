@@ -1,5 +1,7 @@
 export type ProductQueries = {
-    page?: string,
+    page?: number,
+    limit?: number,
+    shop: string,
     q?: string,
     selected?: string
 }

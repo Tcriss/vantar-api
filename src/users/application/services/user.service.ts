@@ -2,34 +2,29 @@ import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Cache } from '@nestjs/cache-manager';
 
-import { UserEntity } from '../../domain/entities/user.entity';
-import { UpdateUserDto } from '../../domain/dtos';
-import { Pagination } from '../../../common/domain/types';
-import { Roles } from '../../../common/domain/enums';
-import { Repository } from '../../../common/domain/entities';
-import { BcryptProvider } from '../../../security/application/providers/bcrypt.provider';
-import { EmailService } from '../../../email/application/email.service';
-import { Cached } from '../../../common/application/decorators';
+import { UserEntity } from '@users/domain/entities';
+import { UpdateUserDto } from '@users/domain/dtos';
+import { Pagination } from '@common/domain/types';
+import { Roles } from '@common/domain/enums';
+import { Repository } from '@common/domain/entities';
+import { BcryptProvider } from '@common/application/providers';
+import { Cached } from '@common/application/decorators';
+import { EmailService } from '@email/application/email.service';
 
 @Injectable()
 export class UserService {
 
-    private logger = new Logger(UserService.name);
+    private readonly logger = new Logger(UserService.name);
 
     constructor(
-        @Cached() private cache: Cache,
-        private repository: Repository<UserEntity>,
-        private emailService: EmailService,
-        private bcrypt: BcryptProvider,
-        private jwt: JwtService
+        @Cached() private readonly cache: Cache,
+        private readonly repository: Repository<UserEntity>,
+        private readonly emailService: EmailService,
+        private readonly bcrypt: BcryptProvider,
+        private readonly jwt: JwtService
     ) {}
 
-    public async findAllUsers(page: string, query?: string): Promise<UserEntity[] | Partial<UserEntity>[]> {
-        const pagination: Pagination = {
-            skip: +page.split(',')[0],
-            take: +page.split(',')[1]
-        };
-        
+    public async findAllUsers(pagination: Pagination, query?: string): Promise<UserEntity[] | Partial<UserEntity>[]> {
         return this.repository.findAll(pagination, query);
     }
 

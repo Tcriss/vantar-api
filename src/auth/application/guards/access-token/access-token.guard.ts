@@ -1,13 +1,16 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { PUBLIC_KEY } from '../../../../common/application/decorators';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '@auth/application/services';
+import { PUBLIC_KEY } from '@common/application/decorators';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate { 
 
-    constructor(private reflector: Reflector, private authService: AuthService) {}
+    constructor(
+        private readonly reflector: Reflector,
+        private readonly authService: AuthService
+    ) {}
 
     public async canActivate(context: ExecutionContext): Promise<boolean> {
         const isPublic: boolean = this.reflector.getAllAndOverride<boolean>(PUBLIC_KEY, [

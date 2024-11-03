@@ -1,14 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Inventory } from "@prisma/client";
 
-import { ProductEntityList } from "../../../products/domain/entities/product-list.entity";
+import { ProductEntityList } from "@products/domain/entities";
 
 export class InventoryEntity implements Inventory {
     @ApiProperty({ format: 'uuid' })
     id: string;
 
     @ApiProperty({ format: 'uuid' })
-    user_id: string;
+    shop_id: string;
     
     @ApiProperty()
     cost: number;
@@ -19,7 +19,7 @@ export class InventoryEntity implements Inventory {
     @ApiProperty()
     subtotal: number;
 
-    @ApiProperty()
+    @ApiProperty({ format: 'date' })
     created_at: Date;
 
     @ApiProperty({ type: ProductEntityList, isArray: true })

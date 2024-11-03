@@ -2,13 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 import { InvoiceController } from './invoice.controller';
-import { mockInvoiceService } from '../../domain/mocks/invoice-providers.mock';
-import { InvoiceService } from '../../application/services/invoice.service';
-import { invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock, partialInvoiceMock1, partialInvoiceMock2 } from '../../../invoices/domain/mocks/invoice..mock';
-import { InvoiceEntity } from '../../../invoices/domain/entities/invoice.entity';
-import { productListMock } from '../../../products/domain/mocks/product-list.mock';
-import { CreateProductListDto } from '../../../products/domain/dtos';
-import { Roles } from '../../../common/domain/enums';
+import { InvoiceEntity } from '@invoices/domain/entities';
+import { productListMock } from '@products/domain/mocks';
+import { mockInvoiceService, invoiceMock, invoiceMock1, invoiceMock2, partialInvoiceMock, partialInvoiceMock1, partialInvoiceMock2 } from '@invoices/domain/mocks';
+import { prismaMock } from '@shops/domain/mocks';
+import { CreateProductListDto } from '@products/domain/dtos';
+import { InvoiceService } from '@invoices/application/services';
+import { PrismaProvider } from '@database/infrastructure/providers';
 
 describe('InvoiceController', () => {
   let controller: InvoiceController;
@@ -20,6 +20,10 @@ describe('InvoiceController', () => {
         {
           provide: InvoiceService,
           useValue: mockInvoiceService
+        },
+        {
+          provide: PrismaProvider,
+          useValue: prismaMock
         }
       ],
       controllers: [InvoiceController],
@@ -37,14 +41,7 @@ describe('InvoiceController', () => {
     it('should find all products', async () => {
       jest.spyOn(service, 'findAllInvoices').mockResolvedValue([invoiceMock, invoiceMock1]);
 
-      const res: Partial<InvoiceEntity>[] = await controller.findAll({
-        user: {
-          id: invoiceMock.user_id,
-          name: '',
-          email: '',
-          role: Roles.CUSTOMER
-        }
-      } as unknown as Request, { page: '0,10' });
+      const res: Partial<InvoiceEntity>[] = await controller.findAll({ page: 1, limit: 10, shop: '123' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([invoiceMock, invoiceMock1]);
@@ -53,14 +50,7 @@ describe('InvoiceController', () => {
     it('should find all products with pagination', async () => {
       jest.spyOn(service, 'findAllInvoices').mockResolvedValue([invoiceMock1]);
 
-      const res: Partial<InvoiceEntity>[] = await controller.findAll({
-        user: {
-          id: invoiceMock.user_id,
-          name: '',
-          email: '',
-          role: Roles.CUSTOMER
-        }
-      } as unknown as Request, { page: '1,1' });
+      const res: Partial<InvoiceEntity>[] = await controller.findAll({ page: 1, limit: 10, shop: '123' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([invoiceMock1]);
@@ -73,14 +63,7 @@ describe('InvoiceController', () => {
         partialInvoiceMock2
       ]);
 
-      const res: Partial<InvoiceEntity>[] = await controller.findAll({
-        user: {
-          id: invoiceMock.user_id,
-          name: '',
-          email: '',
-          role: Roles.CUSTOMER
-        }
-      } as unknown as Request, { page: '0,10', fields: 'id, user_id' });
+      const res: Partial<InvoiceEntity>[] = await controller.findAll({ page: 1, limit: 10, shop: '123' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([
@@ -95,14 +78,7 @@ describe('InvoiceController', () => {
     it('should find one product', async () => {
       jest.spyOn(service, 'findOneInvoice').mockResolvedValue(invoiceMock);
 
-      const res = await controller.findOne({
-        user: {
-          id: invoiceMock.user_id,
-          email: '',
-          name: '',
-          role: Roles.CUSTOMER
-        }
-      } as unknown as Request, invoiceMock.id);
+      const res = await controller.findOne(invoiceMock.id);
 
       expect(res).toBe(invoiceMock);
     });
@@ -110,17 +86,7 @@ describe('InvoiceController', () => {
     it('should find one product with some fields', async () => {
       jest.spyOn(service, 'findOneInvoice').mockResolvedValue(partialInvoiceMock1);
 
-      const res = await controller.findOne({
-          user: {
-            id: invoiceMock1.user_id,
-            email: '',
-            name: '',
-            role: Roles.CUSTOMER
-          }
-        } as unknown as Request, 
-        invoiceMock1.id,
-        'name, user_id'
-      );
+      const res = await controller.findOne(invoiceMock1.id, 'name, user_id');
 
       expect(res).toBe(partialInvoiceMock1);
     });
@@ -129,14 +95,7 @@ describe('InvoiceController', () => {
       jest.spyOn(service, 'findOneInvoice').mockResolvedValue(null);
 
       try {
-        await controller.findOne({
-          user: {
-            id: invoiceMock.user_id,
-            email: '',
-            name: '',
-            role: Roles.CUSTOMER
-          }
-        } as unknown as Request, invoiceMock.id, 'name, user_id');
+        await controller.findOne(invoiceMock.id, 'name, user_id');
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
@@ -148,18 +107,11 @@ describe('InvoiceController', () => {
       jest.spyOn(service, 'findOneInvoice').mockResolvedValue(undefined);
 
       try {
-        await controller.findOne({
-          user: {
-            id: invoiceMock1.user_id,
-            email: '',
-            name: '',
-            role: Roles.CUSTOMER
-          }
-        } as unknown as Request, invoiceMock2.id);
+        await controller.findOne(invoiceMock2.id);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Forbidden resource');
+        expect(err.status).toBe(HttpStatus.NOT_FOUND);
+        expect(err.message).toBe('Invoice not found');
       }
     });
   });
@@ -168,15 +120,8 @@ describe('InvoiceController', () => {
     it('should create an invoice', async () => {
       jest.spyOn(service, 'createInvoice').mockResolvedValue(invoiceMock2);
 
-      const { total, user_id } = invoiceMock2;
       const res = await controller.create({
-        user: {
-          id: invoiceMock2.user_id,
-          name: '',
-          email: '',
-          role: Roles.CUSTOMER
-        }
-      } as unknown as Request, {
+        shop_id: '1',
         products: [productListMock as CreateProductListDto]
       });
 
@@ -189,17 +134,7 @@ describe('InvoiceController', () => {
     it('should update an invoice', async () => {
       jest.spyOn(service, 'updateInvoice').mockResolvedValue(invoiceMock2);
 
-      const { total } = invoiceMock1;
-      const res = await controller.update({
-        user: {
-          id: invoiceMock.user_id,
-          name: '',
-          email: '',
-          role: Roles.CUSTOMER
-        }
-      } as unknown as Request, {
-        products: [productListMock]
-      }, invoiceMock.id);
+      const res = await controller.update({ products: [productListMock] }, invoiceMock.id);
 
       expect(res['message']).toBe('Invoice updated successfully');
       expect(res['invoice']).toBe(invoiceMock2);
@@ -207,49 +142,13 @@ describe('InvoiceController', () => {
 
     it('should throw an exception if invoice was not found', async () => {
       jest.spyOn(service, 'updateInvoice').mockResolvedValue(null);
-
-      const { total } = invoiceMock1;
-      const { user_id } = invoiceMock;
       
       try {
-        await controller.update({
-          user: {
-            id: invoiceMock.user_id,
-            name: '',
-            email: '',
-            role: Roles.CUSTOMER
-          }
-        } as unknown as Request, {
-          products: [productListMock]
-        }, '123');
+        await controller.update({ products: [productListMock] }, '123');
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
         expect(err.message).toBe('Invoice not found');
-      }
-    });
-
-    it('should throw an exception if not the owner', async () => {
-      jest.spyOn(service, 'updateInvoice').mockResolvedValue(undefined);
-
-      const { total } = invoiceMock1;
-      const { user_id } = invoiceMock;
-      
-      try {
-        await controller.update({
-          user: {
-            id: invoiceMock.user_id,
-            name: '',
-            email: '',
-            role: Roles.CUSTOMER
-          }
-        } as unknown as Request, {
-          products: [productListMock]
-        }, '123');
-      } catch (err) {
-        expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Forbidden resource');
       }
     });
   });
@@ -258,14 +157,7 @@ describe('InvoiceController', () => {
     it('should delete an invoice', async () => {
       jest.spyOn(service, 'deleteInvoice').mockResolvedValue(invoiceMock2);
 
-      const res = await controller.delete({
-        user: {
-          id: invoiceMock2.user_id,
-          name: '',
-          email: '',
-          role: Roles.CUSTOMER
-        }
-      } as unknown as Request, invoiceMock2.id);
+      const res = await controller.delete(invoiceMock2.id);
 
       expect(res['message']).toBe('Invoice deleted');
     });
@@ -274,37 +166,11 @@ describe('InvoiceController', () => {
       jest.spyOn(service, 'deleteInvoice').mockResolvedValue(null);
 
       try {
-        await controller.delete({
-          user: {
-            id: invoiceMock.user_id,
-            name: '',
-            email: '',
-            role: Roles.CUSTOMER
-          }
-        } as unknown as Request, invoiceMock.user_id);
+        await controller.delete(invoiceMock.id);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.NOT_FOUND);
         expect(err.message).toBe('Invoice not found');
-      }
-    });
-
-    it('should throw an exception if not the owner', async () => {
-      jest.spyOn(service, 'deleteInvoice').mockResolvedValue(undefined);
-      
-      try {
-        await controller.delete({
-          user: {
-            id: invoiceMock.user_id,
-            name: '',
-            email: '',
-            role: Roles.CUSTOMER
-          }
-        } as unknown as Request, invoiceMock.user_id);
-      } catch (err) {
-        expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('Forbidden resource');
       }
     });
   });

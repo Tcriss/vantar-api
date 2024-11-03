@@ -1,8 +1,8 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Collection, MongoClient, ServerApiVersion } from 'mongodb';
 
-import { DatabaseOptions } from '../../../domain/interfaces';
-import { Options } from '../../../application/decorators/options.decorator';
+import { DatabaseOptions } from '@database/domain/interfaces';
+import { Options } from '@database/application/decorators';
 
 @Injectable()
 export class MongoProvider<T> extends MongoClient implements OnModuleInit, OnModuleDestroy {

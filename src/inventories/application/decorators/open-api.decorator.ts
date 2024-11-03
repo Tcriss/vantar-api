@@ -1,7 +1,7 @@
 import { HttpStatus, applyDecorators } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from "@nestjs/swagger";
 
-import { InventoryEntity } from "../../domain/entities/inventory.entity";
+import { InventoryEntity } from "@inventories/domain/entities";
 
 export const ApiGetInventories = () => applyDecorators(
     ApiOperation({ summary: "Get all customer's inventories" }),
@@ -10,9 +10,10 @@ export const ApiGetInventories = () => applyDecorators(
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Page param missing' }),
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
-    ApiQuery({ name: 'page', example: '0, 10', required: true, description: 'Field that let you paginate the data, take 10 (inventories), skip 1 (skip only one inventory)' }),
-    ApiQuery({ name: 'fields', required: false, description: 'Fields you want to fetch in your response' }),
-    //ApiQuery({ name: 'q', required: false, description: 'Query earch term' })
+    ApiQuery({ name: 'page', required: true, example: 1, description: 'The page of result you eant to fetch' }),
+    ApiQuery({ name: 'limit', required: true, example: 10, description: 'How many inventories will be fetch per page' }),
+    ApiQuery({ name: 'shop', required: true, description: 'shop id param to verify you have access to the inventories' }),
+    ApiQuery({ name: 'fields', required: false, description: 'Fields you want to fetch in your response' })
 );
 
 export const ApiGetInventory = () => applyDecorators(
@@ -25,6 +26,7 @@ export const ApiGetInventory = () => applyDecorators(
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
     ApiParam({ name: 'id', description: 'Inventory id', format: 'uuid', required: true }),
     ApiQuery({ name: 'fields', required: false, description: 'Fields you want to fetch in your response' }),
+    ApiQuery({ name: 'shop', required: true, description: 'shop id param to verify you have access to the inventories' })
 );
 
 export const ApiCreateInventory = () => applyDecorators(
@@ -43,7 +45,8 @@ export const ApiUpdateInventory = () => applyDecorators(
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Inventory not found' }),
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
-    ApiParam({ name: 'id', description: 'Inventory id', format: 'uuid', required: true })
+    ApiParam({ name: 'id', description: 'Inventory id', format: 'uuid', required: true }),
+    ApiQuery({ name: 'shop', required: true, description: 'shop id param to verify you have access to the inventories' }),
 );
 
 export const ApiDeleteInventory = () => applyDecorators(
@@ -54,5 +57,6 @@ export const ApiDeleteInventory = () => applyDecorators(
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden resource' }),
     ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Inventory not found' }),
     ApiResponse({ status: HttpStatus.TOO_MANY_REQUESTS, description: 'Too many resquest' }),
-    ApiParam({ name: 'id', description: 'Inventory id', format: 'uuid', required: true })
+    ApiParam({ name: 'id', description: 'Inventory id', format: 'uuid', required: true }),
+    ApiQuery({ name: 'shop', required: true, description: 'shop id param to verify you have access to the inventories' }),
 );

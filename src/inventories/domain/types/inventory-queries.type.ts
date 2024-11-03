@@ -1,5 +1,7 @@
 export type InventoryQueries = {
-    page?: string,
+    page: number,
+    limit: number,
+    shop: string,
     q?: string,
     fields?: string
 }

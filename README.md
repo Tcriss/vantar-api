@@ -6,6 +6,8 @@ This is [Vantar Project's]('https://github.com/HaroldMart/Vantar-Frontend') API,
 
 ### 🎯 Key Features
 
+- **Manage Shops:** Create an shop where all information are insolated, one shop is diferent from other.
+
 - **Manage Inventory:** Create an inventory from using products from your product list.
 
 - **Manage Products:** Create your product list to use it when creating an invoice or an inventory.
@@ -26,6 +28,12 @@ Some of those features are:
 - Caching.
 - Role and Owner Based Access Control.
 - Secure headers.
+
+### 📄 Documentation
+
+Thanks to the integration of the package nestJS/swagger, Vantar api is well documented, you can access Vantar API's swagger docs through the path `/docs` and swagger documentation will be shown to you.
+
+![Preview](./public/images/cover.png)
 
 ## Technologies used
 
@@ -77,6 +85,7 @@ DB_NAME = #db name
 
 ## connection
 DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@localhost:5434/${DB_NAME}?schema=public
+DIRECT_URL = # only if using supabase
 MONGO_URI = # mongo ulr
 MONGO_DB_NAME = # mongo db database
 
@@ -95,9 +104,9 @@ ACTIVATION_SECRET = # Activation for activation token
 RESET_SECRET = # Secret for reset token validation
 
 #Default ADMIN
-USER_NAME = #admin name
-USER_MAIL = #admin mail
-USER_PW = #admin password
+USER_NAME = # admin name
+USER_MAIL = # admin mail
+USER_PW = # admin password
 ```
 
 ```dosini
@@ -114,6 +123,7 @@ DB_NAME = # postgres name
 
 # replace connection variable where host name is localhost and port
 DATABASE_URL = postgres://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}?schema=public
+DIRECT_URL = # only if using supabase
 MONGO_URI = # mongo database url
 MONGO_DB_NAME = # mongoDB name
 
@@ -132,9 +142,9 @@ ACTIVATION_SECRET = # Activation for activation token
 RESET_SECRET = # Secret for reset token validation
 
 #Default ADMIN
-USER_NAME = #admin name
-USER_MAIL = #admin mail
-USER_PW = #admin password
+USER_NAME = # admin name
+USER_MAIL = # admin mail
+USER_PW = # admin password
 ```
 ### 🔄️ Restore dependencies
 

@@ -5,8 +5,11 @@ export class ProductEntity implements Product {
     @ApiProperty({ format: 'uuid' })
     id: string;
 
+    @ApiProperty({ format: 'date' })
+    created_at: Date;
+
     @ApiProperty({ format: 'uuid' })
-    user_id: string;
+    shop_id: string;
 
     @ApiProperty({ example: 'Cloro' })
     name: string;

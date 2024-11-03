@@ -1,11 +1,11 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '@auth/application/services';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
 
-    constructor(private authService: AuthService) {}
+    constructor(private readonly authService: AuthService) {}
 
     public async canActivate(context: ExecutionContext, ): Promise<boolean> {
         const req: Request = context.switchToHttp().getRequest();

@@ -16,6 +16,19 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/*": ["src/*"],
+      "@auth/*": ["src/auth/*"],
+      "@common/*": ["src/common/*"],
+      "@database/*": ["src/database/*"],
+      "@email/*": ["src/email/*"],
+      "@inventories/*": ["src/inventories/*"],
+      "@invoices/*": ["src/invoices/*"],
+      "@products/*": ["src/products/*"],
+      "@shops/*": ["src/shops/*"],
+      "@users/*": ["src/users/*"]
+    },
+    "resolveJsonModule": true
   }
 }

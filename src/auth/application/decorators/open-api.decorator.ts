@@ -1,7 +1,7 @@
 import { HttpStatus, applyDecorators } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse } from "@nestjs/swagger";
 
-import { AuthEntity } from "../../domain/entities/auth.entity";
+import { AuthEntity } from "@auth/domain/entities/auth.entity";
 
 export const ApiLogin = () => applyDecorators(
     ApiOperation({ summary: 'Sing in a user' }),

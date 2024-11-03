@@ -7,7 +7,7 @@ export class LoggerMiddleware implements NestMiddleware {
 
   private readonly logger = new Logger();
 
-  constructor(private config: ConfigService) {}
+  constructor(private readonly config: ConfigService) {}
 
   use(req: Request, res: Response, next: () => void) {
     const { url, method, ip } = req;
