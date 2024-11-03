@@ -1,4 +1,4 @@
-import { CommonModuleAsyncOptions } from "./security-module-async-options.interface";
+import { CommonModuleAsyncOptions } from "./common-module-async-options.interface";
 
 export interface CommonModuleOptionsForRoot extends CommonModuleAsyncOptions {
     isGlobal?: boolean;

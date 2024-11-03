@@ -1,4 +1,4 @@
-import { ProductEntityList } from "../../../products/domain/entities/product-list.entity";
+import { ProductEntityList } from "@products/domain/entities";
 
 export function productListCreation(products: Partial<ProductEntityList>[], subtotal: number): { list: ProductEntityList[], subtotal: number } {
     let inventorySubtotal: number = subtotal;

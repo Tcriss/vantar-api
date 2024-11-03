@@ -1,9 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
 
-import { BcryptProvider } from './application/providers/bcrypt.provider';
-import { CommonModuleAsyncOptions, CommonModuleOptions } from './domain/interfaces';
-import { SECURITY_OPTIONS_KEY } from './constants';
-import { CommonModuleOptionsForRoot } from './domain/interfaces/security-module-forroot-async.options';
+import { CommonModuleAsyncOptions, CommonModuleOptions, CommonModuleOptionsForRoot } from '@common/domain/interfaces';
+import { BcryptProvider } from '@common/application/providers';
+import { SECURITY_OPTIONS_KEY } from '@common/application/constants';
 
 @Module({})
 export class CommonModule {

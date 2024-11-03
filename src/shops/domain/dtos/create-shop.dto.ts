@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString, Matches } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
-import { nameRegex } from "../../../common/constants";
+import { nameRegex } from "../../../common/application/constants";
 
 export class CreateShopDto {
     @ApiProperty({ example: 'Vantar' })

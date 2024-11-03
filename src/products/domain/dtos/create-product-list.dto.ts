@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsNumber, IsString, Matches } from "class-validator";
 
-import { nameRegex } from "@common/constants";
+import { nameRegex } from "@/common/application/constants";
 
 export class CreateProductListDto {
     @ApiProperty({ example: 'Cloro' })

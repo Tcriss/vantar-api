@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { genSalt, hash, compare } from 'bcrypt';
 
-import { SecurityOptions } from '../decorators';
-import { CommonModuleOptions } from '../../domain/interfaces';
+import { SecurityOptions } from '@common/application/decorators';
+import { CommonModuleOptions } from '@common/domain/interfaces';
 
 @Injectable()
 export class BcryptProvider {
