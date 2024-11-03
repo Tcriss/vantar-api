@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
 
 import { AccessTokenGuard } from './access-token.guard';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '@auth/application/services';
 
 describe('AccessTokenGuard', () => {
   let guard: AccessTokenGuard;

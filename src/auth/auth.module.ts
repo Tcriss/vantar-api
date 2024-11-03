@@ -3,12 +3,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { AuthService } from './application/services/auth.service';
-import { AuthController } from './infrastructure/auth.controller';
-import { GoogleAuthStrategy } from './application/strategies/google.strategy';
-import { UserModule } from '../users/user.module';
-import { AccessTokenGuard } from './application/guards/access-token/access-token.guard';
-import { CommonModule } from 'src/common/common.module';
+import { AuthService } from '@auth/application/services';
+import { AuthController } from '@auth/infrastructure/auth.controller';
+import { AccessTokenGuard } from '@auth/application/guards';
+import { CommonModule } from '@common/common.module';
+import { UserModule } from '@users/user.module';
 
 @Module({
   providers: [

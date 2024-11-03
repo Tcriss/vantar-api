@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } 
 import { Request } from 'express';
 import { validate } from 'uuid';
 
-import { PrismaProvider } from '../../../../database/infrastructure/providers/prisma/prisma.provider';
+import { PrismaProvider } from '@database/infrastructure/providers';
 
 @Injectable()
 export class OwnerGuard implements CanActivate {

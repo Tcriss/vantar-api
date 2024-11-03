@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
-import { AuthEntity } from '../../domain/entities/auth.entity';
-import { UserEntity } from '../../../users/domain/entities/user.entity';
-import { BcryptProvider } from '../../../common/application/providers/bcrypt.provider';
-import { Repository } from '../../../common/domain/entities';
-import { EmailService } from '../../../email/application/email.service';
+import { AuthEntity } from '@auth/domain/entities';
+import { UserEntity } from '@users/domain/entities';
+import { BcryptProvider } from '@common/application/providers';
+import { Repository } from '@common/domain/entities';
+import { EmailService } from '@email/application/email.service';
 
 @Injectable()
 export class AuthService {

@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 
 import { GoogleAuthStrategy } from './google.strategy';
-import { UserService } from '../../../users/application/services/user.service';
-import { mockUserService } from '../../../users/domain/mocks/user-providers.mock';
+import { UserService } from '@users/application/services';
+import { mockUserService } from '@users/domain/mocks';
 
 describe('GoogleAuthStrategy', () => {
   let strategy: GoogleAuthStrategy;

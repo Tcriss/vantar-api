@@ -3,8 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { v4 } from 'uuid';
 
 import { OwnerGuard } from './owner.guard';
-import { PrismaProvider } from '../../../../database/infrastructure/providers/prisma/prisma.provider';
-import { prismaMock, shopMocks } from '../../../../shops/domain/mocks';
+import { prismaMock, shopMocks } from '@shops/domain/mocks';
+import { PrismaProvider } from '@database/infrastructure/providers';
 
 describe('OwnerGuard', () => {
   let prisma: PrismaProvider;

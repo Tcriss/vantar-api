@@ -4,10 +4,10 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 
 import { AuthController } from './auth.controller';
-import { AuthService } from '../application/services/auth.service';
-import { mockAuthService } from '../domain/mocks/auth-providers.mock';
-import { userMock, userMock2 } from '../../users/domain/mocks/user.mocks';
-import { Roles } from '../../common/domain/enums';
+import { userMock, userMock2 } from '@users/domain/mocks';
+import { Roles } from '@common/domain/enums';
+import { mockAuthService } from '@auth/domain/mocks';
+import { AuthService } from '@auth/application/services';
 
 describe('AuthController', () => {
   let service: AuthService;
