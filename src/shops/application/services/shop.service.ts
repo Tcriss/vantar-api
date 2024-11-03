@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Cache } from '@nestjs/cache-manager';
 
-import { ShopEntity } from '../../domain/entities';
-import { SelectedFields } from '../../domain/types';
-import { UpdateShopDto } from '../../domain/dtos';
-import { Repository } from '../../../common/domain/entities';
-import { Pagination } from '../../../common/domain/types';
-import { Cached } from '../../../common/application/decorators';
+import { ShopEntity } from '@shops/domain/entities';
+import { SelectedFields } from '@shops/domain/types';
+import { UpdateShopDto } from '@shops/domain/dtos';
+import { Repository } from '@common/domain/entities';
+import { Pagination } from '@common/domain/types';
+import { Cached } from '@common/application/decorators';
 
 @Injectable()
 export class ShopService {

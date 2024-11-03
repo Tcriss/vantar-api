@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ShopRepository } from './shop.repository';
-import { prismaMock, shopMocks } from '../../domain/mocks';
-import { ShopEntity } from '../../domain/entities';
-import { PrismaProvider } from '../../../database/infrastructure/providers/prisma/prisma.provider';
+import { prismaMock, shopMocks } from '@shops/domain/mocks';
+import { ShopEntity } from '@shops/domain/entities';
+import { PrismaProvider } from '@database/infrastructure/providers';
 
 describe('Respotories', () => {
   let repository: ShopRepository;

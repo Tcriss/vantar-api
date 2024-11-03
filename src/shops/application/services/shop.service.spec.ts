@@ -2,9 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Cache, CacheModule } from '@nestjs/cache-manager';
 
 import { ShopService } from './shop.service';
-import { cacheProviderMock, shopMocks, shopRepositoryMock } from '../../domain/mocks';
-import { ShopEntity } from '../../domain/entities';
-import { Repository } from '../../../common/domain/entities';
+import { cacheProviderMock, shopMocks, shopRepositoryMock } from '@shops/domain/mocks';
+import { ShopEntity } from '@shops/domain/entities';
+import { Repository } from '@common/domain/entities';
 
 describe('ShopService', () => {
   let service: ShopService;

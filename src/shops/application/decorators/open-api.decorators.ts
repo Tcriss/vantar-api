@@ -1,7 +1,7 @@
 import { HttpStatus, applyDecorators } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from "@nestjs/swagger";
 
-import { ShopEntity } from "../../domain/entities/shop.entity";
+import { ShopEntity } from "@shops/domain/entities";
 
 export const ApiGetShops = () => applyDecorators(
     ApiOperation({ summary: "Get all customer's shops" }),

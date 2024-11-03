@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { ShopEntity } from '../../../shops/domain/entities';
-import { SelectedFields } from '../../../shops/domain/types';
-import { Repository } from '../../../common/domain/entities';
-import { Pagination } from '../../../common/domain/types';
-import { PrismaProvider } from '../../../database/infrastructure/providers/prisma/prisma.provider';
+import { ShopEntity } from '@shops/domain/entities';
+import { SelectedFields } from '@shops/domain/types';
+import { Repository } from '@common/domain/entities';
+import { Pagination } from '@common/domain/types';
+import { PrismaProvider } from '@database/infrastructure/providers';
 
 @Injectable()
 export class ShopRepository implements Partial<Repository<ShopEntity>> {

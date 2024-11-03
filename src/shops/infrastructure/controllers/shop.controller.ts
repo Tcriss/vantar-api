@@ -1,14 +1,14 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-import { ShopEntity } from '../../domain/entities';
-import { ShopParams } from '../../domain/types';
-import { CreateShopDto, UpdateShopDto } from '../../domain/dtos';
-import { ShopService } from '../../application/services/shop.service';
-import { ApiCreateShop, ApiDeleteShop, ApiGetShop, ApiGetShops, ApiUpdateShop } from '../../application/decorators';
-import { Roles } from '../../../common/domain/enums';
-import { Role } from '../../../common/application/decorators';
-import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
+import { ShopEntity } from '@shops/domain/entities';
+import { ShopParams } from '@shops/domain/types';
+import { CreateShopDto, UpdateShopDto } from '@shops/domain/dtos';
+import { ShopService } from '@shops/application/services';
+import { ApiCreateShop, ApiDeleteShop, ApiGetShop, ApiGetShops, ApiUpdateShop } from '@shops/application/decorators';
+import { Roles } from '@common/domain/enums';
+import { Role } from '@common/application/decorators';
+import { RoleGuard } from '@auth/application/guards';
 
 @Role(Roles.CUSTOMER)
 @ApiBearerAuth()

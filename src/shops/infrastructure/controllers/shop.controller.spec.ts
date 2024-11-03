@@ -2,10 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 import { ShopController } from './shop.controller';
-import { ShopParams } from '../../domain/types';
-import { shopMocks, shopServiceMock } from '../../domain/mocks';
-import { CreateShopDto, UpdateShopDto } from '../../domain/dtos';
-import { ShopService } from '../../application/services/shop.service';
+import { ShopParams } from '@shops/domain/types';
+import { shopMocks, shopServiceMock } from '@shops/domain/mocks';
+import { CreateShopDto, UpdateShopDto } from '@shops/domain/dtos';
+import { ShopService } from '@shops/application/services';
 
 describe('ShopController', () => {
   let controller: ShopController;
