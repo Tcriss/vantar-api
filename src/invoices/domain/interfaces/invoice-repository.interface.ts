@@ -1,6 +1,6 @@
-import { InvoiceEntity } from "../entities/invoice.entity";
-import { Pagination } from "../../../common/domain/types";
-import { SelectedFields } from "../types";
+import { InvoiceEntity } from "@invoices/domain/entities";
+import { SelectedFields } from "@invoices/domain/types";
+import { Pagination } from "@common/domain/types";
 
 export const InvoiceRepositoryToken = Symbol();
 export interface InvoiceRepositoryI {

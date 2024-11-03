@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProductListRepository } from './product-list.repositroy';
 import { Collection, InsertOneResult, UpdateResult, DeleteResult, ObjectId } from 'mongodb';
-import { ProductEntityList } from '../../../domain/entities/product-list.entity';
-import { MongoProvider } from '../../../../database/infrastructure/providers/mongo-db/mongo.provider';
-import { ProductList } from 'src/products/domain/types/product-list.type';
+
+import { ProductListRepository } from './product-list.repositroy';
+import { ProductList } from '@products/domain/types';
+import { ProductEntityList } from '@products/domain/entities';
+import { MongoProvider } from '@database/infrastructure/providers';
 
 describe('ProductListRepository', () => {
   let repository: ProductListRepository;

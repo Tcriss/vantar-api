@@ -6,18 +6,17 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
 import { join } from 'path';
 
-import { DatabaseModule } from './database/database.module';
-import { UserModule } from './users/user.module';
-import { CorrelationIdMiddleware } from './common/application/middlewares/correlation-id/correlation-id.middleware';
-import { AuthModule } from './auth/auth.module';
-import { InventoryModule } from './inventories/inventory.module';
-import { ProductModule } from './products/product.module';
-import { InvoiceModule } from './invoices/invoice.module';
-import { LoggerMiddleware } from './common/application/middlewares/logger/logger.middleware';
-import { EmailModule } from './email/email.module';
-import { JwtExceptionsFilter } from './auth/application/filters/jwt-exceptions.filter';
-import { validationOptions } from './common/application/config';
-import { rateLimitConfig } from './common/application/config/rate-limit.config';
+import { AuthModule } from '@auth/auth.module';
+import { DatabaseModule } from '@database/database.module';
+import { EmailModule } from '@email/email.module';
+import { InventoryModule } from '@inventories/inventory.module';
+import { InvoiceModule } from '@invoices/invoice.module';
+import { ProductModule } from '@products/product.module';
+import { ShopModule } from '@shops/shop.module';
+import { UserModule } from '@users/user.module';
+import { JwtExceptionsFilter } from '@auth/application/filters';
+import { CorrelationIdMiddleware, LoggerMiddleware } from '@common/application/middlewares';
+import { validationOptions, rateLimitConfig } from '@common/application/config';
 
 @Module({
   providers: [
@@ -67,7 +66,8 @@ import { rateLimitConfig } from './common/application/config/rate-limit.config';
     UserModule,
     InventoryModule,
     ProductModule,
-    InvoiceModule
+    InvoiceModule,
+    ShopModule
   ],
 })
 export class AppModule implements NestModule {

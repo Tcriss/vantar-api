@@ -1,14 +1,13 @@
 import { DynamicModule, Module } from '@nestjs/common';
 
-import { ProductModuleAsyncOptions, ProductModuleOptions } from './domain/interfaces';
-import { ProductService } from './application/services/product.service';
-import { ProductRepository } from './infrastructure/repositories/product/product.repository';
-import { ProductListRepository } from './infrastructure/repositories/product-list/product-list.repositroy';
-import { ProductController } from './infrastructure/controllers/product.controller';
-import { ProductEntity } from './domain/entities/product.entity';
-import { DatabaseModule } from '../database/database.module';
-import { ProductListRepositoryToken } from './application/decotators';
-import { Repository } from '../common/domain/entities';
+import { ProductEntity } from '@products/domain/entities';
+import { ProductModuleAsyncOptions, ProductModuleOptions } from '@products/domain/interfaces';
+import { ProductService } from '@products/application/services';
+import { ProductListRepositoryToken } from '@products/application/decotators';
+import { ProductRepository, ProductListRepository } from '@products/infrastructure/repositories';
+import { ProductController } from '@products/infrastructure/controllers';
+import { DatabaseModule } from '@database/database.module';
+import { Repository } from '@common/domain/entities';
 
 @Module({
     providers: [

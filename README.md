@@ -6,6 +6,8 @@ This is [Vantar Project's]('https://github.com/HaroldMart/Vantar-Frontend') API,
 
 ### 🎯 Key Features
 
+- **Manage Shops:** Create an shop where all information are insolated, one shop is diferent from other.
+
 - **Manage Inventory:** Create an inventory from using products from your product list.
 
 - **Manage Products:** Create your product list to use it when creating an invoice or an inventory.
@@ -26,6 +28,12 @@ Some of those features are:
 - Caching.
 - Role and Owner Based Access Control.
 - Secure headers.
+
+### 📄 Documentation
+
+Thanks to the integration of the package nestJS/swagger, Vantar api is well documented, you can access Vantar API's swagger docs through the path `/docs` and swagger documentation will be shown to you.
+
+![Preview](./public/images/cover.png)
 
 ## Technologies used
 

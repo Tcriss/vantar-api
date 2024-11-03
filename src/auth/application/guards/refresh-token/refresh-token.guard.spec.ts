@@ -5,11 +5,11 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { JwtModule } from '@nestjs/jwt';
 
 import { RefreshTokenGuard } from './refresh-token.guard';
-import { AuthService } from '../../services/auth.service';
-import { SecurityModule } from '../../../../security/security.module';
-import { UserModule } from '../../../../users/user.module';
-import { DatabaseModule } from '../../../../database/database.module';
-import { EmailModule } from '../../../../email/email.module';
+import { AuthService } from '@auth/application/services';
+import { CommonModule } from '@common/common.module';
+import { DatabaseModule } from '@database/database.module';
+import { EmailModule } from '@email/email.module';
+import { UserModule } from '@users/user.module';
 
 describe('RefreshTokenGuard', () => {
   let guard: RefreshTokenGuard;
@@ -20,7 +20,7 @@ describe('RefreshTokenGuard', () => {
       providers: [ AuthService ],
       imports: [
         JwtModule.register({}),
-        SecurityModule.register({ saltRounds: 5 }),
+        CommonModule.register({ saltRounds: 5 }),
         UserModule.forFeature(),
         ConfigModule.forRoot({ isGlobal: true }),
         DatabaseModule.forRoot({ isGlobal: true }),

@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { InvoiceRepository } from './invoice.repository';
-import { PrismaProvider } from '../../../database/infrastructure/providers/prisma/prisma.provider';
-import { prismaMock } from '../../domain/mocks/invoice-providers.mock';
-import { invoiceMock, invoiceMock1, invoiceMock2 } from 'src/invoices/domain/mocks/invoice..mock';
-import { InvoiceEntity } from '../../domain/entities/invoice.entity';
+import { prismaMock, invoiceMock, invoiceMock1, invoiceMock2 } from '@invoices/domain/mocks';
+import { InvoiceEntity } from '@invoices/domain/entities';
+import { PrismaProvider } from '@database/infrastructure/providers';
 
 describe('Repositories', () => {
   let repository: InvoiceRepository;
@@ -33,8 +32,7 @@ describe('Repositories', () => {
     it('should fetch all products', async () => {
       jest.spyOn(prisma.invoice, 'findMany').mockResolvedValue([ invoiceMock, invoiceMock1, invoiceMock2 ]);
 
-      const id: string = 'b5c2d3e4-5678-901a-bcde-fghij2345678';
-      const res: Partial<InvoiceEntity>[] = await repository.findAll(id, { take: 10, skip: 0 });
+      const res: Partial<InvoiceEntity>[] = await repository.findAll('123', { take: 10, skip: 0 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([ invoiceMock, invoiceMock1, invoiceMock2 ]);
@@ -43,8 +41,7 @@ describe('Repositories', () => {
     it('should fetch what pagination indicates', async () => {
       jest.spyOn(prisma.invoice, 'findMany').mockResolvedValue([ invoiceMock2 ]);
 
-      const id: string = 'b5c2d3e4-5678-901a-bcde-fghij2345678';
-      const res: Partial<InvoiceEntity>[] = await repository.findAll(id, { take: 1, skip: 2 });
+      const res: Partial<InvoiceEntity>[] = await repository.findAll('123', { take: 1, skip: 2 });
 
       expect(res).toHaveLength(1);
       expect(res).toEqual([ invoiceMock2 ]);
@@ -65,8 +62,8 @@ describe('Repositories', () => {
     it('should create a product', async () => {
       jest.spyOn(prisma.invoice,'create').mockResolvedValue(invoiceMock);
 
-      const { total, user_id } = invoiceMock;
-      const res: InvoiceEntity = await repository.create({ user_id, total });
+      const { total, shop_id } = invoiceMock;
+      const res: InvoiceEntity = await repository.create({ shop_id, total });
 
       expect(res).toBe(invoiceMock);
     });
@@ -76,8 +73,8 @@ describe('Repositories', () => {
     it('should update a product', async () => {
       jest.spyOn(prisma.invoice,'update').mockResolvedValue(invoiceMock);
 
-      const { total, user_id } = invoiceMock;
-      const res: InvoiceEntity = await repository.update(user_id, { total });
+      const { total, shop_id } = invoiceMock;
+      const res: InvoiceEntity = await repository.update(shop_id, { total });
 
       expect(res).toBe(invoiceMock);
     });

@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
 
 import { AccessTokenGuard } from './access-token.guard';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '@auth/application/services';
 
 describe('AccessTokenGuard', () => {
   let guard: AccessTokenGuard;
@@ -18,7 +18,7 @@ describe('AccessTokenGuard', () => {
     getAllAndOverride: jest.fn(),
   };
 
-  const mockExecutionContext = (authHeader: string): ExecutionContext => ({
+  const mockExecutionContext = (authHeader: string, getHandler: boolean, getClass: boolean): ExecutionContext => ({
     switchToHttp: () => ({
       getRequest: () => ({
         headers: {
@@ -26,6 +26,8 @@ describe('AccessTokenGuard', () => {
         },
       }),
     }),
+    getHandler: (): any => getHandler,
+    getClass: (): any => getClass
   } as unknown as ExecutionContext);
 
   beforeEach(async () => {
@@ -52,33 +54,35 @@ describe('AccessTokenGuard', () => {
     expect(guard).toBeDefined();
   });
 
-  // it('should allow access to public routes', async () => {
-  //   jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(true);
+  it('should allow access to public routes', async () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(true);
 
-  //   const context = mockExecutionContext('');
-  //   const result = await guard.canActivate(context);
+    const context = mockExecutionContext('', true, true);
+    const result = await guard.canActivate(context);
     
-  //   expect(result).toBe(true);
-  // });
+    expect(result).toBe(true);
+  });
 
-  // it('should throw an error if token is missing in headers', async () => {
-  //   jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
+  it('should throw an error if token is missing in headers', async () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
 
-  //   const context = mockExecutionContext('Bearer');
+    const context = mockExecutionContext('Bearer', false, false);
 
-  //   await expect(guard.canActivate(context)).rejects.toThrow(
-  //     new HttpException('Token missing in headers', HttpStatus.UNAUTHORIZED),
-  //   );
-  // });
+    await expect(guard.canActivate(context)).rejects.toThrow(
+      new HttpException('Token missing in headers', HttpStatus.UNAUTHORIZED),
+    );
+  });
 
-  // it('should return true if token is valid', async () => {
-  //   jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
-  //   const validToken = { userId: 1, username: 'test' };
-  //   jest.spyOn(authService, 'verifyToken').mockResolvedValue(validToken);
+  it('should return true if token is valid', async () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
 
-  //   const context = mockExecutionContext('Bearer valid-token');
-  //   const result = await guard.canActivate(context);
+    const validToken = { userId: 1, username: 'test' };
 
-  //   expect(result).toBe(true);
-  // });
+    jest.spyOn(authService, 'verifyToken').mockResolvedValue(validToken);
+
+    const context = mockExecutionContext('Bearer valid-token', false, false);
+    const result = await guard.canActivate(context);
+
+    expect(result).toBe(true);
+  });
 });

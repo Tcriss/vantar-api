@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { EmailService } from './email.service';
-import { EMAIL_OPTIONS_KEY } from './constants/email-options.key';
-import { ResendProviderEntity } from '../domain/entities/resend-provider.entiry';
-import { ResendProvider } from '../infrastructure/resend.provider';
+import { EMAIL_OPTIONS_KEY } from '@email/application/constants';
+import { ResendProviderEntity } from '@email/domain/entities';
+import { ResendProvider } from '@email/infrastructure/resend.provider';
 
 describe('EmailService', () => {
   let service: EmailService;
