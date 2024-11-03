@@ -1,11 +1,10 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 
-import { DatabaseModuleAsyncOptions, DatabaseOptions } from './domain/interfaces';
-import { DatabaseModuleOptionsKey } from './application/constans/database=module-options.key';
-import { PrismaProvider } from './infrastructure/providers/prisma/prisma.provider';
-import { MongoProvider } from './infrastructure/providers/mongo-db/mongo.provider';
-import { PrismaClientExceptionFilter } from './application/filters/prisma-client-exception/prisma-client-exception.filter';
+import { DatabaseModuleAsyncOptions, DatabaseOptions } from '@database/domain/interfaces';
+import { DatabaseModuleOptionsKey } from '@database/application/constans';
+import { PrismaProvider, MongoProvider } from '@database/infrastructure/providers';
+import { PrismaClientExceptionFilter } from '@database/application/filters';
 
 @Module({})
 export class DatabaseModule {
