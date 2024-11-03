@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { InvoiceRepository } from './invoice.repository';
-import { PrismaProvider } from '../../../database/infrastructure/providers/prisma/prisma.provider';
-import { prismaMock } from '../../domain/mocks/invoice-providers.mock';
-import { invoiceMock, invoiceMock1, invoiceMock2 } from '../../domain/mocks/invoice.mock';
-import { InvoiceEntity } from '../../domain/entities';
+import { prismaMock, invoiceMock, invoiceMock1, invoiceMock2 } from '@invoices/domain/mocks';
+import { InvoiceEntity } from '@invoices/domain/entities';
+import { PrismaProvider } from '@database/infrastructure/providers';
 
 describe('Repositories', () => {
   let repository: InvoiceRepository;
@@ -33,7 +32,7 @@ describe('Repositories', () => {
     it('should fetch all products', async () => {
       jest.spyOn(prisma.invoice, 'findMany').mockResolvedValue([ invoiceMock, invoiceMock1, invoiceMock2 ]);
 
-      const res: Partial<InvoiceEntity>[] = await repository.findAll({ take: 10, skip: 0 });
+      const res: Partial<InvoiceEntity>[] = await repository.findAll('123', { take: 10, skip: 0 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([ invoiceMock, invoiceMock1, invoiceMock2 ]);
@@ -42,7 +41,7 @@ describe('Repositories', () => {
     it('should fetch what pagination indicates', async () => {
       jest.spyOn(prisma.invoice, 'findMany').mockResolvedValue([ invoiceMock2 ]);
 
-      const res: Partial<InvoiceEntity>[] = await repository.findAll({ take: 1, skip: 2 });
+      const res: Partial<InvoiceEntity>[] = await repository.findAll('123', { take: 1, skip: 2 });
 
       expect(res).toHaveLength(1);
       expect(res).toEqual([ invoiceMock2 ]);

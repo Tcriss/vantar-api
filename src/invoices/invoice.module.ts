@@ -1,13 +1,13 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 
-import { InvoiceRepository } from "./infrastructure/repositories/invoice.repository";
-import { InvoiceService } from './application/services/invoice.service';
-import { InvoiceController } from "./infrastructure/controllers/invoice.controller";
-import { ProductModule } from "../products/product.module";
-import { Repository } from "../common/domain/entities";
-import { InvoiceEntity } from "./domain/entities/invoice.entity";
-import { DatabaseModule } from "../database/database.module";
+import { InvoiceEntity } from "@invoices/domain/entities";
+import { InvoiceService } from '@invoices/application/services';
+import { InvoiceRepository } from "@invoices/infrastructure/repositories";
+import { InvoiceController } from "@invoices/infrastructure/controllers";
+import { Repository } from "@common/domain/entities";
+import { ProductModule } from "@products/product.module";
+import { DatabaseModule } from "@database/database.module";
 
 @Module({
     providers: [

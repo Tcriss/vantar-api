@@ -1,7 +1,7 @@
 import { HttpStatus, applyDecorators } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from "@nestjs/swagger";
 
-import { InvoiceEntity } from "../../domain/entities/invoice.entity";
+import { InvoiceEntity } from "@invoices/domain/entities";
 
 export const ApiGetInvoices = () => applyDecorators(
     ApiOperation({ summary: 'Get all invoices' }),

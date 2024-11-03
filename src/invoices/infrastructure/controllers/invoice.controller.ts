@@ -1,14 +1,14 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-import { InvoiceQueries } from '../../domain/types';
-import { InvoiceEntity } from '../../domain/entities';
-import { CreateInvoiceDto, UpdateInvoiceDto } from '../../domain/dtos';
-import { InvoiceService } from '../../application/services/invoice.service';
-import { RoleGuard } from '../../../auth/application/guards/role/role.guard';
-import { ApiCreateInvoice, ApiDeleteInvoice, ApiGetInvoice, ApiGetInvoices, ApiUpdateInvoice } from '../../application/decorators';
-import { Roles } from '../../../common/domain/enums';
-import { Role } from '../../../common/application/decorators';
+import { InvoiceEntity } from '@invoices/domain/entities';
+import { InvoiceQueries } from '@invoices/domain/types';
+import { CreateInvoiceDto, UpdateInvoiceDto } from '@invoices/domain/dtos';
+import { InvoiceService } from '@invoices/application/services';
+import { ApiCreateInvoice, ApiDeleteInvoice, ApiGetInvoice, ApiGetInvoices, ApiUpdateInvoice } from '@invoices/application/decorators';
+import { RoleGuard } from '@auth/application/guards';
+import { Roles } from '@common/domain/enums';
+import { Role } from '@common/application/decorators';
 
 @ApiBearerAuth()
 @ApiTags('Invoices')
@@ -24,12 +24,16 @@ export class InvoiceController {
     public async findAll(@Query() queries: InvoiceQueries): Promise<Partial<InvoiceEntity>[]> {
         if (!queries.limit || !queries.page) throw new HttpException("'page' or 'limit' param missing", HttpStatus.BAD_REQUEST);
 
-        const { page, limit, fields } = queries;
+        const { page, limit, fields, shop } = queries;
 
-        return this.service.findAllInvoices({ 
-            skip: (page - 1) * limit,
-            take: limit
-        }, fields);
+        return this.service.findAllInvoices(
+            shop,
+            { 
+                skip: (page - 1) * limit,
+                take: limit
+            },
+            fields
+        );
     }
 
     @ApiGetInvoice()

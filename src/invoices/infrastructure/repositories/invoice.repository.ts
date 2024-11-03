@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { Pagination } from '../../../common/domain/types';
-import { InvoiceEntity } from '../../domain/entities';
-import { SelectedFields } from '../../domain/types';
-import { PrismaProvider } from '../../../database/infrastructure/providers/prisma/prisma.provider';
-import { Repository } from '../../../common/domain/entities';
+import { InvoiceEntity } from '@invoices/domain/entities';
+import { SelectedFields } from '@invoices/domain/types';
+import { Repository } from '@common/domain/entities';
+import { Pagination } from '@common/domain/types';
+import { PrismaProvider } from '@database/infrastructure/providers';
 
 @Injectable()
 export class InvoiceRepository implements Partial<Repository<InvoiceEntity>> {
 
     constructor(private readonly prisma: PrismaProvider) {}
 
-    public async findAll(page: Pagination, fields?: SelectedFields, q?: string): Promise<Partial<InvoiceEntity>[]> {
+    public async findAll(shopId: string, page: Pagination, fields?: SelectedFields, q?: string): Promise<Partial<InvoiceEntity>[]> {
         return this.prisma.invoice.findMany({
+            where: { shop_id: shopId },
             select: fields,
             take: page.take,
             skip: page.skip

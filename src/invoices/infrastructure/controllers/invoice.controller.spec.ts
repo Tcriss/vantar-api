@@ -36,7 +36,7 @@ describe('InvoiceController', () => {
     it('should find all products', async () => {
       jest.spyOn(service, 'findAllInvoices').mockResolvedValue([invoiceMock, invoiceMock1]);
 
-      const res: Partial<InvoiceEntity>[] = await controller.findAll({ page: 1, limit: 10 });
+      const res: Partial<InvoiceEntity>[] = await controller.findAll({ page: 1, limit: 10, shop: '123' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([invoiceMock, invoiceMock1]);
@@ -45,7 +45,7 @@ describe('InvoiceController', () => {
     it('should find all products with pagination', async () => {
       jest.spyOn(service, 'findAllInvoices').mockResolvedValue([invoiceMock1]);
 
-      const res: Partial<InvoiceEntity>[] = await controller.findAll({ page: 1, limit: 10 });
+      const res: Partial<InvoiceEntity>[] = await controller.findAll({ page: 1, limit: 10, shop: '123' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([invoiceMock1]);
@@ -58,7 +58,7 @@ describe('InvoiceController', () => {
         partialInvoiceMock2
       ]);
 
-      const res: Partial<InvoiceEntity>[] = await controller.findAll({ page: 1, limit: 10 });
+      const res: Partial<InvoiceEntity>[] = await controller.findAll({ page: 1, limit: 10, shop: '123' });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toEqual([

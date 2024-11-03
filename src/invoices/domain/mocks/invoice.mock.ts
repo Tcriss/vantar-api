@@ -1,4 +1,4 @@
-import { InvoiceEntity } from '../entities/invoice.entity';
+import { InvoiceEntity } from '@invoices/domain/entities';
 
 export const invoiceMock = {
   id: 'e2d3f5a2-d60b-4c8b-b5f5-6d84d2b9a5b6',

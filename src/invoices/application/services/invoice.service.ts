@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Cache } from '@nestjs/cache-manager';
 
-import { SelectedFields } from '../../domain/types';
-import { InvoiceEntity } from '../../domain/entities';
-import { Pagination } from '../../../common/domain/types';
-import { Repository } from '../../../common/domain/entities';
-import { productListCreation } from '../../../common/application/utils';
-import { ProductList } from '../../../products/domain/types/product-list.type';
-import { ProductListRepository } from '../../../products/application/decotators';
-import { Cached } from '../../../common/application/decorators';
+import { SelectedFields } from '@invoices/domain/types';
+import { InvoiceEntity } from '@invoices/domain/entities';
+import { Pagination } from '@common/domain/types';
+import { Repository } from '@common/domain/entities';
+import { productListCreation } from '@common/application/utils';
+import { Cached } from '@common/application/decorators';
+import { ProductList } from '@products/domain/types';
+import { ProductListRepository } from '@products/application/decotators';
 
 @Injectable()
 export class InvoiceService {
@@ -19,7 +19,7 @@ export class InvoiceService {
         @Cached() private readonly cache: Cache
     ) {}
 
-    public async findAllInvoices(page: Pagination, selected?: string): Promise<Partial<InvoiceEntity>[]> {
+    public async findAllInvoices(userId: string, page: Pagination, selected?: string): Promise<Partial<InvoiceEntity>[]> {
         const selectedFields: SelectedFields = selected ? {
             id: true,
             shop_id: true,
@@ -36,7 +36,7 @@ export class InvoiceService {
 
         if (cachedInvoices && cachedFields == selectedFields && cachedPagination == page) return cachedInvoices;
 
-        const invoices = await this.invoiceRepository.findAll(page, selectedFields);
+        const invoices = await this.invoiceRepository.findAll(userId, page, selectedFields);
         await this.cache.set('invoices', invoices);
 
         return invoices;
