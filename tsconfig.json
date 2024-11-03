@@ -27,7 +27,8 @@
       "@invoices/*": ["src/invoices/*"],
       "@products/*": ["src/products/*"],
       "@shops/*": ["src/shops/*"],
-      "@users/*": ["src/users/*"],
-    }
+      "@users/*": ["src/users/*"]
+    },
+    "resolveJsonModule": true
   }
 }
