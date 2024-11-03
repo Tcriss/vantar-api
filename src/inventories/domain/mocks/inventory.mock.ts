@@ -1,5 +1,5 @@
-import { productListMock, productListMock1, productListMock2 } from "../../../products/domain/mocks/product-list.mock";
-import { InventoryEntity } from "../entities/inventory.entity";
+import { productListMock, productListMock1, productListMock2 } from "@products/domain/mocks/product-list.mock";
+import { InventoryEntity } from "@inventories/domain/entities";
 
 export const mockInventory1: InventoryEntity = {
     id: 'd290f1ee-6c54-4b01-90e6-d701748f0851',

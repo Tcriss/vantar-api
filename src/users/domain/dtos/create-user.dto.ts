@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsEnum, IsNotEmpty, IsString, IsStrongPassword, Matches, MaxLength, MinLength } from "class-validator";
 
 import { Roles } from "../../../common/domain/enums";
-import { nameRegex, pwRegex } from "../../../common/constants";
+import { nameRegex } from "../../../common/constants";
 
 export class CreateUserDto {
     @ApiProperty({ example: 'Haroldy Martinez', description: 'User name' })

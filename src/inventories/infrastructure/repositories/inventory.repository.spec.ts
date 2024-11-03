@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { InventoryRepository } from './inventory.repository';
-import { PrismaProvider } from '../../../database/infrastructure/providers/prisma/prisma.provider';
-import { prismaMock } from '../../domain/mocks/inventory-providers.mock';
-import { mockInventory1, mockInventory2, mockInventory3 } from '../../domain/mocks/inventory.mock';
-import { InventoryEntity } from '../../domain/entities/inventory.entity';
+import { prismaMock, mockInventory1, mockInventory2, mockInventory3 } from '@inventories/domain/mocks';
+import { InventoryEntity } from '@inventories/domain/entities';
+import { PrismaProvider } from '@database/infrastructure/providers';
 
 describe('Customer', () => {
   let repository: InventoryRepository;
@@ -33,7 +32,7 @@ describe('Customer', () => {
     it('should find all inventories', async () => {
       jest.spyOn(prisma.inventory, 'findMany').mockResolvedValue([ mockInventory1, mockInventory3 ]);
 
-      const res: Partial<InventoryEntity>[] = await repository.findAll({ skip: 1, take: 2 });
+      const res: Partial<InventoryEntity>[] = await repository.findAll('123', { skip: 1, take: 2 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toHaveLength(2);
@@ -43,7 +42,7 @@ describe('Customer', () => {
     it('should only bring one element', async () => {
       jest.spyOn(prisma.inventory, 'findMany').mockResolvedValue([mockInventory1]);
 
-      const res: Partial<InventoryEntity>[] = await repository.findAll({ skip: 0, take: 1 });
+      const res: Partial<InventoryEntity>[] = await repository.findAll('123', { skip: 0, take: 1 });
 
       expect(res).toBeInstanceOf(Array);
       expect(res).toHaveLength(1);

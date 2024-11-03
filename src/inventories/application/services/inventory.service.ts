@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Cache } from '@nestjs/cache-manager';
 
-import { Pagination } from '../../../common/domain/types';
-import { SelectedFields } from '../../domain/types';
-import { InventoryEntity } from '../../domain/entities/inventory.entity';
-import { Repository } from '../../../common/domain/entities';
-import { InventoryProductList } from '../../../inventories/domain/types/inventory-prodcut-list.type';
-import { productListCreation } from '../../../common/application/utils';
-import { ProductList } from '../../../products/domain/types/product-list.type';
-import { ProductListRepository } from '../../../products/application/decotators';
-import { Cached } from '../../../common/application/decorators';
+import { InventoryEntity } from '@inventories/domain/entities';
+import { SelectedFields, InventoryProductList } from '@inventories/domain/types';
+import { Pagination } from '@common/domain/types';
+import { Repository } from '@common/domain/entities';
+import { productListCreation } from '@common/application/utils';
+import { Cached } from '@common/application/decorators';
+import { ProductList } from '@products/domain/types';
+import { ProductListRepository } from '@products/application/decotators';
 
 @Injectable()
 export class InventoryService {
@@ -20,7 +19,7 @@ export class InventoryService {
         @Cached() private readonly cache: Cache
     ) {}
 
-    public async findAllInventories(page: Pagination, selected?: string): Promise<Partial<InventoryEntity>[]> {
+    public async findAllInventories(shopId: string, page: Pagination, selected?: string): Promise<Partial<InventoryEntity>[]> {
         const fields: SelectedFields = selected ? {
             id: true,
             user_id: true,
@@ -39,7 +38,7 @@ export class InventoryService {
 
         if (cachedInventories && cachedFields == fields && cachedPagination == page) return cachedInventories;
 
-        const inventories = await this.inventoryRepository.findAll(page, fields);
+        const inventories = await this.inventoryRepository.findAll(shopId, page, fields);
         await this.cache.set('inventories', inventories);
 
         return inventories;
@@ -49,10 +48,10 @@ export class InventoryService {
         const fields: SelectedFields = selected ? {
             id: true,
             user_id: true,
-            cost: selected.includes('cost') ? true : false,
-            subtotal: selected.includes('subtotal') ? true : false,
-            total: selected.includes('total') ? true : false,
-            created_at: selected.includes('created_at') ? true : false
+            cost: !!selected.includes('cost'),
+            subtotal: !!selected.includes('subtotal'),
+            total: !!selected.includes('total'),
+            created_at: !!selected.includes('created_at')
         } : null;
         await this.cache.set('fields', fields);
         const cachedFields = await this.cache.get('inventory-fields');

@@ -3,14 +3,13 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { ObjectId } from 'mongodb';
 
 import { InventoryService } from './inventory.service';
-import { mockInventoryRepository } from '../../domain/mocks/inventory-providers.mock';
-import { mockInventory1, mockInventory2, mockInventory3, mockPartialInventory1 } from '../../domain/mocks/inventory.mock';
-import { mockProductListRepository } from '../../../products/domain/mocks/product-providers.mock';
-import { InventoryProductList } from '../../domain/types/inventory-prodcut-list.type';
-import { InventoryEntity } from '../../domain/entities/inventory.entity';
-import { ProductEntityList } from '../../../products/domain/entities/product-list.entity';
-import { Repository } from '../../../common/domain/entities';
-import { ProductListRepositoryToken } from '../../../products/application/decotators';
+import { mockInventory1, mockInventory2, mockInventory3, mockPartialInventory1, mockInventoryRepository } from '@inventories/domain/mocks';
+import { InventoryProductList } from '@inventories/domain/types';
+import { InventoryEntity } from '@inventories/domain/entities';
+import { Repository } from '@common/domain/entities';
+import { mockProductListRepository } from '@products/domain/mocks';
+import { ProductEntityList } from '@products/domain/entities';
+import { ProductListRepositoryToken } from '@products/application/decotators';
 
 
 describe('InventoryService', () => {
@@ -47,7 +46,7 @@ describe('InventoryService', () => {
     it('should fetch all inventories', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([ mockInventory1, mockInventory3 ]);
 
-      const res: Partial<InventoryEntity>[] = await service.findAllInventories({ take: 10, skip: 0 });
+      const res: Partial<InventoryEntity>[] = await service.findAllInventories('123', { take: 10, skip: 0 });
 
       expect(res).toStrictEqual([ mockInventory1, mockInventory3 ]);
     });
@@ -55,7 +54,7 @@ describe('InventoryService', () => {
     it('should fetch some fields', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([ mockPartialInventory1 ]);
 
-      const res: Partial<InventoryEntity>[] = await service.findAllInventories({ take: 10, skip: 0 }, 'company_name, products_amount, id');
+      const res: Partial<InventoryEntity>[] = await service.findAllInventories('123', { take: 10, skip: 0 }, 'company_name, products_amount, id');
 
       expect(res).toStrictEqual([ mockPartialInventory1 ]);
     });
