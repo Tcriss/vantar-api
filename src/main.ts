@@ -11,7 +11,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerOptions);
   const config = app.get<ConfigService>(ConfigService);
 
-  SwaggerModule.setup('api', app, document, { swaggerOptions: { tagsSorter: 'alpha' } });
+  SwaggerModule.setup('docs', app, document, { swaggerOptions: { tagsSorter: 'alpha' } });
   app.use(helmet(helmetConfig));
   app.enableCors({
     origin: config.get<string>('CLIENT'),
