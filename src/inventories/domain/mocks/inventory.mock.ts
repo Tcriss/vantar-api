@@ -1,4 +1,4 @@
-import { productListMock, productListMock1, productListMock2 } from "@products/domain/mocks/product-list.mock";
+import { productListMock, productListMock1, productListMock2 } from "@products/domain/mocks";
 import { InventoryEntity } from "@inventories/domain/entities";
 
 export const mockInventory1: InventoryEntity = {

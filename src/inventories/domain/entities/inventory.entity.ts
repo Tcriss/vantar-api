@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Inventory } from "@prisma/client";
 
-import { ProductEntityList } from "@products/domain/entities/product-list.entity";
+import { ProductEntityList } from "@products/domain/entities";
 
 export class InventoryEntity implements Inventory {
     @ApiProperty({ format: 'uuid' })

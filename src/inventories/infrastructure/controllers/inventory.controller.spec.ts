@@ -6,7 +6,7 @@ import { mockInventoryService, prismaMock, mockInventory1, mockInventory2, mockI
 import { InventoryEntity } from '@inventories/domain/entities';
 import { InventoyResponse } from '@inventories/domain/types';
 import { InventoryService } from '@inventories/application/services';
-import { PrismaProvider } from '@database/infrastructure/providers/prisma/prisma.provider';
+import { PrismaProvider } from '@database/infrastructure/providers';
 
 describe('InventoryController', () => {
   let controller: InventoryController;

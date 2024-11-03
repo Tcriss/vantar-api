@@ -8,8 +8,7 @@ import { InventoryService } from '@inventories/application/services';
 import { ApiCreateInventory, ApiDeleteInventory, ApiGetInventories, ApiGetInventory, ApiUpdateInventory } from '@inventories/application/decorators';
 import { Role } from '@common/application/decorators';
 import { Roles } from '@common/domain/enums';
-import { RoleGuard } from '@auth/application/guards/role/role.guard';
-import { OwnerGuard } from '@auth/application/guards/owner/owner.guard';
+import { RoleGuard, OwnerGuard } from '@auth/application/guards';
 
 @ApiBearerAuth()
 @ApiTags('Inventories')
